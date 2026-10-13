@@ -13,4 +13,4 @@
 - **Keterangan:** Aplikasi untuk visualisasi jadwal dan timeline proyek dalam bentuk Gantt Chart.
 - **Akun Login:**
   - **Email:** lanaenjoy@gmail.com
-  - **Password:** maulana240405
+  - **Password:** maulana240405. (pakai titik di akhir password)
