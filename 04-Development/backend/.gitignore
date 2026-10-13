@@ -3,9 +3,15 @@
 *.exe
 *.out
 
-# Env
-.env
 .env.example
+.env
+.env.*
+!.env.example
+/04-Development/backend/tests/
+/04-Development/backend/docs/
+/04-Development/backend/docker-compose.yml
+
+
 # IDE
 .idea/
 .vscode/

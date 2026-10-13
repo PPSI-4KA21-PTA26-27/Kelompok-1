@@ -1,58 +1,89 @@
+// Command api adalah entry point server HTTP Hii Stranger.
 package main
 
 import (
 	"context"
 	"errors"
-	"log"
+	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
+
+	"github.com/gin-gonic/gin"
 
 	"kel1/backend/internal/config"
 	"kel1/backend/internal/database"
-	"kel1/backend/internal/models"
-	"kel1/backend/internal/router"
+	"kel1/backend/internal/httpapi"
+	"kel1/backend/internal/platform/logging"
 )
 
 func main() {
-	cfg := config.Load()
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, "fatal:", err)
+		os.Exit(1)
+	}
+}
 
-	db, err := database.Connect(cfg)
+func run() error {
+	cfg, err := config.Load()
 	if err != nil {
-		log.Fatalf("gagal konek database: %v", err)
+		return err
 	}
 
-	if err := db.AutoMigrate(models.All()...); err != nil {
-		log.Fatalf("gagal migrate: %v", err)
+	log := logging.New(cfg.LogLevel, cfg.IsProduction(), os.Stdout)
+	slog.SetDefault(log)
+	for _, w := range cfg.Warnings {
+		log.Warn("config_warning", slog.String("detail", w))
+	}
+	if cfg.IsProduction() {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	pool, err := database.NewPool(ctx, cfg.Database, "hii-stranger-api")
+	if err != nil {
+		return err
+	}
+	defer pool.Close() // dijalankan setelah server berhenti menerima request
+
+	handler, err := httpapi.NewRouter(httpapi.Dependencies{Config: cfg, Logger: log, DB: pool})
+	if err != nil {
+		return err
 	}
 
 	srv := &http.Server{
-		Addr:              ":" + cfg.AppPort,
-		Handler:           router.Setup(cfg, db),
-		ReadHeaderTimeout: 10 * time.Second,
-		ReadTimeout:       30 * time.Second,
-		WriteTimeout:      30 * time.Second,
+		Addr:              ":" + cfg.HTTP.Port,
+		Handler:           handler,
+		ReadHeaderTimeout: cfg.HTTP.ReadHeaderTimeout,
+		ReadTimeout:       cfg.HTTP.ReadTimeout,
+		WriteTimeout:      cfg.HTTP.WriteTimeout,
+		IdleTimeout:       cfg.HTTP.IdleTimeout,
 	}
 
+	serveErr := make(chan error, 1)
 	go func() {
-		log.Printf("server jalan di http://localhost:%s (env: %s)", cfg.AppPort, cfg.AppEnv)
+		log.Info("server_starting", slog.String("addr", srv.Addr), slog.String("env", cfg.Env))
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("server error: %v", err)
+			serveErr <- err
 		}
 	}()
 
-	// Graceful shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Println("shutting down...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("shutdown paksa: %v", err)
+	select {
+	case err := <-serveErr:
+		return fmt.Errorf("server error: %w", err)
+	case <-ctx.Done():
 	}
-	log.Println("server berhenti")
+
+	log.Info("server_shutting_down")
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), cfg.HTTP.ShutdownTimeout)
+	defer cancel()
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		return fmt.Errorf("graceful shutdown gagal: %w", err)
+	}
+	log.Info("server_stopped")
+	return nil
 }

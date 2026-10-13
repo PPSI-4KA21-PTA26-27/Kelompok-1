@@ -1,35 +1,48 @@
+# Hanya untuk pengembangan lokal. Nilai rahasia dibaca dari .env (tidak ada password di file ini).
 services:
   db:
     image: postgres:16-alpine
-    container_name: kel1_db
+    container_name: hii_stranger_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: kel1_db
+      POSTGRES_USER: hii
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?isi POSTGRES_PASSWORD di .env}
+      POSTGRES_DB: hii_stranger
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432" # hanya bisa diakses dari mesin ini
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d kel1_db"]
+      test: ["CMD-SHELL", "pg_isready -U hii -d hii_stranger"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  api:
+  # Dijalankan sekali; API menunggu sampai migrasi sukses.
+  migrate:
     build: .
-    container_name: kel1_api
-    restart: unless-stopped
+    container_name: hii_stranger_migrate
+    command: ["/app/migrate", "up"]
+    environment:
+      DATABASE_URL: postgres://hii:${POSTGRES_PASSWORD}@db:5432/hii_stranger?sslmode=disable
     depends_on:
       db:
         condition: service_healthy
+    restart: "no"
+
+  api:
+    build: .
+    container_name: hii_stranger_api
+    restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
     env_file:
       - .env
     environment:
-      DB_HOST: db
+      DATABASE_URL: postgres://hii:${POSTGRES_PASSWORD}@db:5432/hii_stranger?sslmode=disable
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
 
 volumes:
   pgdata:

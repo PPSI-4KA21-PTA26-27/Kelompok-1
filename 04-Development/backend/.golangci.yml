@@ -1,0 +1,17 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard
+  enable:
+    - gosec      # scan celah keamanan di kode (hardcoded secret, SQL injection, crypto lemah, dll)
+    - bodyclose  # response body HTTP yang lupa di-close
+    - errorlint  # penggunaan error wrapping yang salah
+    - noctx      # request HTTP tanpa context
+    - misspell   # typo di komentar dan string
+
+formatters:
+  enable:
+    - gofmt

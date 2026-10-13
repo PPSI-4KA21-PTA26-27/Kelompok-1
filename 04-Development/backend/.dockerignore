@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+.git
+.idea
+.vscode
+bin
+docs
+*.test
+coverage.out
