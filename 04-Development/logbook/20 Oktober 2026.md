@@ -26,5 +26,5 @@ Seluruh dokumen referensi yang digunakan dalam penyusunan dokumentasi disimpan d
 
 
 
-\[Folder Referensi Dokumentasi Hii Stranger](https://drive.google.com/drive/folders/13wrNNS-QBuSBUpf5Q4DdFez\_BNCwOmAI?usp=drive\_link)
+\[Folder Referensi Dokumentasi Hii Stranger](https://drive.google.com/drive/folders/13wrNNS-QBuSBUpf5Q4DdFez_BNCwOmAI)
 
