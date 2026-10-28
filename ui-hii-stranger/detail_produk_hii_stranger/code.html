@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-error": "#ffffff", "surface-container-low": "#f5f3ef", "surface-tint": "#5f5e5d", "error-container": "#ffdad6", "outline-variant": "#c7c7c0", "on-primary": "#ffffff", "error": "#ba1a1a", "on-surface": "#1b1c1a", "secondary-fixed": "#c9f300", "on-primary-fixed-variant": "#474745", "on-secondary-container": "#576a00", "primary-container": "#1c1c1a", "tertiary-fixed": "#e7e2d9", "on-error-container": "#93000a", "surface-variant": "#e4e2de", "inverse-surface": "#30312e", "tertiary": "#000000", "on-primary-container": "#858382", "inverse-on-surface": "#f2f0ed", "background": "#fbf9f5", "on-background": "#1b1c1a", "surface-dim": "#dbdad6", "surface": "#fbf9f5", "on-primary-fixed": "#1c1c1a", "on-secondary-fixed": "#171e00", "on-secondary-fixed-variant": "#3e4c00", "on-surface-variant": "#464742", "secondary-fixed-dim": "#b0d500", "primary": "#000000", "surface-bright": "#fbf9f5", "outline": "#767872", "surface-container": "#efeeea", "secondary-container": "#c6f000", "tertiary-container": "#1d1c16", "primary-fixed-dim": "#c9c6c4", "tertiary-fixed-dim": "#cbc6be", "on-tertiary-fixed-variant": "#494740", "secondary": "#536600", "on-tertiary-fixed": "#1d1c16", "on-tertiary": "#ffffff", "surface-container-high": "#eae8e4", "on-tertiary-container": "#87837c", "primary-fixed": "#e5e2e0", "on-secondary": "#ffffff", "inverse-primary": "#c9c6c4", "surface-container-lowest": "#ffffff", "surface-container-highest": "#e4e2de" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "margin-desktop": "3rem", "margin": "1rem", "space-xs": "0.25rem", "space-md": "0.75rem", "space-lg": "1.25rem", "gutter": "0.75rem", "space-xl": "2rem", "space-sm": "0.5rem", "gutter-desktop": "1.5rem" }, fontFamily: { "headline-lg-mobile": ["Bricolage Grotesque"], "price-display": ["Bricolage Grotesque"], "label-md": ["Geist"], "body-sm": ["Geist"], "display-lg": ["Bricolage Grotesque"], "body-md": ["Geist"], "body-lg": ["Geist"], "headline-md": ["Bricolage Grotesque"], "headline-lg": ["Bricolage Grotesque"], "label-caps": ["Geist"], "label-lg": ["Geist"], "display-lg-mobile": ["Bricolage Grotesque"] }, fontSize: { "headline-lg-mobile": ["26px", { lineHeight: "30px", letterSpacing: "-0.02em", fontWeight: "700" }], "price-display": ["20px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "700" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }], "body-sm": ["12px", { lineHeight: "16px", letterSpacing: "0em", fontWeight: "400" }], "display-lg": ["48px", { lineHeight: "52px", letterSpacing: "-0.03em", fontWeight: "800" }], "body-md": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "400" }], "body-lg": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "400" }], "headline-md": ["22px", { lineHeight: "26px", letterSpacing: "-0.015em", fontWeight: "700" }], "headline-lg": ["32px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }], "label-caps": ["11px", { lineHeight: "14px", letterSpacing: "0.06em", fontWeight: "700" }], "label-lg": ["14px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "600" }], "display-lg-mobile": ["34px", { lineHeight: "38px", letterSpacing: "-0.025em", fontWeight: "800" }] } } } };</script><style>@layer base { html, body { width: 100vw; min-height: 100%; margin: 0; padding: 0; background-color: #fbf9f5; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } } ::-webkit-scrollbar { display: none; }</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen selection:bg-secondary-fixed selection:text-primary"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-4 flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="Kembali" class="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center text-primary hover:bg-surface-container-low transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Hii Stranger Brand Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WVJTdfrsZ215fy-i6NIctDV3M2jpngPLSmWa3Grvw1aZXL09ASg2d7bE8BTrfJ10T8Bk2MadaHQtj7H2m2IWjRgDLjHrAMh7xceYzUvs5_U8nbSMTBnBadbNOuXGYf6zIh8tiU1zfp-KxOmebG0_aZbk7GpOIZV7NTSJZCEyqj_4iwNZrhKEUJNGDZ5NKXowyvevD8Rdy6urV8XgiM4me-NLJb4PNZR06r28qQ5S2-OiQou4PSAnRZXQR1"/><span class="font-headline-md text-headline-md tracking-tight uppercase text-primary font-bold">Keranjang</span></div><div class="flex items-center"><a aria-label="Profil Akun" class="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center p-0.5 hover:opacity-85 transition-opacity" data-path="akun" href="#"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHfQcC_cYHW8et1HpotSWzIy4Lr00v2GetjaOT0nBGKazpDdp0QFejUtQsdRYPP6c5ZczNLkJ-ns0QfuE9ba6ev6yazU9PQaz_1FMFR2qGKzP3soITZiaDGSr8jUnJJ3V8It9w1W8HhaVoifQW9bWwlnG0Gi_gCuxNHwmvDvtaE16zKNuk0naSuLJm32kSkdpXHk2nzngCmZdz_6E8UP9YGRMny9AslzX9nF6-vtwkpi2-rMQfmUixUw"/></a></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 bg-surface"><div class="flex flex-col w-full pb-32">
+<!-- Top Release / Drop Banner -->
+<div class="px-4 pt-3 pb-2 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="inline-block w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span class="font-label-caps text-label-caps tracking-widest text-on-surface-variant uppercase">DROP 04 / NOCTURNAL ARCHIVE</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-wider">SKU // HS-24-089</span>
+</div>
+<!-- Editorial Product Gallery Section -->
+<section class="relative px-4 w-full">
+<div class="relative w-full aspect-[4/5] rounded-xl overflow-hidden bg-surface-container shadow-sm">
+<!-- Media Carousel Container -->
+<div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" id="gallery-slider">
+<!-- Slide 1 -->
+<div class="min-w-full h-full snap-center relative">
+<img alt="Overdyed Tactical Heavy Hoodie Front View" class="w-full h-full object-cover select-none pointer-events-none" data-alt="Editorial streetwear lookbook shot of a model wearing an overdyed washed slate heavyweight oversized tactical hoodie. Studio concrete minimal brutalist background, dramatic soft natural shadow, high fashion drape, 4:5 vertical framing, neutral muted tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7OCabUuofSmNgqn63nJiOShQnqOneFVb_RH9yQdT4MxDT2WXlzZVzA2OXibeQcdlz8DWWtFOd55w2Lz4tHb8tgqXgwHSF82HVWtPCjnlbi-I_4e81W6qesHhO0Jv7k8JZPhSWWjiWDq-E6KTZC-yim-AwrdIxS86A0K11ABMyicGXOJMiK5D7EzJjNxGmP94LE2t7F-_eLIxpLrP_3wrBPa7qBSBM295_0bI8FAtuH4a6FPjGPSNmEA"/>
+</div>
+<!-- Slide 2 -->
+<div class="min-w-full h-full snap-center relative">
+<img alt="Overdyed Tactical Heavy Hoodie Fabric Detail" class="w-full h-full object-cover select-none pointer-events-none" data-alt="Close up fabric texture shot of washed slate heavy French terry cotton 420 GSM hoodie. Detailed drop-shoulder double seam stitching, custom metallic eyelets, raw artisanal feel, studio lighting with warm stone shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNgSB8Y4KXwJs_-US587Q0TBbq5oCaUVkFLdRClZGjs_HU3e6ttQsVMwIPktTshOi6TKNACvPkXTriZKDzDMm5bWbG9TRfZFOqN6P-tW9tvXN1uCf8-ZfjC3tzTuP0TvfDnEXK9F3JlQ9zL_wayFJFa01qGmYqmi2a-dnTfWNpxQRQPghKb2XCUAUDjAoCvqLdrB8-YCFn-RjFWef0cKb7-2ipRmIK0C5E1hBdSblEmd0xRm06z-4i7Q"/>
+</div>
+<!-- Slide 3 -->
+<div class="min-w-full h-full snap-center relative">
+<img alt="Overdyed Tactical Heavy Hoodie Back View" class="w-full h-full object-cover select-none pointer-events-none" data-alt="Back editorial silhouette of oversized boxy hoodie streetwear piece, minimal tonal typography screenprint across lower spine, architectural urban backdrop, subdued warm tones with natural overcast light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0WWv46rk-eJOQ3SFkKs9SVINe9P5N7OFuqZlim7fsYO3evA9VM8d_5Wfg3bGbJAmHFPy1JsNNYi7f-7KvLpmiZEHoyf790X5DlkAmiXPY3dnTCZe73pFkpbFC5BeHuEldObge4nJuloee8qoXxjZteigEvqObl6F-qqk7iXE7kRk6nPJ-QibE94oWNb7miven-y6BlEXtC8AGCo81AiouQIaP9hRlAOuZaYIBBb1Q69TWtlEWp8JVCA"/>
+</div>
+</div>
+<!-- Floating Badges Layer -->
+<div class="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none z-10">
+<div class="bg-primary text-secondary-fixed px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span class="font-label-caps text-label-caps tracking-wider uppercase">PRE-ORDER (7 HARI)</span>
+</div>
+<div class="bg-surface/90 backdrop-blur-md text-primary px-2.5 py-0.5 rounded-md shadow-sm w-fit">
+<span class="font-label-caps text-label-caps font-bold tracking-tight">EDISI TERBATAS // 100 PCS</span>
+</div>
+</div>
+<!-- Stock Urgency Pill -->
+<div class="absolute top-3 right-3 pointer-events-none z-10">
+<div class="bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-primary tracking-wide">Sisa 3 pcs</span>
+</div>
+</div>
+<!-- Slide Dots Indicator -->
+<div class="absolute bottom-3 inset-x-0 flex items-center justify-center gap-1.5 z-10">
+<button aria-label="Slide 1" class="w-6 h-1.5 rounded-full bg-secondary-fixed transition-all duration-300" id="dot-0" onclick="scrollGallery(0)"></button>
+<button aria-label="Slide 2" class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest/70 backdrop-blur-sm transition-all duration-300" id="dot-1" onclick="scrollGallery(1)"></button>
+<button aria-label="Slide 3" class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest/70 backdrop-blur-sm transition-all duration-300" id="dot-2" onclick="scrollGallery(2)"></button>
+</div>
+</div>
+</section>
+<!-- Product Title & Pricing Block -->
+<section class="px-4 pt-4 flex flex-col gap-2">
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight uppercase leading-none">
+        Overdyed Tactical Heavy Hoodie
+      </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Washed Slate // Boxy Atelier Cut</p>
+</div>
+<!-- Pricing Row with Discount Badge -->
+<div class="flex items-baseline gap-2.5 mt-1">
+<span class="font-price-display text-price-display text-primary tabular-nums tracking-tight">
+        Rp489.000
+      </span>
+<span class="font-body-md text-body-md text-on-surface-variant line-through tabular-nums">
+        Rp549.000
+      </span>
+<span class="bg-secondary-container text-on-secondary-container font-label-caps text-label-caps px-1.5 py-0.5 rounded uppercase">
+        -11%
+      </span>
+</div>
+<!-- Pre-order Dispatch Notice Box -->
+<div class="bg-surface-container-low rounded-xl p-3 flex items-start gap-2.5 mt-1">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">local_shipping</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary">Pre-Order Dikirim Langsung</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+          Diperkirakan siap kirim dalam 7 hari kerja langsung dari atelier Jakarta.
+        </span>
+</div>
+</div>
+</section>
+<!-- Interactive Variants Selector -->
+<section class="px-4 pt-5 flex flex-col gap-4">
+<!-- Color Selector -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary uppercase tracking-wide">PILIHAN WARNA</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="selected-color-label">Washed Slate</span>
+</div>
+<div class="flex items-center gap-2">
+<!-- Washed Slate (Selected) -->
+<button class="color-pill px-3.5 py-2 rounded-xl bg-primary text-secondary-fixed flex items-center gap-2 shadow-sm transition-transform active:scale-95" onclick="selectColor(this, 'Washed Slate')" type="button">
+<span class="w-3 h-3 rounded-full bg-[#52575D]"></span>
+<span class="font-label-md text-label-md uppercase">Washed Slate</span>
+</button>
+<!-- Faded Black -->
+<button class="color-pill px-3.5 py-2 rounded-xl bg-surface-container-low text-on-surface flex items-center gap-2 hover:bg-surface-container transition-all active:scale-95" onclick="selectColor(this, 'Faded Black')" type="button">
+<span class="w-3 h-3 rounded-full bg-[#202022]"></span>
+<span class="font-label-md text-label-md uppercase">Faded Black</span>
+</button>
+<!-- Raw Chalk (Sold Out / Crossed) -->
+<div class="relative px-3.5 py-2 rounded-xl bg-surface-container-low/50 text-outline-variant flex items-center gap-2 cursor-not-allowed select-none overflow-hidden opacity-60">
+<span class="w-3 h-3 rounded-full bg-[#E5E1D8]"></span>
+<span class="font-label-md text-label-md uppercase line-through">Raw Chalk</span>
+<span class="absolute inset-0 bg-transparent flex items-center justify-center pointer-events-none"></span>
+</div>
+</div>
+</div>
+<!-- Size Selector -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-primary uppercase tracking-wide">UKURAN</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium" id="selected-size-label">(L Terpilih)</span>
+</div>
+<button class="text-primary font-label-md text-label-md underline underline-offset-4 flex items-center gap-1 hover:text-on-surface-variant" onclick="toggleModal('size-chart-modal')" type="button">
+<span class="material-symbols-outlined text-[16px]">straighten</span>
+<span>Panduan Ukuran</span>
+</button>
+</div>
+<!-- Size Chips Grid -->
+<div class="grid grid-cols-5 gap-2">
+<!-- Size S -->
+<button class="size-btn h-12 rounded-xl bg-surface-container-low text-primary font-label-md text-label-md flex items-center justify-center transition-all active:scale-95" onclick="selectSize(this, 'S')" type="button">
+          S
+        </button>
+<!-- Size M -->
+<button class="size-btn h-12 rounded-xl bg-surface-container-low text-primary font-label-md text-label-md flex items-center justify-center transition-all active:scale-95" onclick="selectSize(this, 'M')" type="button">
+          M
+        </button>
+<!-- Size L (Active) -->
+<button class="size-btn h-12 rounded-xl bg-primary text-secondary-fixed font-label-md text-label-md flex items-center justify-center shadow-sm transition-all active:scale-95" onclick="selectSize(this, 'L')" type="button">
+          L
+        </button>
+<!-- Size XL -->
+<button class="size-btn h-12 rounded-xl bg-surface-container-low text-primary font-label-md text-label-md flex items-center justify-center transition-all active:scale-95" onclick="selectSize(this, 'XL')" type="button">
+          XL
+        </button>
+<!-- Size XXL (Disabled) -->
+<div class="h-12 rounded-xl bg-surface-container-low/40 text-outline-variant font-label-md text-label-md flex items-center justify-center cursor-not-allowed select-none relative overflow-hidden line-through opacity-50">
+          XXL
+        </div>
+</div>
+</div>
+<!-- Quantity Stepper -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary uppercase tracking-wide">JUMLAH</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Maks. 3 pcs / transaksi</span>
+</div>
+<div class="flex items-center bg-surface-container-low rounded-xl p-1 gap-2">
+<button aria-label="Kurangi jumlah" class="w-10 h-10 rounded-lg bg-surface-container-lowest text-primary flex items-center justify-center shadow-sm active:scale-90 transition-transform" onclick="changeQuantity(-1)" type="button">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="w-8 text-center font-headline-md text-headline-md text-primary tabular-nums select-none" id="qty-counter">
+          1
+        </span>
+<button aria-label="Tambah jumlah" class="w-10 h-10 rounded-lg bg-surface-container-lowest text-primary flex items-center justify-center shadow-sm active:scale-90 transition-transform" onclick="changeQuantity(1)" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Editorial Material & Specifications Section -->
+<section class="px-4 pt-6 flex flex-col gap-3">
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">texture</span>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">SPESIFIKASI &amp; MATERIAL</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5 pt-1">
+<div class="bg-surface-container-low p-2.5 rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Material Fabric</span>
+<span class="font-body-md text-body-md font-medium text-primary mt-0.5">100% French Terry</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cotton 420 GSM</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Siluet Potongan</span>
+<span class="font-body-md text-body-md font-medium text-primary mt-0.5">Boxy Relaxed</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Drop-shoulder seam</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Washing Finish</span>
+<span class="font-body-md text-body-md font-medium text-primary mt-0.5">Garment Overdyed</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Vintaged washed patina</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Konstruksi</span>
+<span class="font-body-md text-body-md font-medium text-primary mt-0.5">Double Stitched</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Heavy duty ribbed cuffs</span>
+</div>
+</div>
+<!-- Editorial Notes -->
+<div class="pt-2">
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Dikonsepkan untuk siluet streetwear kontemporer yang substansial. Setiap garmen melewati proses pencucian pigmen manual, menciptakan keunikan gradasi pudar yang unik pada setiap helai. Tahan lama, tebal, dan bernapas alami untuk iklim tropis perkotaan.
+        </p>
+</div>
+</div>
+<!-- Accordion: Atelier & Delivery Guarantees -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<button class="w-full p-4 flex items-center justify-between text-left" onclick="toggleAccordion('atelier-desc', 'atelier-icon')" type="button">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wide">JAMINAN KEASLIAN &amp; PENGIRIMAN</span>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px] transition-transform duration-200" id="atelier-icon">expand_more</span>
+</button>
+<div class="hidden px-4 pb-4" id="atelier-desc">
+<ul class="font-body-sm text-body-sm text-on-surface-variant space-y-2">
+<li class="flex items-center gap-2">
+<span class="w-1 h-1 rounded-full bg-primary"></span>
+            100% Produk otentik bersertifikat nomor seri rilisan archive.
+          </li>
+<li class="flex items-center gap-2">
+<span class="w-1 h-1 rounded-full bg-primary"></span>
+            Dikemas dengan waterproof archive tote bag &amp; hangtag metalik eksklusif.
+          </li>
+<li class="flex items-center gap-2">
+<span class="w-1 h-1 rounded-full bg-primary"></span>
+            Penukaran ukuran maksimal 3 hari setelah paket diterima atelier.
+          </li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Sticky Bottom Action Bar -->
+<div class="fixed bottom-0 inset-x-0 z-40 bg-surface/95 backdrop-blur-xl pb-safe shadow-[0_-8px_30px_rgba(20,20,19,0.06)]">
+<div class="h-20 px-4 flex items-center gap-3">
+<!-- Secondary Action: Add to Bag -->
+<button class="flex-1 h-12 min-h-[48px] rounded-xl bg-surface-container-lowest text-primary font-label-lg text-label-lg uppercase tracking-wide flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all" id="add-to-cart-btn" onclick="triggerAddToCart()" type="button">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+<span>+ Keranjang</span>
+</button>
+<!-- Primary Action: Buy Now / Direct Checkout -->
+<button class="flex-[1.4] h-12 min-h-[48px] rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-lg text-label-lg uppercase tracking-wider font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all" onclick="handleInstantCheckout()" type="button">
+<span>Beli Sekarang</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Toast Notification Feedback -->
+<div class="fixed top-20 inset-x-4 z-50 transform -translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="cart-toast">
+<div class="bg-primary text-secondary-fixed rounded-xl p-3 shadow-xl flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-secondary-fixed">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-primary font-semibold">Tersimpan di Keranjang</span>
+<span class="font-body-sm text-body-sm text-secondary-fixed">Washed Slate • Ukuran L (1 pcs)</span>
+</div>
+</div>
+<a class="font-label-caps text-label-caps text-secondary-fixed underline uppercase tracking-wider" data-path="keranjang" href="#">Lihat</a>
+</div>
+</div>
+<!-- Size Chart Modal Drawer -->
+<div class="fixed inset-0 z-50 hidden bg-primary/40 backdrop-blur-sm flex items-end justify-center" id="size-chart-modal">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-t-2xl p-5 shadow-2xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">straighten</span>
+<h3 class="font-headline-md text-headline-md text-primary uppercase">Panduan Ukuran (cm)</h3>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-primary" onclick="toggleModal('size-chart-modal')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Standar potongan boxy oversized streetwear atelier. Disarankan memilih ukuran reguler Anda untuk tampilan relaxed drape.
+      </p>
+<!-- Dimension Table -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden p-2">
+<div class="grid grid-cols-4 text-center font-label-caps text-label-caps text-on-surface-variant pb-2 pt-1 border-none">
+<span>UKURAN</span>
+<span>PANJANG</span>
+<span>LEBAR</span>
+<span>LENGAN</span>
+</div>
+<div class="space-y-1.5 font-body-sm text-body-sm text-primary tabular-nums">
+<div class="grid grid-cols-4 text-center py-1.5 rounded-lg bg-surface-container-lowest">
+<span class="font-semibold">S</span>
+<span>68 cm</span>
+<span>58 cm</span>
+<span>56 cm</span>
+</div>
+<div class="grid grid-cols-4 text-center py-1.5 rounded-lg bg-surface-container-lowest">
+<span class="font-semibold">M</span>
+<span>70 cm</span>
+<span>61 cm</span>
+<span>58 cm</span>
+</div>
+<div class="grid grid-cols-4 text-center py-1.5 rounded-lg bg-secondary-container/40 font-semibold text-primary">
+<span>L</span>
+<span>73 cm</span>
+<span>64 cm</span>
+<span>60 cm</span>
+</div>
+<div class="grid grid-cols-4 text-center py-1.5 rounded-lg bg-surface-container-lowest">
+<span class="font-semibold">XL</span>
+<span>76 cm</span>
+<span>67 cm</span>
+<span>62 cm</span>
+</div>
+<div class="grid grid-cols-4 text-center py-1.5 rounded-lg bg-surface-container-lowest text-outline-variant">
+<span>XXL</span>
+<span>78 cm</span>
+<span>70 cm</span>
+<span>64 cm</span>
+</div>
+</div>
+</div>
+<button class="w-full h-12 rounded-xl bg-primary text-secondary-fixed font-label-md text-label-md uppercase tracking-wider" onclick="toggleModal('size-chart-modal')" type="button">
+        Tutup Panduan
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Simple State Handling
+  let currentQty = 1;
+  const maxStock = 3;
+  let activeSize = 'L';
+  let activeColor = 'Washed Slate';
+
+  function changeQuantity(delta) {
+    const nextVal = currentQty + delta;
+    if (nextVal >= 1 && nextVal <= maxStock) {
+      currentQty = nextVal;
+      document.getElementById('qty-counter').innerText = currentQty;
+    }
+  }
+
+  function selectColor(btn, colorName) {
+    document.querySelectorAll('.color-pill').forEach(el => {
+      el.className = 'color-pill px-3.5 py-2 rounded-xl bg-surface-container-low text-on-surface flex items-center gap-2 hover:bg-surface-container transition-all active:scale-95';
+    });
+    btn.className = 'color-pill px-3.5 py-2 rounded-xl bg-primary text-secondary-fixed flex items-center gap-2 shadow-sm transition-transform active:scale-95';
+    activeColor = colorName;
+    document.getElementById('selected-color-label').innerText = colorName;
+  }
+
+  function selectSize(btn, sizeName) {
+    document.querySelectorAll('.size-btn').forEach(el => {
+      el.className = 'size-btn h-12 rounded-xl bg-surface-container-low text-primary font-label-md text-label-md flex items-center justify-center transition-all active:scale-95';
+    });
+    btn.className = 'size-btn h-12 rounded-xl bg-primary text-secondary-fixed font-label-md text-label-md flex items-center justify-center shadow-sm transition-all active:scale-95';
+    activeSize = sizeName;
+    document.getElementById('selected-size-label').innerText = '(' + sizeName + ' Terpilih)';
+  }
+
+  function toggleAccordion(contentId, iconId) {
+    const content = document.getElementById(contentId);
+    const icon = document.getElementById(iconId);
+    if (content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      icon.classList.add('rotate-180');
+    } else {
+      content.classList.add('hidden');
+      icon.classList.remove('rotate-180');
+    }
+  }
+
+  function toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal.classList.contains('hidden')) {
+      modal.classList.remove('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function scrollGallery(index) {
+    const slider = document.getElementById('gallery-slider');
+    const width = slider.clientWidth;
+    slider.scrollTo({ left: width * index, behavior: 'smooth' });
+    updateDots(index);
+  }
+
+  function updateDots(activeIdx) {
+    [0, 1, 2].forEach(i => {
+      const dot = document.getElementById('dot-' + i);
+      if (i === activeIdx) {
+        dot.className = 'w-6 h-1.5 rounded-full bg-secondary-fixed transition-all duration-300';
+      } else {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-surface-container-lowest/70 backdrop-blur-sm transition-all duration-300';
+      }
+    });
+  }
+
+  const slider = document.getElementById('gallery-slider');
+  slider.addEventListener('scroll', () => {
+    const index = Math.round(slider.scrollLeft / slider.clientWidth);
+    updateDots(index);
+  }, { passive: true });
+
+  function triggerAddToCart() {
+    const toast = document.getElementById('cart-toast');
+    toast.classList.remove('-translate-y-24', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('-translate-y-24', 'opacity-0');
+    }, 2800);
+  }
+
+  function handleInstantCheckout() {
+    triggerAddToCart();
+    setTimeout(() => {
+      const cartLink = document.querySelector('[data-path="keranjang"]');
+      if (cartLink) {
+        cartLink.click();
+      }
+    }, 400);
+  }
+</script></main></body></html>

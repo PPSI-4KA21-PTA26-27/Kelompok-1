@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;800&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-low":"#f5f3ef","on-surface-variant":"#464742","surface-container-high":"#eae8e4","surface-bright":"#fbf9f5","background":"#fbf9f5","tertiary-fixed":"#e7e2d9","on-primary-fixed-variant":"#474745","outline":"#767872","surface-container":"#efeeea","on-primary-fixed":"#1c1c1a","on-error":"#ffffff","inverse-primary":"#c9c6c4","secondary":"#536600","surface":"#fbf9f5","on-surface":"#1b1c1a","on-secondary-fixed":"#171e00","on-tertiary-container":"#87837c","primary-fixed":"#e5e2e0","primary-container":"#1c1c1a","on-secondary-container":"#576a00","secondary-fixed":"#c9f300","secondary-fixed-dim":"#b0d500","surface-tint":"#5f5e5d","on-tertiary-fixed":"#1d1c16","tertiary-fixed-dim":"#cbc6be","error-container":"#ffdad6","primary":"#000000","surface-container-lowest":"#ffffff","error":"#ba1a1a","on-tertiary":"#ffffff","tertiary-container":"#1d1c16","on-tertiary-fixed-variant":"#494740","outline-variant":"#c7c7c0","primary-fixed-dim":"#c9c6c4","inverse-surface":"#30312e","on-secondary-fixed-variant":"#3e4c00","surface-container-highest":"#e4e2de","surface-dim":"#dbdad6","on-error-container":"#93000a","tertiary":"#000000","inverse-on-surface":"#f2f0ed","secondary-container":"#c6f000","on-background":"#1b1c1a","on-primary":"#ffffff","surface-variant":"#e4e2de","on-primary-container":"#858382","on-secondary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-sm":"0.5rem","gutter":"0.75rem","margin-desktop":"3rem","space-xs":"0.25rem","space-lg":"1.25rem","space-md":"0.75rem","space-xl":"2rem","gutter-desktop":"1.5rem","margin":"1rem"},"fontFamily":{"headline-md":["Bricolage Grotesque"],"label-md":["Geist"],"price-display":["Bricolage Grotesque"],"display-lg-mobile":["Bricolage Grotesque"],"body-md":["Geist"],"display-lg":["Bricolage Grotesque"],"headline-lg":["Bricolage Grotesque"],"label-caps":["Geist"],"body-sm":["Geist"],"body-lg":["Geist"],"headline-lg-mobile":["Bricolage Grotesque"],"label-lg":["Geist"]},"fontSize":{"headline-md":["22px",{"lineHeight":"26px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"price-display":["20px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"700"}],"display-lg-mobile":["34px",{"lineHeight":"38px","letterSpacing":"-0.025em","fontWeight":"800"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"52px","letterSpacing":"-0.03em","fontWeight":"800"}],"headline-lg":["32px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-caps":["11px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-lg-mobile":["26px",{"lineHeight":"30px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-60 bg-surface-container-low border-r border-outline-variant/40 flex flex-col justify-between z-40"><div class="flex flex-col"><div class="px-space-md py-space-lg border-b border-outline-variant/40"><span class="font-headline-md text-headline-md uppercase tracking-tight text-primary block">Hii Stranger</span><div class="flex items-center gap-space-xs mt-0.5"><span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Admin Portal</span><span class="font-label-caps text-label-caps px-1.5 py-0.5 bg-surface-container-highest rounded text-on-surface-variant">v1.0</span></div></div><div class="px-space-md pt-space-md pb-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Manajemen Toko</span></div><nav class="flex flex-col gap-0.5 px-space-sm" data-active-classes="bg-primary text-on-primary font-bold"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ringkasan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">space_dashboard</span><span>Ringkasan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pesanan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Pesanan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pembayaran" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">payments</span><span>Pembayaran</span></div><span class="px-1.5 py-0.5 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps rounded-full">3 Baru</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="produk" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">checkroom</span><span>Produk</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="kategori" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">category</span><span>Kategori</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="banner" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_carousel</span><span>Banner</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ongkir" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">local_shipping</span><span>Ongkir</span></div></a><div class="my-space-xs border-t border-outline-variant/30"></div><div class="px-space-sm py-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sistem &amp; Kontrol</span></div><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="analitik" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span>Analitik</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Admin</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="maintenance" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">build_circle</span><span>Maintenance</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Super</span></a></nav></div><div class="p-space-md border-t border-outline-variant/40 bg-surface-container"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="inline-block w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-caps text-label-caps text-on-surface">ONLINE / LIVE</span></div><span class="font-label-caps text-label-caps text-on-surface-variant">REGION ID</span></div></div></aside><div class="pl-60 min-h-screen flex flex-col"><header class="fixed top-0 left-60 right-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/40 z-30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md"><span class="hover:text-on-surface cursor-pointer">Admin</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-semibold">Console</span></div><div class="h-4 w-px bg-outline-variant/60 hidden sm:block"></div><div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low border border-outline-variant/40"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sinkron Otomatis 10s</span></div></div><div class="flex items-center gap-space-md"><span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-primary text-on-primary uppercase tracking-widest">SUPERADMIN</span><div class="flex items-center gap-space-sm border-l border-outline-variant/40 pl-space-md"><div class="text-right hidden md:block"><span class="block font-label-md text-label-md text-on-surface leading-tight">HQ Controller</span><span class="block font-label-caps text-label-caps text-on-surface-variant">root@hiistranger.com</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><a class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-error transition-colors" data-path="login" href="#" title="Keluar dari Sistem"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></header><main class="w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full">
+<!-- Container with responsive editorial margins -->
+<div class="px-space-md sm:px-space-lg lg:px-margin-desktop py-space-xl flex flex-col gap-space-xl">
+<!-- Breadcrumb & Header Section -->
+<div class="flex flex-col gap-space-md">
+<!-- Breadcrumb navigation -->
+<nav class="flex items-center gap-space-xs font-label-md text-label-md text-on-surface-variant">
+<span>Toko</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Logistik &amp; Pengiriman</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">Tarif Ongkos Kirim</span>
+</nav>
+<!-- Title + Action CTAs -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
+<div class="flex flex-col gap-space-xs max-w-2xl">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-caps text-label-caps tracking-widest text-secondary font-bold uppercase px-2 py-0.5 bg-secondary-container rounded">ROUTING ENGINE V2.4</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">MODUL EKSPEDISI IN-APP</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight uppercase leading-none">
+            Manajemen Ongkir &amp; Ekspedisi
+          </h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+            Kelola matriks biaya pengiriman domestik, zona provinsi/kota (RegionFields), integrasi kurir, dan aturan gratis ongkir otomatis.
+          </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-space-sm flex-wrap shrink-0">
+<button class="h-12 px-space-md bg-surface-container-low hover:bg-surface-container-high text-on-surface rounded-xl font-label-lg text-label-lg transition-all duration-200 flex items-center gap-space-sm cursor-pointer shadow-sm" id="btn-sync-api" type="button">
+<span class="material-symbols-outlined text-[18px]">sync_alt</span>
+<span>Sinkron API Kurir (Live Rate Test)</span>
+</button>
+<button class="h-12 px-space-lg bg-secondary-container hover:bg-secondary-fixed text-on-secondary-fixed rounded-xl font-label-lg text-label-lg transition-all duration-200 flex items-center gap-space-sm font-bold shadow-sm cursor-pointer" id="btn-open-form" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>+ Tambah Aturan Wilayah</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick KPI Metrik Grid (4 Cards Bento) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-desktop">
+<!-- KPI 1 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Kurir Rekanan Aktif</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+</span>
+</div>
+<div class="mt-space-lg">
+<div class="font-headline-lg text-headline-lg text-primary tracking-tight">3 Ekspedisi</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">JNE Express, SiCepat, J&amp;T Cargo</p>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-primary/10"></div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Rata-rata Biaya Ongkir</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">price_change</span>
+</span>
+</div>
+<div class="mt-space-lg">
+<div class="font-price-display text-price-display text-primary tracking-tight">Rp 18.500 <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">/ order</span></div>
+<p class="font-body-sm text-body-sm text-secondary font-medium mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_down</span> -4.2% optimasi zona Jabodetabek
+          </p>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-secondary-fixed"></div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Zona Terjangkau</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">map</span>
+</span>
+</div>
+<div class="mt-space-lg">
+<div class="font-headline-lg text-headline-lg text-primary tracking-tight">38 Provinsi</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">514 Kota &amp; Kabupaten Terverifikasi</p>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-primary/10"></div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-primary text-on-primary p-space-lg rounded-xl flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-primary-container uppercase tracking-wider">Subsidi QRIS Aktif</span>
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-ping"></span>
+</div>
+<div class="mt-space-lg">
+<div class="font-headline-lg text-headline-lg text-secondary-container tracking-tight">-Rp 10.000</div>
+<p class="font-body-sm text-body-sm text-on-primary-container mt-0.5">Min. Belanja Rp500.000 (Otomatis)</p>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-secondary-container"></div>
+</div>
+</div>
+<!-- Global Rule Banner Card: QRIS Free Shipping Rule -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-lg relative overflow-hidden">
+<div class="flex items-start sm:items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">qr_code_scanner</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-label-caps text-label-caps text-on-surface font-bold uppercase tracking-wider">ATURAN PROMOSI GLOBAL</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container uppercase font-bold" id="promo-status-badge">AKTIF / AUTO-APPLY</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary uppercase tracking-tight mt-0.5">
+            Subsidi Ongkir Pembayaran QRIS
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Pelanggan dengan keranjang belanja minimal <strong class="text-on-surface font-semibold">Rp 500.000</strong> akan secara otomatis menerima potongan ongkos kirim sebesar <strong class="text-on-surface font-semibold">Rp 10.000</strong> saat memilih metode pembayaran QRIS di halaman checkout.
+          </p>
+</div>
+</div>
+<!-- Action Toggle Switch -->
+<div class="flex items-center gap-space-md shrink-0 bg-surface-container-low px-space-md py-space-sm rounded-xl">
+<div class="text-right">
+<span class="block font-label-md text-label-md text-on-surface leading-tight">Switch Aturan</span>
+<span class="block font-label-caps text-label-caps text-secondary font-bold uppercase" id="toggle-label">BERLAKU</span>
+</div>
+<button aria-checked="true" class="w-14 h-8 bg-primary rounded-full p-1 transition-colors duration-200 cursor-pointer flex items-center justify-end" id="qris-promo-toggle" role="switch" type="button">
+<div class="w-6 h-6 bg-secondary-container rounded-full shadow-md transform transition-transform duration-200" id="toggle-thumb"></div>
+</button>
+</div>
+</div>
+<!-- Main Dual-Panel Content Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start">
+<!-- Left Panel: Fast Region Rate Setup Form (5 cols on lg) -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-lg sticky top-20">
+<div class="flex items-center justify-between pb-space-sm bg-surface-container-lowest">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">FORM REGIONFIELDS</span>
+<h3 class="font-headline-md text-headline-md text-primary tracking-tight">Atur Biaya Wilayah Cepat</h3>
+</div>
+<span class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</span>
+</div>
+<form class="flex flex-col gap-space-md" id="shipping-rate-form">
+<!-- Courier Selector -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="input-courier">
+              Ekspedisi &amp; Layanan <span class="text-error">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-12 px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest outline-none transition-colors appearance-none cursor-pointer" id="input-courier">
+<option selected="" value="JNE Reguler">JNE Reguler (Mitra Utama Domestik)</option>
+<option value="SiCepat Cargo Express">SiCepat Cargo Express (Heavy Shipment)</option>
+<option value="SiCepat BEST">SiCepat BEST (Next-Day Fast Delivery)</option>
+<option value="J&amp;T EZ">J&amp;T EZ (Standard Standard)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+<!-- Tingkat Wilayah / Scope Selector -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Tingkat Wilayah / Cakupan</label>
+<div class="grid grid-cols-3 gap-space-xs">
+<label class="flex flex-col items-center justify-center p-space-sm rounded-lg bg-surface-container-low cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-on-primary transition-colors text-center">
+<input checked="" class="sr-only" name="region-level" type="radio" value="provinsi"/>
+<span class="font-label-caps text-label-caps uppercase font-bold">Per Provinsi</span>
+<span class="font-body-sm text-body-sm opacity-70">Satu Tarif</span>
+</label>
+<label class="flex flex-col items-center justify-center p-space-sm rounded-lg bg-surface-container-low cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-on-primary transition-colors text-center">
+<input class="sr-only" name="region-level" type="radio" value="kota"/>
+<span class="font-label-caps text-label-caps uppercase font-bold">Per Kota</span>
+<span class="font-body-sm text-body-sm opacity-70">Spesifik</span>
+</label>
+<label class="flex flex-col items-center justify-center p-space-sm rounded-lg bg-surface-container-low cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-on-primary transition-colors text-center">
+<input class="sr-only" name="region-level" type="radio" value="jabodetabek"/>
+<span class="font-label-caps text-label-caps uppercase font-bold">Jabodetabek</span>
+<span class="font-body-sm text-body-sm opacity-70">Flat Rate</span>
+</label>
+</div>
+</div>
+<!-- Provinsi Dropdown -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="input-province">Provinsi <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full h-12 px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest outline-none transition-colors appearance-none cursor-pointer" id="input-province">
+<option selected="" value="DKI Jakarta">DKI Jakarta</option>
+<option value="Jawa Barat">Jawa Barat</option>
+<option value="Jawa Tengah">Jawa Tengah</option>
+<option value="D.I. Yogyakarta">D.I. Yogyakarta</option>
+<option value="Jawa Timur">Jawa Timur</option>
+<option value="Banten">Banten</option>
+<option value="Bali">Bali</option>
+<option value="Sumatera Utara">Sumatera Utara</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+<!-- Scope / Kota Target -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="input-city-scope">Cakupan Kota</label>
+<div class="relative">
+<select class="w-full h-12 px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest outline-none transition-colors appearance-none cursor-pointer" id="input-city-scope">
+<option selected="" value="Semua Kota (Flat)">Semua Kota (Flat)</option>
+<option value="Jakarta Selatan">Jakarta Selatan</option>
+<option value="Jakarta Pusat">Jakarta Pusat</option>
+<option value="Jakarta Barat">Jakarta Barat</option>
+<option value="Jakarta Timur">Jakarta Timur</option>
+<option value="Jakarta Utara">Jakarta Utara</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Pricing & Lead Time -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<!-- Tarif Flat Dasar -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="input-base-rate">
+                Tarif Flat Dasar (1 Kg) <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-label-md text-label-md text-on-surface-variant font-bold">Rp</span>
+<input class="w-full h-12 pl-10 pr-space-md rounded-xl bg-surface-container-low text-on-surface font-price-display text-price-display focus:bg-surface-container-lowest outline-none transition-colors" id="input-base-rate" placeholder="18.000" type="text" value="18.000"/>
+</div>
+</div>
+<!-- Estimasi Pengantaran -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="input-etd">
+                Estimasi Pengantaran
+              </label>
+<input class="w-full h-12 px-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest outline-none transition-colors" id="input-etd" placeholder="Contoh: 1-2 hari kerja" type="text" value="1-2 hari kerja"/>
+</div>
+</div>
+<!-- Berat Tambahan & Policy -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="input-extra-rate">
+              Biaya Kg Tambahan (Incremental Weight)
+            </label>
+<div class="relative">
+<span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-label-md text-label-md text-on-surface-variant font-bold">Rp</span>
+<input class="w-full h-12 pl-10 pr-space-md rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest outline-none transition-colors" id="input-extra-rate" type="text" value="10.000 / kg tambahan (Dasar 1 kg)"/>
+</div>
+</div>
+<!-- Status Layanan Toggle -->
+<div class="flex items-center justify-between p-space-md rounded-xl bg-surface-container-low">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Status Layanan Checkout</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tampilkan rute ini kepada pembeli</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="input-status" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Buttons -->
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 h-12 bg-secondary-container hover:bg-secondary-fixed text-on-secondary-fixed rounded-xl font-label-lg text-label-lg font-bold transition-all duration-200 cursor-pointer shadow-sm flex items-center justify-center gap-1.5" id="btn-save-rate" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Simpan Tarif Wilayah</span>
+</button>
+<button class="h-12 px-space-md bg-surface-container-low hover:bg-surface-container-high text-on-surface rounded-xl font-label-lg text-label-lg transition-colors cursor-pointer" id="btn-reset-form" type="button">
+              Batal
+            </button>
+</div>
+</form>
+</div>
+<!-- Right Panel: Shipping Rates Matrix Table (7 cols on lg) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<!-- Filter & Search Toolbar -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-sm">
+<!-- Search input -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-space-md rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant/70 outline-none focus:bg-surface-container" id="search-matrix" placeholder="Cari wilayah, kota, atau kurir..." type="text"/>
+</div>
+<!-- Filter Pills -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 sm:pb-0">
+<button class="filter-pill active px-3 py-1.5 rounded-full font-label-caps text-label-caps uppercase bg-primary text-secondary-container transition-colors shrink-0" type="button">Semua</button>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-caps text-label-caps uppercase bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors shrink-0" type="button">JNE</button>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-caps text-label-caps uppercase bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors shrink-0" type="button">SiCepat</button>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-caps text-label-caps uppercase bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors shrink-0" type="button">J&amp;T</button>
+</div>
+</div>
+<!-- Matriks Table Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps uppercase tracking-wider">
+<th class="py-space-md px-space-md">Wilayah / Destinasi</th>
+<th class="py-space-md px-space-md">Ekspedisi &amp; Layanan</th>
+<th class="py-space-md px-space-md">Tarif Dasar</th>
+<th class="py-space-md px-space-md">Estimasi</th>
+<th class="py-space-md px-space-md">Subsidi QRIS</th>
+<th class="py-space-md px-space-md">Status</th>
+<th class="py-space-md px-space-md text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y divide-surface-container-high/60" id="rates-table-body">
+<!-- Row 1: DKI Jakarta -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="font-label-md text-label-md text-primary font-bold">DKI Jakarta</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Semua Wilayah (Flat Rate)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-caps text-label-caps font-semibold text-on-surface">JNE Reguler</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="font-price-display text-price-display text-primary font-bold">Rp 18.000</span>
+<span class="block text-[11px] text-on-surface-variant">+Rp10k/kg brikutnya</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant whitespace-nowrap">1-2 Hari</td>
+<td class="py-space-md px-space-md">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-bold whitespace-nowrap">Ya (-Rp10k)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-secondary font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> AKTIF
+                    </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors" title="Edit Baris" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Hapus Aturan" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Jawa Barat -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="font-label-md text-label-md text-primary font-bold">Jawa Barat</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Bandung, Bogor, Depok, Bekasi</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-caps text-label-caps font-semibold text-on-surface">JNE Reguler</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="font-price-display text-price-display text-primary font-bold">Rp 20.000</span>
+<span class="block text-[11px] text-on-surface-variant">+Rp12k/kg brikutnya</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant whitespace-nowrap">1-3 Hari</td>
+<td class="py-space-md px-space-md">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-bold whitespace-nowrap">Ya (-Rp10k)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-secondary font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> AKTIF
+                    </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors" title="Edit Baris" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Hapus Aturan" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Jawa Tengah & D.I. Yogyakarta -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="font-label-md text-label-md text-primary font-bold">Jawa Tengah &amp; DIY</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Semarang, Solo, Sleman, Bantul</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-caps text-label-caps font-semibold text-on-surface">JNE Reguler</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="font-price-display text-price-display text-primary font-bold">Rp 22.000</span>
+<span class="block text-[11px] text-on-surface-variant">+Rp12k/kg brikutnya</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant whitespace-nowrap">2-3 Hari</td>
+<td class="py-space-md px-space-md">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-bold whitespace-nowrap">Ya (-Rp10k)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-secondary font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> AKTIF
+                    </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors" title="Edit Baris" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Hapus Aturan" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Jawa Timur -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="font-label-md text-label-md text-primary font-bold">Jawa Timur</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Surabaya, Malang, Sidoarjo, Kediri</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-caps text-label-caps font-semibold text-on-surface">SiCepat BEST</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="font-price-display text-price-display text-primary font-bold">Rp 24.000</span>
+<span class="block text-[11px] text-on-surface-variant">+Rp14k/kg brikutnya</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant whitespace-nowrap">2-3 Hari</td>
+<td class="py-space-md px-space-md">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-bold whitespace-nowrap">Ya (-Rp10k)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-secondary font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> AKTIF
+                    </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors" title="Edit Baris" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Hapus Aturan" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Luar Pulau Jawa Zona 1 -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="font-label-md text-label-md text-primary font-bold">Luar Pulau Jawa (Zona 1)</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Sumatera &amp; Bali (Kota Besar)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-caps text-label-caps font-semibold text-on-surface">JNE Reguler</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="font-price-display text-price-display text-primary font-bold">Rp 35.000</span>
+<span class="block text-[11px] text-on-surface-variant">+Rp20k/kg brikutnya</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant whitespace-nowrap">3-5 Hari</td>
+<td class="py-space-md px-space-md">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-bold whitespace-nowrap">Ya (-Rp10k)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-secondary font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> AKTIF
+                    </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors" title="Edit Baris" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Hapus Aturan" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Kargo Pesanan Berat -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-space-md px-space-md">
+<div class="font-label-md text-label-md text-primary font-bold">Kargo Pesanan Berat (&gt; 5 Pcs)</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Seluruh Pulau Jawa (Heavyweight)</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-caps text-label-caps font-semibold text-on-surface">SiCepat Cargo Express</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="font-price-display text-price-display text-primary font-bold">Rp 45.000</span>
+<span class="block text-[11px] text-on-surface-variant">Min. 5 kg pertama</span>
+</td>
+<td class="py-space-md px-space-md text-on-surface-variant whitespace-nowrap">3-5 Hari</td>
+<td class="py-space-md px-space-md">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-bold whitespace-nowrap">Tidak Berlaku</span>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-secondary font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> AKTIF
+                    </span>
+</td>
+<td class="py-space-md px-space-md text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors" title="Edit Baris" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Hapus Aturan" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Realtime Sync Footnote in Table Card -->
+<div class="p-space-md bg-surface-container-low flex items-center justify-between gap-space-sm flex-wrap text-on-surface-variant">
+<div class="flex items-center gap-space-xs font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">bolt</span>
+<span>Tarif di atas langsung dihitung secara real-time pada formulir checkout (<code class="bg-surface-container-highest px-1 py-0.5 rounded text-on-surface font-mono">/checkout</code>) berdasarkan pilihan Provinsi &amp; Kota penerima.</span>
+</div>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Menampilkan 6 dari 38 Zona</span>
+</div>
+</div>
+<!-- Technical Fallback / Go Backend Engine Notice -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-md shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">terminal</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-bold">Backend Go Flat-Rate Engine Sync</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Saat koneksi ekspedisi API pihak ketiga (JNE / SiCepat Gateway) mengalami timeout (&gt; 1200ms), sistem serverless Go Hii Stranger secara otomatis menggunakan nilai fallback flat-rate per zona di atas untuk menjamin konversi checkout tidak terganggu.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Notification Toast Container (Dynamic feedback) -->
+<div class="fixed bottom-space-lg right-space-lg z-50 flex flex-col gap-2 pointer-events-none" id="toast-container"></div>
+<!-- Micro-interactions Script -->
+<script>
+    (function initShippingEngine() {
+      // Elements
+      const qrisToggle = document.getElementById('qris-promo-toggle');
+      const toggleThumb = document.getElementById('toggle-thumb');
+      const toggleLabel = document.getElementById('toggle-label');
+      const promoBadge = document.getElementById('promo-status-badge');
+      const syncBtn = document.getElementById('btn-sync-api');
+      const saveBtn = document.getElementById('btn-save-rate');
+      const resetBtn = document.getElementById('btn-reset-form');
+      const searchInput = document.getElementById('search-matrix');
+      const tableBody = document.getElementById('rates-table-body');
+      const filterPills = document.querySelectorAll('.filter-pill');
+      const toastContainer = document.getElementById('toast-container');
+
+      function showToast(title, msg, isSuccess = true) {
+        const toast = document.createElement('div');
+        toast.className = `p-4 rounded-xl shadow-lg flex items-center gap-3 transition-all transform duration-300 pointer-events-auto ${
+          isSuccess ? 'bg-primary text-on-primary' : 'bg-error text-on-error'
+        }`;
+        toast.innerHTML = `
+          <span class="material-symbols-outlined text-[20px] ${isSuccess ? 'text-secondary-container' : 'text-on-error'}">
+            ${isSuccess ? 'check_circle' : 'error'}
+          </span>
+          <div class="flex flex-col">
+            <span class="font-label-md text-label-md font-bold">${title}</span>
+            <span class="font-body-sm text-body-sm opacity-90">${msg}</span>
+          </div>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          setTimeout(() => toast.remove(), 300);
+        }, 3200);
+      }
+
+      // 1. Toggle QRIS Promo Rule
+      let isPromoActive = true;
+      if (qrisToggle) {
+        qrisToggle.addEventListener('click', () => {
+          isPromoActive = !isPromoActive;
+          if (isPromoActive) {
+            qrisToggle.className = 'w-14 h-8 bg-primary rounded-full p-1 transition-colors duration-200 cursor-pointer flex items-center justify-end';
+            toggleThumb.className = 'w-6 h-6 bg-secondary-container rounded-full shadow-md transform transition-transform duration-200';
+            toggleLabel.innerText = 'BERLAKU';
+            toggleLabel.className = 'block font-label-caps text-label-caps text-secondary font-bold uppercase';
+            promoBadge.className = 'font-label-caps text-label-caps px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container uppercase font-bold';
+            promoBadge.innerText = 'AKTIF / AUTO-APPLY';
+            showToast('Subsidi QRIS Diaktifkan', 'Aturan potongan Rp10.000 berlaku di checkout.');
+          } else {
+            qrisToggle.className = 'w-14 h-8 bg-surface-container-highest rounded-full p-1 transition-colors duration-200 cursor-pointer flex items-center justify-start';
+            toggleThumb.className = 'w-6 h-6 bg-outline rounded-full shadow-md transform transition-transform duration-200';
+            toggleLabel.innerText = 'NONAKTIF';
+            toggleLabel.className = 'block font-label-caps text-label-caps text-on-surface-variant font-bold uppercase';
+            promoBadge.className = 'font-label-caps text-label-caps px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant uppercase font-bold';
+            promoBadge.innerText = 'DINONAKTIFKAN';
+            showToast('Subsidi QRIS Dimatikan', 'Subsidi otomatis dihentikan sementara.');
+          }
+        });
+      }
+
+      // 2. Courier API Live Rate Sync Simulation
+      if (syncBtn) {
+        syncBtn.addEventListener('click', () => {
+          const originalHTML = syncBtn.innerHTML;
+          syncBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+            <span>Memeriksa API JNE, SiCepat &amp; J&amp;T...</span>
+          `;
+          syncBtn.disabled = true;
+
+          setTimeout(() => {
+            syncBtn.innerHTML = originalHTML;
+            syncBtn.disabled = false;
+            showToast('Sinkronisasi API Berhasil', 'Status latency kurir normal: JNE (110ms), SiCepat (85ms), J&T (94ms).');
+          }, 1400);
+        });
+      }
+
+      // 3. Fast Rate Save Simulation
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+          const courier = document.getElementById('input-courier').value;
+          const province = document.getElementById('input-province').value;
+          const rate = document.getElementById('input-base-rate').value;
+          showToast('Tarif Disimpan', `Rute ${province} via ${courier} diperbarui ke Rp ${rate}.`);
+        });
+      }
+
+      // 4. Reset Form
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          document.getElementById('shipping-rate-form').reset();
+          showToast('Form Direset', 'Nilai input dikembalikan ke default.', false);
+        });
+      }
+
+      // 5. Matrix Table Search Filter
+      if (searchInput && tableBody) {
+        searchInput.addEventListener('input', (e) => {
+          const term = e.target.value.toLowerCase().trim();
+          const rows = tableBody.querySelectorAll('tr');
+          rows.forEach((row) => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+          });
+        });
+      }
+
+      // 6. Filter Pills Toggle
+      filterPills.forEach((pill) => {
+        pill.addEventListener('click', () => {
+          filterPills.forEach((p) => {
+            p.className = 'filter-pill px-3 py-1.5 rounded-full font-label-caps text-label-caps uppercase bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors shrink-0';
+          });
+          pill.className = 'filter-pill active px-3 py-1.5 rounded-full font-label-caps text-label-caps uppercase bg-primary text-secondary-container transition-colors shrink-0';
+          
+          const courierKey = pill.innerText.trim();
+          const rows = tableBody.querySelectorAll('tr');
+          rows.forEach((row) => {
+            if (courierKey === 'SEMUA') {
+              row.style.display = '';
+            } else {
+              const text = row.innerText;
+              row.style.display = text.includes(courierKey) ? '' : 'none';
+            }
+          });
+        });
+      });
+
+      // 7. Scroll to Form Trigger
+      const openFormBtn = document.getElementById('btn-open-form');
+      if (openFormBtn) {
+        openFormBtn.addEventListener('click', () => {
+          document.getElementById('input-province').focus();
+          document.getElementById('shipping-rate-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+    })();
+  </script>
+</div></main><footer class="w-full border-t border-outline-variant/30 bg-surface-container-low py-space-md"><div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase"><div class="flex items-center gap-space-md"><span>© 2025 HII STRANGER APPAREL GROUP</span><span>•</span><span>INTERNAL CORE MANAGEMENT</span></div><div class="flex items-center gap-space-md"><span>SERVER STATUS: NORMAL</span><span class="font-mono">TZ: UTC+7</span></div></div></footer></div></body></html>

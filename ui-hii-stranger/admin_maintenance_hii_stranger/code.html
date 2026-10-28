@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;800&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-low":"#f5f3ef","on-surface-variant":"#464742","surface-container-high":"#eae8e4","surface-bright":"#fbf9f5","background":"#fbf9f5","tertiary-fixed":"#e7e2d9","on-primary-fixed-variant":"#474745","outline":"#767872","surface-container":"#efeeea","on-primary-fixed":"#1c1c1a","on-error":"#ffffff","inverse-primary":"#c9c6c4","secondary":"#536600","surface":"#fbf9f5","on-surface":"#1b1c1a","on-secondary-fixed":"#171e00","on-tertiary-container":"#87837c","primary-fixed":"#e5e2e0","primary-container":"#1c1c1a","on-secondary-container":"#576a00","secondary-fixed":"#c9f300","secondary-fixed-dim":"#b0d500","surface-tint":"#5f5e5d","on-tertiary-fixed":"#1d1c16","tertiary-fixed-dim":"#cbc6be","error-container":"#ffdad6","primary":"#000000","surface-container-lowest":"#ffffff","error":"#ba1a1a","on-tertiary":"#ffffff","tertiary-container":"#1d1c16","on-tertiary-fixed-variant":"#494740","outline-variant":"#c7c7c0","primary-fixed-dim":"#c9c6c4","inverse-surface":"#30312e","on-secondary-fixed-variant":"#3e4c00","surface-container-highest":"#e4e2de","surface-dim":"#dbdad6","on-error-container":"#93000a","tertiary":"#000000","inverse-on-surface":"#f2f0ed","secondary-container":"#c6f000","on-background":"#1b1c1a","on-primary":"#ffffff","surface-variant":"#e4e2de","on-primary-container":"#858382","on-secondary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-sm":"0.5rem","gutter":"0.75rem","margin-desktop":"3rem","space-xs":"0.25rem","space-lg":"1.25rem","space-md":"0.75rem","space-xl":"2rem","gutter-desktop":"1.5rem","margin":"1rem"},"fontFamily":{"headline-md":["Bricolage Grotesque"],"label-md":["Geist"],"price-display":["Bricolage Grotesque"],"display-lg-mobile":["Bricolage Grotesque"],"body-md":["Geist"],"display-lg":["Bricolage Grotesque"],"headline-lg":["Bricolage Grotesque"],"label-caps":["Geist"],"body-sm":["Geist"],"body-lg":["Geist"],"headline-lg-mobile":["Bricolage Grotesque"],"label-lg":["Geist"]},"fontSize":{"headline-md":["22px",{"lineHeight":"26px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"price-display":["20px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"700"}],"display-lg-mobile":["34px",{"lineHeight":"38px","letterSpacing":"-0.025em","fontWeight":"800"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"52px","letterSpacing":"-0.03em","fontWeight":"800"}],"headline-lg":["32px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-caps":["11px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-lg-mobile":["26px",{"lineHeight":"30px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-60 bg-surface-container-low border-r border-outline-variant/40 flex flex-col justify-between z-40"><div class="flex flex-col"><div class="px-space-md py-space-lg border-b border-outline-variant/40"><span class="font-headline-md text-headline-md uppercase tracking-tight text-primary block">Hii Stranger</span><div class="flex items-center gap-space-xs mt-0.5"><span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Admin Portal</span><span class="font-label-caps text-label-caps px-1.5 py-0.5 bg-surface-container-highest rounded text-on-surface-variant">v1.0</span></div></div><div class="px-space-md pt-space-md pb-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Manajemen Toko</span></div><nav class="flex flex-col gap-0.5 px-space-sm" data-active-classes="bg-primary text-on-primary font-bold"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ringkasan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">space_dashboard</span><span>Ringkasan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pesanan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Pesanan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pembayaran" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">payments</span><span>Pembayaran</span></div><span class="px-1.5 py-0.5 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps rounded-full">3 Baru</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="produk" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">checkroom</span><span>Produk</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="kategori" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">category</span><span>Kategori</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="banner" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_carousel</span><span>Banner</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ongkir" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">local_shipping</span><span>Ongkir</span></div></a><div class="my-space-xs border-t border-outline-variant/30"></div><div class="px-space-sm py-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sistem &amp; Kontrol</span></div><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="analitik" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span>Analitik</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Admin</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="maintenance" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">build_circle</span><span>Maintenance</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Super</span></a></nav></div><div class="p-space-md border-t border-outline-variant/40 bg-surface-container"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="inline-block w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-caps text-label-caps text-on-surface">ONLINE / LIVE</span></div><span class="font-label-caps text-label-caps text-on-surface-variant">REGION ID</span></div></div></aside><div class="pl-60 min-h-screen flex flex-col"><header class="fixed top-0 left-60 right-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/40 z-30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md"><span class="hover:text-on-surface cursor-pointer">Admin</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-semibold">Console</span></div><div class="h-4 w-px bg-outline-variant/60 hidden sm:block"></div><div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low border border-outline-variant/40"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sinkron Otomatis 10s</span></div></div><div class="flex items-center gap-space-md"><span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-primary text-on-primary uppercase tracking-widest">SUPERADMIN</span><div class="flex items-center gap-space-sm border-l border-outline-variant/40 pl-space-md"><div class="text-right hidden md:block"><span class="block font-label-md text-label-md text-on-surface leading-tight">HQ Controller</span><span class="block font-label-caps text-label-caps text-on-surface-variant">root@hiistranger.com</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><a class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-error transition-colors" data-path="login" href="#" title="Keluar dari Sistem"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></header><main class="w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full">
+<!-- Interactive Notification Toast (Hidden by default, triggered via JS) -->
+<div class="fixed top-20 right-8 z-50 transform translate-y-[-120%] opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-space-sm px-space-md py-space-sm bg-primary text-on-primary rounded-xl shadow-xl border border-secondary-fixed" id="toastNotification">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">check_circle</span>
+<span class="font-label-lg text-label-lg tracking-tight" id="toastMessage">Perintah berhasil dieksekusi</span>
+</div>
+<div class="px-space-xl py-space-lg flex flex-col gap-space-xl max-w-[1400px] w-full mx-auto">
+<!-- 1. HEADER & INTRODUKSI -->
+<header class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md pb-space-md">
+<div class="flex flex-col gap-space-xs max-w-3xl">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant font-bold">
+            Infrastruktur &amp; Keamanan Sistem • Go-Actor Engine v2.4
+          </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-caps text-label-caps font-mono">NODE-JKT-01</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg uppercase tracking-tighter text-on-surface leading-tight mt-1">
+          Kontrol Pemeliharaan &amp; Log Sistem
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-2xl">
+          Kelola mode pemeliharaan storefront publik, pantau status kesehatan microservice backend Go, audit stream error log real-time, dan eksekusi invalidasi cache Redis edge.
+        </p>
+</div>
+<!-- Action buttons -->
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="flex items-center gap-space-xs px-space-md py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg transition-transform active:scale-95 duration-150" id="btnHealthCheck" onclick="runDiagnostics()">
+<span class="material-symbols-outlined text-[18px]" id="healthIcon">vital_signs</span>
+<span>Jalankan Health Check</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-2.5 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg transition-transform active:scale-95 duration-150 shadow-sm" onclick="downloadAuditLog()">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed">cloud_download</span>
+<span>Unduh Log Audit (.log.gz)</span>
+</button>
+</div>
+</header>
+<!-- 2. ROW 1: 4 KARTU KESEHATAN SISTEM -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1 -->
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between gap-space-md shadow-sm relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Storefront Publik</span>
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+            LIVE / AKTIF
+          </span>
+</div>
+<div>
+<div class="font-display-lg text-[34px] leading-tight font-extrabold text-on-surface tracking-tight" id="storefrontStatusValue">OPERASIONAL</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Toko beroperasi normal, 0 pembatasan checkout.</p>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="bg-secondary-container h-full w-full"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Backend Engine Latency</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">speed</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg text-[34px] leading-tight font-extrabold text-on-surface tracking-tight" id="latencyMetric">18</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant">ms</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Go-Fiber runtime • 99.98% Uptime (30H)</p>
+</div>
+<div class="flex items-center gap-1">
+<div class="h-1 flex-1 rounded-full bg-secondary-container"></div>
+<div class="h-1 flex-1 rounded-full bg-secondary-container"></div>
+<div class="h-1 flex-1 rounded-full bg-secondary-container"></div>
+<div class="h-1 flex-1 rounded-full bg-surface-container-highest"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">PostgreSQL WAL &amp; Pool</span>
+<span class="font-label-caps text-label-caps px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant">MAX 50</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg text-[34px] leading-tight font-extrabold text-on-surface tracking-tight">12</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant font-normal">/ 50 Conn</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Database sinkron aman • Max idle 5 min</p>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[24%]"></div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Redis Edge Cache</span>
+<span class="font-label-caps text-label-caps text-secondary font-bold">HIT 94.6%</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg text-[34px] leading-tight font-extrabold text-on-surface tracking-tight">42.8</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant font-normal">MB (14%)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Key Eviction: Volatile-LRU • TTL 300s</p>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-secondary-fixed h-full w-[14%]"></div>
+</div>
+</div>
+</section>
+<!-- 3. ROW 2: CONTROL PANEL DUA SISI (GRID SPLIT 4:8 / 1:2) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- PANEL KIRI (MAINTENANCE SWITCH & CACHE CONTROL - 4 COLS) -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Box Mode Maintenance -->
+<div class="p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-md relative">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">shield_person</span>
+<span class="font-headline-md text-[18px] uppercase tracking-tight text-on-surface">Kontrol Pemeliharaan</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-caps text-label-caps uppercase tracking-wider font-bold">
+              SUPERADMIN LOCK
+            </span>
+</div>
+<!-- Toggle switch container -->
+<div class="p-space-md rounded-xl bg-surface-container flex items-center justify-between transition-colors duration-200" id="maintenanceCardState">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Mode Maintenance Storefront</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="maintenanceSwitchLabel">Saat ini: NONAKTIF (Toko Buka)</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" id="maintenanceToggle" onchange="toggleMaintenanceState(this)" type="checkbox"/>
+<div class="w-14 h-8 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-error"></div>
+</label>
+</div>
+<!-- Peringatan Konsekuensi -->
+<div class="p-space-md rounded-xl bg-error-container/40 text-on-error-container flex gap-space-sm items-start">
+<span class="material-symbols-outlined text-[20px] text-error shrink-0">warning</span>
+<p class="font-body-sm text-body-sm leading-snug">
+              Saat diaktifkan, halaman publik storefront (Beranda, Katalog, Keranjang, Checkout) menampilkan landing page <strong>UNDER MAINTENANCE / DROP 05 IN PREPARATION</strong>. Jalur portal admin tetap aktif melalui IP Whitelist.
+            </p>
+</div>
+<!-- Form Konfigurasi Pemeliharaan -->
+<div class="flex flex-col gap-space-md">
+<!-- Estimasi Durasi -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-semibold">Estimasi Durasi Jeda</label>
+<div class="grid grid-cols-4 gap-2" id="durationPresetGroup">
+<button class="duration-btn py-2 px-1 rounded-lg text-center font-label-md text-label-md bg-primary text-on-primary font-bold" onclick="selectDuration(this, '30m')" type="button">30 Mnt</button>
+<button class="duration-btn py-2 px-1 rounded-lg text-center font-label-md text-label-md bg-surface-container hover:bg-surface-container-high text-on-surface" onclick="selectDuration(this, '1h')" type="button">1 Jam</button>
+<button class="duration-btn py-2 px-1 rounded-lg text-center font-label-md text-label-md bg-surface-container hover:bg-surface-container-high text-on-surface" onclick="selectDuration(this, '2h')" type="button">2 Jam</button>
+<button class="duration-btn py-2 px-1 rounded-lg text-center font-label-md text-label-md bg-surface-container hover:bg-surface-container-high text-on-surface" onclick="selectDuration(this, 'custom')" type="button">Kustom</button>
+</div>
+</div>
+<!-- Pesan Publik / Banner Notice -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-semibold flex justify-between" for="maintenanceNoticeText">
+<span>Pesan Publik Storefront</span>
+<span class="text-on-surface-variant font-normal">Maks 180 Karakter</span>
+</label>
+<textarea class="w-full p-space-sm rounded-xl bg-surface-container-lowest text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none" id="maintenanceNoticeText" placeholder="Masukkan pesan untuk pengunjung..." rows="3">Storefront sedang dalam pembaruan inventaris Drop 05 Monolith Restock. Kami segera kembali pukul 20:00 WIB.</textarea>
+</div>
+<!-- Bypass IP Whitelist -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md uppercase tracking-wider text-on-surface font-semibold flex items-center justify-between">
+<span>Bypass IP Whitelist (Akses HQ)</span>
+<span class="font-mono text-label-caps text-label-caps text-secondary font-bold">2 AKTIF</span>
+</label>
+<div class="p-space-sm rounded-xl bg-surface-container flex flex-col gap-1.5 font-mono text-body-sm text-body-sm">
+<div class="flex items-center justify-between py-0.5">
+<span class="text-on-surface">182.253.110.42 <span class="text-on-surface-variant font-sans text-xs">(Jakarta HQ Primary)</span></span>
+<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+</div>
+<div class="flex items-center justify-between py-0.5">
+<span class="text-on-surface">114.124.20.15 <span class="text-on-surface-variant font-sans text-xs">(Dev Core VPN)</span></span>
+<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+</div>
+</div>
+</div>
+<!-- Tombol Aksi Kritis -->
+<button class="w-full mt-2 py-3 px-space-md rounded-xl bg-primary text-on-primary font-label-lg text-label-lg hover:bg-primary-container transition-all flex items-center justify-center gap-space-xs group shadow-md active:scale-[0.99]" onclick="applyMaintenanceSettings()">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed group-hover:rotate-45 transition-transform duration-200">lock_reset</span>
+<span>Terapkan Status Maintenance</span>
+</button>
+</div>
+</div>
+<!-- Box Manajemen Cache & Indeks Mesin Cari -->
+<div class="p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-[18px] uppercase tracking-tight text-on-surface">Cache &amp; Rebuild Statis</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase font-mono">REDIS 7.2-ALPINE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Bersihkan lapisan cache memori untuk memaksakan sinkronisasi instan terhadap perubahan harga, stok SKU, dan banner katalog.
+          </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm pt-1">
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-highest text-left flex flex-col gap-space-xs transition-colors group" onclick="purgeCache()">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-primary text-[22px]">bolt</span>
+<span class="font-label-caps text-label-caps text-secondary font-bold">EDGE</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">Purge Redis Cache</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Flushes keys `cat:*`, `bnr:*`, `sku:*`</span>
+</button>
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-highest text-left flex flex-col gap-space-xs transition-colors group" onclick="reindexCatalog()">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-primary text-[22px]">manage_search</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant font-bold">SEARCH</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface mt-1">Re-index SKU Search</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Update token fuzzy search artikel</span>
+</button>
+</div>
+</div>
+</div>
+<!-- PANEL KANAN: REAL-TIME SYSTEM LOG & AUDIT TRAIL (7 COLS) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<div class="p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-space-md">
+<!-- Terminal Header & Level Filters -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+<h2 class="font-headline-md text-[18px] uppercase tracking-tight text-on-surface">Real-Time System Log &amp; Audit Trail</h2>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-label-caps text-label-caps px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant">
+                  STREAM FIFO • 5s
+                </span>
+<button class="p-1 rounded hover:bg-surface-container-highest text-on-surface-variant" id="pauseLogBtn" onclick="toggleLogPause()" title="Jeda Stream">
+<span class="material-symbols-outlined text-[18px]">pause</span>
+</button>
+</div>
+</div>
+<!-- Tab Filter Level Log -->
+<div class="flex flex-wrap items-center gap-1.5 pt-1">
+<button class="log-tab active px-3 py-1 rounded-full font-label-md text-label-md bg-primary text-on-primary font-bold" onclick="filterLogs('ALL')">Semua (1.420)</button>
+<button class="log-tab px-3 py-1 rounded-full font-label-md text-label-md bg-surface-container hover:bg-surface-container-high text-on-surface" onclick="filterLogs('INFO')">Info (1.350)</button>
+<button class="log-tab px-3 py-1 rounded-full font-label-md text-label-md bg-surface-container hover:bg-surface-container-high text-on-surface" onclick="filterLogs('WARN')">Warning (62)</button>
+<button class="log-tab px-3 py-1 rounded-full font-label-md text-label-md bg-error-container text-on-error-container font-semibold" onclick="filterLogs('ERROR')">Error (8)</button>
+<button class="log-tab px-3 py-1 rounded-full font-label-md text-label-md bg-surface-container text-on-surface-variant opacity-60" onclick="filterLogs('CRIT')">Critical (0)</button>
+</div>
+</div>
+<!-- Secondary Filter & Search Toolbar -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-xs">
+<div class="md:col-span-5">
+<select class="w-full px-space-sm py-2 rounded-xl bg-surface-container-lowest text-on-surface font-label-md text-label-md focus:outline-none" id="moduleFilter" onchange="filterModule(this.value)">
+<option value="ALL">Semua Modul / Microservice</option>
+<option value="QRIS_ENGINE">QRIS Verifier Daemon</option>
+<option value="SHIPPING_GATEWAY">Shipping Gateway API</option>
+<option value="AUTH">Auth &amp; JWT Guard</option>
+<option value="MUTEX_LOCK">Inventory Mutex Actor</option>
+<option value="CACHE_PURGE">Redis Cache Worker</option>
+<option value="DB_WAL">PostgreSQL WAL Replicator</option>
+</select>
+</div>
+<div class="md:col-span-7 relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-on-surface-variant">search</span>
+<input class="w-full pl-9 pr-space-md py-2 rounded-xl bg-surface-container-lowest text-on-surface font-body-sm text-body-sm focus:outline-none placeholder:text-on-surface-variant/60" id="logSearchInput" onkeyup="searchLogs(this.value)" placeholder="Cari kata kunci log, request ID, code..." type="text"/>
+</div>
+</div>
+<!-- High-Contrast Brutalist Terminal Box -->
+<div class="w-full bg-[#141413] text-[#efeeea] rounded-xl p-space-md font-mono text-[12px] leading-relaxed shadow-inner overflow-hidden flex flex-col">
+<!-- Terminal Topbar -->
+<div class="flex items-center justify-between pb-space-sm border-b border-[#2d2d2a] mb-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
+<span class="ml-2 text-[11px] text-[#858382]">tail -f /var/log/hiistranger/stdout.log</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<label class="flex items-center gap-1 text-[11px] text-[#858382] cursor-pointer">
+<input checked="" class="rounded accent-[#c6f000]" id="autoScrollCheck" type="checkbox"/>
+<span>Auto-scroll</span>
+</label>
+</div>
+</div>
+<!-- Log Entries Scroll Area -->
+<div class="flex flex-col gap-1.5 overflow-y-auto max-h-[360px] pr-1 scroll-smooth" id="logTerminalArea">
+<!-- Entry 1 -->
+<div class="log-entry flex flex-col sm:flex-row sm:items-baseline gap-1.5 py-1 px-1.5 rounded hover:bg-[#1f1f1d] transition-colors" data-level="INFO" data-module="QRIS_ENGINE">
+<span class="text-[#858382] shrink-0 font-sans text-[11px]">[14:22:15 WIB]</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#c6f000] text-[#141413] shrink-0">INFO</span>
+<span class="text-[#87837c] font-semibold shrink-0">[QRIS_ENGINE]</span>
+<span class="text-[#f5f3ef] break-words">
+                  Webhook payload processed for <span class="text-[#c6f000]">#ORD-20250428-0914</span> (Matched 3-digit: 382) • <span class="text-[#858382]">24ms</span>
+</span>
+</div>
+<!-- Entry 2 -->
+<div class="log-entry flex flex-col sm:flex-row sm:items-baseline gap-1.5 py-1 px-1.5 rounded hover:bg-[#1f1f1d] transition-colors" data-level="WARN" data-module="SHIPPING_GATEWAY">
+<span class="text-[#858382] shrink-0 font-sans text-[11px]">[14:20:02 WIB]</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#ffbd2e] text-[#141413] shrink-0">WARN</span>
+<span class="text-[#87837c] font-semibold shrink-0">[SHIPPING_GATEWAY]</span>
+<span class="text-[#f5f3ef] break-words">
+                  JNE API response latency exceeded 950ms (Fallback to Flat-Rate active) • <span class="text-[#ffbd2e]">HTTP 200</span>
+</span>
+</div>
+<!-- Entry 3 -->
+<div class="log-entry flex flex-col sm:flex-row sm:items-baseline gap-1.5 py-1 px-1.5 rounded hover:bg-[#1f1f1d] transition-colors" data-level="INFO" data-module="AUTH">
+<span class="text-[#858382] shrink-0 font-sans text-[11px]">[14:15:40 WIB]</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#c6f000] text-[#141413] shrink-0">INFO</span>
+<span class="text-[#87837c] font-semibold shrink-0">[AUTH]</span>
+<span class="text-[#f5f3ef] break-words">
+                  Superadmin session authenticated: <span class="text-[#efeeea] font-medium">root@hiistranger.com</span> from IP <span class="underline decoration-dotted text-[#858382]">182.253.110.42</span>
+</span>
+</div>
+<!-- Entry 4 -->
+<div class="log-entry flex flex-col sm:flex-row sm:items-baseline gap-1.5 py-1 px-1.5 rounded hover:bg-[#1f1f1d] transition-colors bg-[#ba1a1a]/10" data-level="ERROR" data-module="MUTEX_LOCK">
+<span class="text-[#858382] shrink-0 font-sans text-[11px]">[14:11:18 WIB]</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#ba1a1a] text-[#ffffff] shrink-0">ERROR</span>
+<span class="text-[#ffdad6] font-semibold shrink-0">[MUTEX_LOCK]</span>
+<span class="text-[#ffdad6] break-words">
+                  Failed to acquire SKU lock for <span class="font-bold underline">OTH-BLK-01</span> (High contention resolved on retry #2)
+                </span>
+</div>
+<!-- Entry 5 -->
+<div class="log-entry flex flex-col sm:flex-row sm:items-baseline gap-1.5 py-1 px-1.5 rounded hover:bg-[#1f1f1d] transition-colors" data-level="INFO" data-module="CACHE_PURGE">
+<span class="text-[#858382] shrink-0 font-sans text-[11px]">[13:58:32 WIB]</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#c6f000] text-[#141413] shrink-0">INFO</span>
+<span class="text-[#87837c] font-semibold shrink-0">[CACHE_PURGE]</span>
+<span class="text-[#f5f3ef] break-words">
+                  Invalidation key pattern <code class="text-[#c6f000]">catalog:*</code> executed by cron trigger worker
+                </span>
+</div>
+<!-- Entry 6 -->
+<div class="log-entry flex flex-col sm:flex-row sm:items-baseline gap-1.5 py-1 px-1.5 rounded hover:bg-[#1f1f1d] transition-colors" data-level="INFO" data-module="DB_WAL">
+<span class="text-[#858382] shrink-0 font-sans text-[11px]">[13:45:10 WIB]</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#c6f000] text-[#141413] shrink-0">INFO</span>
+<span class="text-[#87837c] font-semibold shrink-0">[DB_WAL]</span>
+<span class="text-[#f5f3ef] break-words">
+                  Checkpoint completed in 420ms, 12 WAL segments recycled to archival storage
+                </span>
+</div>
+</div>
+<!-- Terminal Actions Footer -->
+<div class="flex flex-wrap items-center justify-between pt-space-sm border-t border-[#2d2d2a] mt-space-xs gap-2">
+<div class="flex items-center gap-space-xs text-[11px] text-[#858382]">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-[#c6f000]"></span>
+<span id="renderedLinesCount">Menampilkan 6 entri terbaru</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-2.5 py-1 rounded bg-[#272725] hover:bg-[#343431] text-[#efeeea] text-[11px] font-medium transition-colors" onclick="clearTerminalView()">
+                  Bersihkan Tampilan
+                </button>
+<button class="px-2.5 py-1 rounded bg-[#c6f000] hover:bg-[#b0d500] text-[#141413] text-[11px] font-bold transition-colors flex items-center gap-1" onclick="copyLogSnippet()">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Salin Cuplikan</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. ROW 3: LOG ROTATION & SECURITY AUDIT WIDGET -->
+<section class="p-space-lg rounded-xl bg-surface-container-low shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md max-w-2xl">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[24px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Kepatuhan Audit &amp; Retensi Log</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps font-mono">ENCRYPTED</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Log dirotasi otomatis setiap 7 hari, tersimpan aman pada bucket TLS 1.3 blob storage. Sertifikat SSL Cloudflare Edge aktif &amp; valid hingga <strong>24 Desember 2025</strong>.
+          </p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm w-full md:w-auto shrink-0">
+<a class="flex-1 md:flex-initial inline-flex items-center justify-center gap-space-xs px-space-md py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-colors" href="#docs" onclick="openDocsModal(); return false;">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Dokumentasi API Server</span>
+</a>
+</div>
+</section>
+</div>
+</div>
+<script>
+  // Simple toast trigger
+  function showToast(msg) {
+    const toast = document.getElementById('toastNotification');
+    const label = document.getElementById('toastMessage');
+    if (!toast || !label) return;
+    label.innerText = msg;
+    toast.classList.remove('translate-y-[-120%]', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('translate-y-[-120%]', 'opacity-0');
+    }, 2800);
+  }
+
+  // Duration selector
+  function selectDuration(btn, val) {
+    const group = document.getElementById('durationPresetGroup');
+    const buttons = group.querySelectorAll('.duration-btn');
+    buttons.forEach(b => {
+      b.classList.remove('bg-primary', 'text-on-primary', 'font-bold');
+      b.classList.add('bg-surface-container', 'text-on-surface');
+    });
+    btn.classList.add('bg-primary', 'text-on-primary', 'font-bold');
+    btn.classList.remove('bg-surface-container', 'text-on-surface');
+    showToast(`Estimasi jeda diset ke: ${val}`);
+  }
+
+  // Maintenance Toggle Interactive Behavior
+  function toggleMaintenanceState(checkbox) {
+    const statusVal = document.getElementById('storefrontStatusValue');
+    const switchLabel = document.getElementById('maintenanceSwitchLabel');
+    const cardState = document.getElementById('maintenanceCardState');
+
+    if (checkbox.checked) {
+      if (statusVal) statusVal.innerText = 'MAINTENANCE';
+      if (switchLabel) switchLabel.innerText = 'Saat ini: AKTIF (Toko Ditutup Sementara)';
+      if (cardState) {
+        cardState.classList.add('bg-error-container/20');
+      }
+      showToast('Mode Maintenance Diaktifkan (Draft). Klik "Terapkan" untuk eksekusi.');
+    } else {
+      if (statusVal) statusVal.innerText = 'OPERASIONAL';
+      if (switchLabel) switchLabel.innerText = 'Saat ini: NONAKTIF (Toko Buka)';
+      if (cardState) {
+        cardState.classList.remove('bg-error-container/20');
+      }
+      showToast('Mode Maintenance Dinonaktifkan.');
+    }
+  }
+
+  // Apply Maintenance Settings
+  function applyMaintenanceSettings() {
+    const isChecked = document.getElementById('maintenanceToggle').checked;
+    const msg = isChecked 
+      ? 'Status Maintenance Publik BERHASIL DITERAPKAN. Edge router memblokir checkout.' 
+      : 'Konfigurasi Pemeliharaan diperbarui. Storefront tetap ONLINE.';
+    showToast(msg);
+  }
+
+  // Health check diagnostic
+  function runDiagnostics() {
+    const icon = document.getElementById('healthIcon');
+    const latency = document.getElementById('latencyMetric');
+    if (icon) icon.classList.add('animate-spin');
+    
+    setTimeout(() => {
+      if (icon) icon.classList.remove('animate-spin');
+      if (latency) latency.innerText = Math.floor(Math.random() * (22 - 14 + 1)) + 14;
+      showToast('Diagnostik Selesai: Seluruh 6 microservice berfungsi optimal (0 packet loss).');
+    }, 700);
+  }
+
+  // Purge Cache
+  function purgeCache() {
+    showToast('Redis: Invalidation event terkirim! 42.8 MB cache berhasil dibersihkan.');
+  }
+
+  // Reindex SKU
+  function reindexCatalog() {
+    showToast('ElasticSearch Actor: Re-indexing 184 SKU streetwear selesai dalam 120ms.');
+  }
+
+  // Download log
+  function downloadAuditLog() {
+    showToast('Mengunduh audit_log_2025-04-28.log.gz ...');
+  }
+
+  // Filter logs by level
+  function filterLogs(level) {
+    const tabs = document.querySelectorAll('.log-tab');
+    tabs.forEach(t => {
+      t.classList.remove('bg-primary', 'text-on-primary', 'font-bold');
+      if (!t.classList.contains('bg-error-container')) {
+        t.classList.add('bg-surface-container', 'text-on-surface');
+      }
+    });
+    event.currentTarget.classList.add('bg-primary', 'text-on-primary', 'font-bold');
+    event.currentTarget.classList.remove('bg-surface-container');
+
+    const entries = document.querySelectorAll('#logTerminalArea .log-entry');
+    let visible = 0;
+    entries.forEach(e => {
+      if (level === 'ALL' || e.dataset.level === level) {
+        e.style.display = 'flex';
+        visible++;
+      } else {
+        e.style.display = 'none';
+      }
+    });
+    document.getElementById('renderedLinesCount').innerText = `Menampilkan ${visible} entri (${level})`;
+  }
+
+  // Filter logs by module
+  function filterModule(mod) {
+    const entries = document.querySelectorAll('#logTerminalArea .log-entry');
+    let visible = 0;
+    entries.forEach(e => {
+      if (mod === 'ALL' || e.dataset.module === mod) {
+        e.style.display = 'flex';
+        visible++;
+      } else {
+        e.style.display = 'none';
+      }
+    });
+    document.getElementById('renderedLinesCount').innerText = `Menampilkan ${visible} entri filter modul`;
+  }
+
+  // Search logs
+  function searchLogs(query) {
+    const q = query.toLowerCase();
+    const entries = document.querySelectorAll('#logTerminalArea .log-entry');
+    let visible = 0;
+    entries.forEach(e => {
+      const txt = e.innerText.toLowerCase();
+      if (txt.includes(q)) {
+        e.style.display = 'flex';
+        visible++;
+      } else {
+        e.style.display = 'none';
+      }
+    });
+    document.getElementById('renderedLinesCount').innerText = `Menampilkan ${visible} hasil pencarian`;
+  }
+
+  // Clear terminal
+  function clearTerminalView() {
+    const area = document.getElementById('logTerminalArea');
+    area.innerHTML = '<div class="text-[#858382] italic py-2 px-1">// Terminal dibersihkan oleh pengguna. Menunggu stream buffer baru...</div>';
+    document.getElementById('renderedLinesCount').innerText = '0 entri aktif';
+    showToast('Tampilan console dibersihkan.');
+  }
+
+  // Copy Snippet
+  function copyLogSnippet() {
+    const area = document.getElementById('logTerminalArea');
+    navigator.clipboard.writeText(area.innerText).then(() => {
+      showToast('Cuplikan baris log berhasil disalin ke clipboard.');
+    });
+  }
+
+  // Pause toggle
+  let isPaused = false;
+  function toggleLogPause() {
+    isPaused = !isPaused;
+    const btn = document.getElementById('pauseLogBtn');
+    btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">${isPaused ? 'play_arrow' : 'pause'}</span>`;
+    showToast(isPaused ? 'Log stream FIFO dijeda.' : 'Log stream dilanjutkan.');
+  }
+
+  function openDocsModal() {
+    showToast('Membuka dokumentasi internal API: /api/v2/docs');
+  }
+</script></main><footer class="w-full border-t border-outline-variant/30 bg-surface-container-low py-space-md"><div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase"><div class="flex items-center gap-space-md"><span>© 2025 HII STRANGER APPAREL GROUP</span><span>•</span><span>INTERNAL CORE MANAGEMENT</span></div><div class="flex items-center gap-space-md"><span>SERVER STATUS: NORMAL</span><span class="font-mono">TZ: UTC+7</span></div></div></footer></div></body></html>

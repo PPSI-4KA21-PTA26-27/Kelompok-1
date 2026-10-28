@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;800&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-low":"#f5f3ef","on-surface-variant":"#464742","surface-container-high":"#eae8e4","surface-bright":"#fbf9f5","background":"#fbf9f5","tertiary-fixed":"#e7e2d9","on-primary-fixed-variant":"#474745","outline":"#767872","surface-container":"#efeeea","on-primary-fixed":"#1c1c1a","on-error":"#ffffff","inverse-primary":"#c9c6c4","secondary":"#536600","surface":"#fbf9f5","on-surface":"#1b1c1a","on-secondary-fixed":"#171e00","on-tertiary-container":"#87837c","primary-fixed":"#e5e2e0","primary-container":"#1c1c1a","on-secondary-container":"#576a00","secondary-fixed":"#c9f300","secondary-fixed-dim":"#b0d500","surface-tint":"#5f5e5d","on-tertiary-fixed":"#1d1c16","tertiary-fixed-dim":"#cbc6be","error-container":"#ffdad6","primary":"#000000","surface-container-lowest":"#ffffff","error":"#ba1a1a","on-tertiary":"#ffffff","tertiary-container":"#1d1c16","on-tertiary-fixed-variant":"#494740","outline-variant":"#c7c7c0","primary-fixed-dim":"#c9c6c4","inverse-surface":"#30312e","on-secondary-fixed-variant":"#3e4c00","surface-container-highest":"#e4e2de","surface-dim":"#dbdad6","on-error-container":"#93000a","tertiary":"#000000","inverse-on-surface":"#f2f0ed","secondary-container":"#c6f000","on-background":"#1b1c1a","on-primary":"#ffffff","surface-variant":"#e4e2de","on-primary-container":"#858382","on-secondary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-sm":"0.5rem","gutter":"0.75rem","margin-desktop":"3rem","space-xs":"0.25rem","space-lg":"1.25rem","space-md":"0.75rem","space-xl":"2rem","gutter-desktop":"1.5rem","margin":"1rem"},"fontFamily":{"headline-md":["Bricolage Grotesque"],"label-md":["Geist"],"price-display":["Bricolage Grotesque"],"display-lg-mobile":["Bricolage Grotesque"],"body-md":["Geist"],"display-lg":["Bricolage Grotesque"],"headline-lg":["Bricolage Grotesque"],"label-caps":["Geist"],"body-sm":["Geist"],"body-lg":["Geist"],"headline-lg-mobile":["Bricolage Grotesque"],"label-lg":["Geist"]},"fontSize":{"headline-md":["22px",{"lineHeight":"26px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"price-display":["20px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"700"}],"display-lg-mobile":["34px",{"lineHeight":"38px","letterSpacing":"-0.025em","fontWeight":"800"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"52px","letterSpacing":"-0.03em","fontWeight":"800"}],"headline-lg":["32px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-caps":["11px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-lg-mobile":["26px",{"lineHeight":"30px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-60 bg-surface-container-low border-r border-outline-variant/40 flex flex-col justify-between z-40"><div class="flex flex-col"><div class="px-space-md py-space-lg border-b border-outline-variant/40"><span class="font-headline-md text-headline-md uppercase tracking-tight text-primary block">Hii Stranger</span><div class="flex items-center gap-space-xs mt-0.5"><span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Admin Portal</span><span class="font-label-caps text-label-caps px-1.5 py-0.5 bg-surface-container-highest rounded text-on-surface-variant">v1.0</span></div></div><div class="px-space-md pt-space-md pb-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Manajemen Toko</span></div><nav class="flex flex-col gap-0.5 px-space-sm" data-active-classes="bg-primary text-on-primary font-bold"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ringkasan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">space_dashboard</span><span>Ringkasan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pesanan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Pesanan</span></div></a><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm rounded-lg transition-colors bg-primary text-on-primary font-bold" data-path="pembayaran" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">payments</span><span>Pembayaran</span></div><span class="px-1.5 py-0.5 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps rounded-full">3 Baru</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="produk" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">checkroom</span><span>Produk</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="kategori" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">category</span><span>Kategori</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="banner" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_carousel</span><span>Banner</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ongkir" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">local_shipping</span><span>Ongkir</span></div></a><div class="my-space-xs border-t border-outline-variant/30"></div><div class="px-space-sm py-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sistem &amp; Kontrol</span></div><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="analitik" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span>Analitik</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Admin</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="maintenance" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">build_circle</span><span>Maintenance</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Super</span></a></nav></div><div class="p-space-md border-t border-outline-variant/40 bg-surface-container"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="inline-block w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-caps text-label-caps text-on-surface">ONLINE / LIVE</span></div><span class="font-label-caps text-label-caps text-on-surface-variant">REGION ID</span></div></div></aside><div class="pl-60 min-h-screen flex flex-col"><header class="fixed top-0 left-60 right-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/40 z-30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md"><span class="hover:text-on-surface cursor-pointer">Admin</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-semibold">Console</span></div><div class="h-4 w-px bg-outline-variant/60 hidden sm:block"></div><div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low border border-outline-variant/40"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sinkron Otomatis 10s</span></div></div><div class="flex items-center gap-space-md"><span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-primary text-on-primary uppercase tracking-widest">SUPERADMIN</span><div class="flex items-center gap-space-sm border-l border-outline-variant/40 pl-space-md"><div class="text-right hidden md:block"><span class="block font-label-md text-label-md text-on-surface leading-tight">HQ Controller</span><span class="block font-label-caps text-label-caps text-on-surface-variant">root@hiistranger.com</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><a class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-error transition-colors" data-path="login" href="#" title="Keluar dari Sistem"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></header><main class="w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full">
+<!-- Top Context Header Bar -->
+<div class="px-space-lg py-space-md bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Internal Core Management / Finance</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-caps text-label-caps text-secondary-container bg-primary text-secondary-fixed px-1.5 py-0.5 rounded">QRIS Engine v2.4</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg uppercase text-primary tracking-tight">Verifikasi Pembayaran QRIS</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tinjau bukti transfer manual dari customer, cocokkan 3 digit kode unik, dan konfirmasi pelunasan pesanan.</p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container rounded-lg">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="font-label-caps text-label-caps uppercase text-on-surface tracking-wider">Antrean Polling 15 Detik (3 Menunggu)</span>
+</div>
+<button class="flex items-center gap-1 px-3 py-1.5 bg-surface-container-high hover:bg-surface-dim transition-colors rounded-lg font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Sinkron</span>
+</button>
+</div>
+</div>
+<!-- Status Tabs & Queue Controls Filter Strip -->
+<div class="px-space-lg py-space-sm bg-surface flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-1.5 overflow-x-auto py-1">
+<!-- Active Tab -->
+<button class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary text-secondary-fixed font-label-lg text-label-lg shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary-fixed">hourglass_top</span>
+<span>Menunggu Verifikasi</span>
+<span class="px-1.5 py-0.2 bg-secondary-fixed text-primary font-headline-md text-[11px] leading-tight rounded-full">3</span>
+</button>
+<button class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Dikonfirmasi (Paid)</span>
+<span class="px-1.5 py-0.2 bg-surface-container-highest text-on-surface font-label-caps text-[11px] rounded-full">128</span>
+</button>
+<button class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors text-on-surface-variant font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+<span>Ditolak (Rejected)</span>
+<span class="px-1.5 py-0.2 bg-surface-container-highest text-on-surface font-label-caps text-[11px] rounded-full">9</span>
+</button>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-1 px-2.5 py-1.5 bg-surface-container-low rounded-lg text-on-surface-variant font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[15px]">sort</span>
+<span>URUTAN: TERLAMA DULU (FIFO)</span>
+</div>
+<div class="px-2.5 py-1.5 bg-surface-container-low rounded-lg text-on-surface-variant font-label-caps text-label-caps flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">security</span>
+<span>SOP AUTH BLOB STREAM</span>
+</div>
+</div>
+</div>
+<!-- Dual-Panel Verification Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md p-space-lg bg-surface">
+<!-- LEFT PANEL: Verification Queue List (4 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Daftar Tiket Antrean</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">3 ITEM MENUNGGU AUDIT</span>
+</div>
+<!-- Queue Card 1 (Active / Selected) -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl transition-all cursor-pointer relative shadow-sm" style="box-shadow: 0 0 0 2px #000000;">
+<div class="flex items-start justify-between gap-space-xs mb-2">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps px-1.5 py-0.5 rounded bg-primary text-secondary-fixed">AKTIF DIPILIH</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">22 MNT LALU</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mt-1">#ORD-20250428-0914</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps font-bold uppercase">
+            Pending
+          </span>
+</div>
+<div class="flex flex-col gap-1.5 py-2 my-1 bg-surface-container-low px-space-sm rounded-lg">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant font-body-sm">Customer:</span>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Arka Narendra</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant font-body-sm">Kontak:</span>
+<span class="font-body-sm text-body-sm text-on-surface">081289102938</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant font-body-sm">Waktu Upload:</span>
+<span class="font-body-sm text-body-sm text-on-surface">28 Apr 2025, 14:22 WIB</span>
+</div>
+</div>
+<div class="flex items-end justify-between mt-2 pt-1">
+<div>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant block">Tagihan Pesanan</span>
+<span class="font-price-display text-price-display text-primary">Rp549.382</span>
+</div>
+<div class="text-right">
+<span class="font-label-caps text-label-caps uppercase text-secondary-container bg-primary px-1.5 py-0.5 rounded font-mono font-bold">KODE UNIK: 382</span>
+</div>
+</div>
+</div>
+<!-- Queue Card 2 -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-colors p-space-md rounded-xl cursor-pointer">
+<div class="flex items-start justify-between gap-space-xs mb-2">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">45 MNT LALU</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mt-0.5">#ORD-20250428-0902</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps uppercase">
+            Pending
+          </span>
+</div>
+<div class="flex flex-col gap-1 py-1.5 my-1 bg-surface-container px-space-sm rounded-lg">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">Customer:</span>
+<span class="font-label-md text-label-md text-on-surface">Siska Maharani</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">Waktu Upload:</span>
+<span class="font-body-sm text-body-sm text-on-surface">28 Apr 2025, 13:59 WIB</span>
+</div>
+</div>
+<div class="flex items-end justify-between mt-2 pt-1">
+<div>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant block">Tagihan Pesanan</span>
+<span class="font-price-display text-price-display text-primary">Rp289.145</span>
+</div>
+<span class="font-label-caps text-label-caps bg-surface-container-highest text-on-surface px-1.5 py-0.5 rounded font-mono">KODE UNIK: 145</span>
+</div>
+</div>
+<!-- Queue Card 3 -->
+<div class="bg-surface-container-low hover:bg-surface-container transition-colors p-space-md rounded-xl cursor-pointer">
+<div class="flex items-start justify-between gap-space-xs mb-2">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">1 JAM LALU</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mt-0.5">#ORD-20250428-0887</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps uppercase">
+            Pending
+          </span>
+</div>
+<div class="flex flex-col gap-1 py-1.5 my-1 bg-surface-container px-space-sm rounded-lg">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">Customer:</span>
+<span class="font-label-md text-label-md text-on-surface">Dimas Wicaksono</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">Waktu Upload:</span>
+<span class="font-body-sm text-body-sm text-on-surface">28 Apr 2025, 13:30 WIB</span>
+</div>
+</div>
+<div class="flex items-end justify-between mt-2 pt-1">
+<div>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant block">Tagihan Pesanan</span>
+<span class="font-price-display text-price-display text-primary">Rp459.720</span>
+</div>
+<span class="font-label-caps text-label-caps bg-surface-container-highest text-on-surface px-1.5 py-0.5 rounded font-mono">KODE UNIK: 720</span>
+</div>
+</div>
+<!-- Audit Guidance Footnote -->
+<div class="p-space-sm bg-surface-container rounded-xl flex items-start gap-2 text-on-surface-variant mt-2">
+<span class="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">info</span>
+<span class="font-body-sm text-body-sm leading-snug">
+          Verifikasi manual dilakukan sesuai FIFO untuk mencegah penumpukan alokasi stok produk streetwear limited edition Drop 01.
+        </span>
+</div>
+</div>
+<!-- RIGHT PANEL: Transfer Proof Viewer & Decision Desk (8 Cols) -->
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<!-- Panel Header Card -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-secondary-fixed">
+<span class="material-symbols-outlined text-[22px]">find_in_page</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">TINJAUAN BUKTI TRANSFER QRIS</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-on-surface font-mono text-[10px]">TLS 1.3 SECURE BLOB</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight">Tinjauan Bukti Pembayaran - #ORD-20250428-0914</h2>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-container px-2 py-1 rounded">STREAM: /api/v1/admin/receipts/0914.blob</span>
+</div>
+</div>
+<!-- Main Visual Proof Viewer + Details Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md items-start">
+<!-- Interactive Image Viewer (7 Cols) -->
+<div class="md:col-span-7 bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-sm shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">photo_camera</span>
+<span class="font-label-md text-label-md text-on-surface">Struk Transfer m-Banking Asli</span>
+</div>
+<!-- Viewer Controls -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-lg">
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface transition-colors flex items-center justify-center" id="zoom-in" title="Zoom In">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</button>
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface transition-colors flex items-center justify-center" id="zoom-out" title="Zoom Out">
+<span class="material-symbols-outlined text-[18px]">zoom_out</span>
+</button>
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface transition-colors flex items-center justify-center" id="zoom-reset" title="Reset Zoom">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+</button>
+<button class="p-1 hover:bg-surface-container-high rounded text-on-surface transition-colors flex items-center justify-center" id="open-full" title="Fullscreen Preview">
+<span class="material-symbols-outlined text-[18px]">fullscreen</span>
+</button>
+</div>
+</div>
+<!-- Zoom Canvas Area -->
+<div class="relative w-full h-[410px] bg-surface-container-highest rounded-xl overflow-hidden flex items-center justify-center select-none group">
+<div class="relative transition-transform duration-200 ease-out origin-center cursor-grab active:cursor-grabbing w-full max-w-[320px] bg-surface-container-lowest p-4 rounded-xl shadow-lg border-t-4 border-primary" id="receipt-container">
+<!-- Digital Struk Simulation Mockup -->
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-high">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded bg-primary text-secondary-fixed flex items-center justify-center font-bold text-[10px]">BCA</div>
+<span class="font-label-md text-label-md font-bold text-primary">m-Transfer BERHASIL</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary font-bold">LUNAS</span>
+</div>
+<div class="py-3 flex flex-col gap-2">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant font-body-sm">Tanggal &amp; Jam:</span>
+<span class="font-mono text-on-surface font-semibold text-right">28/04/2025 14:21:40</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant font-body-sm">No. Referensi:</span>
+<span class="font-mono text-on-surface text-right">BCA-20250428-79104820</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant font-body-sm">Tujuan QRIS:</span>
+<span class="font-label-md text-label-md text-primary text-right">HII STRANGER CORP</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface-variant font-body-sm">Pengirim:</span>
+<span class="font-body-sm text-body-sm text-on-surface text-right">ARKA NARENDRA</span>
+</div>
+</div>
+<!-- Big Highlight Amount in Struk -->
+<div class="p-3 my-1 bg-surface-container-low rounded-lg text-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block">Total Transfer</span>
+<span class="font-headline-lg text-headline-lg text-primary tracking-tight font-extrabold">Rp549.382</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed-dim bg-primary px-2 py-0.5 rounded-full inline-block mt-1 font-mono">Kode: 382 Valid</span>
+</div>
+<div class="pt-2 text-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest block">NMID: ID1020038891002</span>
+<span class="font-label-caps text-label-caps text-outline block text-[9px] mt-0.5">Diverifikasi Sistem Enkripsi Perbankan Indonesia</span>
+</div>
+</div>
+<!-- Floating Watermark / Security Badge -->
+<div class="absolute bottom-3 left-3 bg-primary/80 backdrop-blur-md px-2.5 py-1 rounded-md text-secondary-fixed font-label-caps text-label-caps uppercase flex items-center gap-1.5 pointer-events-none">
+<span class="material-symbols-outlined text-[13px]">verified_user</span>
+<span>SIGNED INTERNAL BLOB HASH: 8f4a..0914</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-caps text-label-caps px-1">
+<span>FILE: BUKTI_TRANSFER_ORD0914_BCA.JPG (1.8 MB)</span>
+<span>IP CLIENT: 182.253.110.42</span>
+</div>
+</div>
+<!-- Verification Data & Match Analyzer (5 Cols) -->
+<div class="md:col-span-5 flex flex-col gap-space-sm">
+<!-- Matched Nominal Comparison Widget -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl flex flex-col gap-space-sm shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Komparasi Nominal Otomatis</span>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps rounded-full font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">check_circle</span>
+<span>COCOK IDENTIK</span>
+</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-1">
+<div class="p-2.5 bg-surface-container-low rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Tagihan Pesanan</span>
+<span class="font-price-display text-price-display text-primary mt-0.5">Rp549.382</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant mt-1 leading-tight">Termasuk kode unik <span class="font-bold text-primary">+Rp382</span></span>
+</div>
+<div class="p-2.5 bg-secondary-fixed/20 rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps uppercase text-secondary">Nominal Pada Bukti</span>
+<span class="font-price-display text-price-display text-primary mt-0.5">Rp549.382</span>
+<span class="font-body-sm text-[11px] text-secondary mt-1 font-semibold leading-tight">Selisih: Rp0 (Sempurna)</span>
+</div>
+</div>
+<!-- Visual Bar Comparison -->
+<div class="p-2.5 bg-surface-container-low rounded-lg flex flex-col gap-1.5">
+<div class="flex justify-between items-center font-label-caps text-label-caps">
+<span class="text-on-surface-variant">Toleransi Variansi Selisih</span>
+<span class="text-primary font-mono font-bold">100.0% MATCH</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-secondary-fixed-dim h-full rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+</div>
+<!-- Customer Note Card -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl flex flex-col gap-1.5 shadow-sm">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">chat</span>
+<span>Catatan Dari Customer</span>
+</span>
+<div class="p-2.5 bg-surface-container-low rounded-lg text-body-md text-on-surface italic font-body-md">
+              “Transfer dari rekening BCA a.n Arka Narendra, terima kasih min.”
+            </div>
+</div>
+<!-- Order Context Summary -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl flex flex-col gap-2 shadow-sm">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Detail Ringkas Pesanan</span>
+<div class="flex flex-col gap-1 text-body-sm">
+<div class="flex justify-between py-1 bg-surface-container-low px-2 rounded">
+<span class="text-on-surface-variant font-body-sm">1x Oversized Acid Washed Tee (XL)</span>
+<span class="font-mono text-primary">Rp299.000</span>
+</div>
+<div class="flex justify-between py-1 bg-surface-container-low px-2 rounded">
+<span class="text-on-surface-variant font-body-sm">1x Heavyweight Raw Denim Hat</span>
+<span class="font-mono text-primary">Rp220.000</span>
+</div>
+<div class="flex justify-between py-1 bg-surface-container-low px-2 rounded">
+<span class="text-on-surface-variant font-body-sm">Ongkos Kirim (JNE YES - Jakarta)</span>
+<span class="font-mono text-primary">Rp30.000</span>
+</div>
+<div class="flex justify-between py-1 bg-surface-container-low px-2 rounded font-semibold text-primary">
+<span>Kode Unik Verifikasi Otomatis</span>
+<span class="font-mono text-secondary">+Rp382</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- DECISION ACTIONS BAR & SOP NOTICE -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl flex flex-col gap-space-sm shadow-sm">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px] text-primary">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Validasi Manual Otoritas Admin</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Status Paid hanya dapat diubah melalui persetujuan pembayaran di halaman ini.</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-space-sm w-full sm:w-auto">
+<!-- Reject Button -->
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-space-md py-3 rounded-xl bg-surface-container-high hover:bg-error-container hover:text-error text-on-surface font-label-lg text-label-lg transition-colors" id="btn-reject">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span>Tolak Pembayaran ✕</span>
+</button>
+<!-- Approve Button (Primary High Voltage Lime) -->
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-space-lg py-3 rounded-xl bg-secondary-fixed hover:bg-secondary-fixed-dim text-primary font-label-lg text-label-lg font-bold shadow-md active:scale-95 transition-all" id="btn-approve">
+<span class="material-symbols-outlined text-[20px] text-primary">check_circle</span>
+<span>Setujui Pembayaran (Mark as Paid) ✓</span>
+</button>
+</div>
+</div>
+<!-- Compliance & SOP Warning Bar -->
+<div class="px-space-sm py-1.5 bg-surface-container-low rounded-lg flex items-center justify-between text-on-surface-variant font-label-caps text-label-caps">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span>KEPATUHAN SISTEM: Catatan penolakan diarsipkan secara internal pada audit trail admin.</span>
+</div>
+<span>OPERATOR ID: #ADM-HQ-01</span>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL: Confirmation for APPROVE (Mark as Paid) -->
+<div class="fixed inset-0 z-50 bg-primary/60 backdrop-blur-sm hidden items-center justify-center p-4" id="modal-approve">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-2xl p-space-lg flex flex-col gap-space-md shadow-2xl">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">task_alt</span>
+</div>
+<div>
+<span class="font-label-caps text-label-caps uppercase text-secondary tracking-wider font-bold">Konfirmasi Otorisasi Kasir</span>
+<h3 class="font-headline-md text-headline-md text-primary">Setujui Pelunasan #ORD-20250428-0914?</h3>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Tindakan ini akan mengubah status pesanan menjadi <strong class="text-primary font-bold">PAID</strong>, mengunci alokasi stok gudang, dan memindahkan tiket ke tab <strong class="text-primary">Siap Diproses</strong>.
+      </p>
+<div class="p-space-sm bg-surface-container-low rounded-xl flex flex-col gap-1 font-body-sm">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Nominal Terkonfirmasi:</span>
+<span class="font-price-display text-price-display text-primary">Rp549.382</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Customer:</span>
+<span class="font-semibold text-on-surface">Arka Narendra</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Metode:</span>
+<span class="text-on-surface">Manual QRIS / Transfer BCA</span>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm mt-2">
+<button class="px-space-md py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high font-label-lg text-label-lg text-on-surface transition-colors" id="close-approve-modal">
+          Batal
+        </button>
+<button class="px-space-lg py-2.5 rounded-xl bg-primary hover:bg-primary-container text-secondary-fixed font-label-lg text-label-lg font-bold flex items-center gap-1.5 transition-colors" id="confirm-approve-action">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Konfirmasi Lunas (Paid)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- MODAL: Rejection Form with 500 Char Counter -->
+<div class="fixed inset-0 z-50 bg-primary/60 backdrop-blur-sm hidden items-center justify-center p-4" id="modal-reject">
+<div class="w-full max-w-lg bg-surface-container-lowest rounded-2xl p-space-lg flex flex-col gap-space-md shadow-2xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">gpp_bad</span>
+</div>
+<div>
+<span class="font-label-caps text-label-caps uppercase text-error tracking-wider font-bold">Penolakan Verifikasi</span>
+<h3 class="font-headline-md text-headline-md text-primary">Tolak Bukti Transfer #ORD-0914</h3>
+</div>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container" id="close-reject-x">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Masukkan catatan internal penyebab penolakan bukti. Sesuai arsitektur backend, alasan ini <strong class="text-primary">hanya disimpan di log audit admin</strong> untuk kepatuhan SOP internal.
+      </p>
+<!-- Predefined Reason Tags -->
+<div class="flex flex-wrap gap-1.5">
+<button class="reason-preset font-label-caps text-label-caps px-2.5 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+          Nominal Tidak Cocok
+        </button>
+<button class="reason-preset font-label-caps text-label-caps px-2.5 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+          Struk Buram / Tidak Terbaca
+        </button>
+<button class="reason-preset font-label-caps text-label-caps px-2.5 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+          Duplikasi Bukti Transfer
+        </button>
+<button class="reason-preset font-label-caps text-label-caps px-2.5 py-1 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+          Nama Rekening Berbeda Tanpa Catatan
+        </button>
+</div>
+<!-- Reason Textarea -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface" for="reject-notes">Catatan Alasan Penolakan (Internal Admin Log):</label>
+<textarea class="w-full p-3 rounded-xl bg-surface border-0 bg-surface-container focus:bg-surface-container-lowest outline-none text-body-md text-on-surface font-body-md transition-all resize-none" id="reject-notes" maxlength="500" placeholder="Tulis rincian audit kenapa bukti transfer ini ditolak..." rows="4"></textarea>
+<div class="flex justify-between items-center px-1 text-on-surface-variant font-label-caps text-label-caps">
+<span>MAKSIMAL 500 KARAKTER</span>
+<span id="char-count">0 / 500</span>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm mt-2">
+<button class="px-space-md py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high font-label-lg text-label-lg text-on-surface transition-colors" id="close-reject-modal">
+          Batal
+        </button>
+<button class="px-space-lg py-2.5 rounded-xl bg-error hover:bg-red-700 text-on-error font-label-lg text-label-lg font-bold flex items-center gap-1.5 transition-colors" id="confirm-reject-action">
+<span class="material-symbols-outlined text-[18px]">block</span>
+<span>Tolak &amp; Simpan Log</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Toast Notification Popup -->
+<div class="fixed bottom-6 right-6 z-50 bg-primary text-secondary-fixed px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300" id="toast-notif">
+<span class="material-symbols-outlined text-[22px] text-secondary-fixed">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg leading-tight" id="toast-title">Pembayaran Dikonfirmasi</span>
+<span class="font-body-sm text-body-sm text-surface-dim" id="toast-desc">Pesanan #ORD-20250428-0914 telah berstatus PAID.</span>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    // Zoom and pan logic for receipt image
+    let currentScale = 1;
+    const container = document.getElementById('receipt-container');
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    const zoomResetBtn = document.getElementById('zoom-reset');
+    const fullscreenBtn = document.getElementById('open-full');
+
+    function updateScale() {
+      if (container) {
+        container.style.transform = `scale(${currentScale})`;
+      }
+    }
+
+    if (zoomInBtn) {
+      zoomInBtn.addEventListener('click', () => {
+        if (currentScale < 1.8) {
+          currentScale += 0.2;
+          updateScale();
+        }
+      });
+    }
+
+    if (zoomOutBtn) {
+      zoomOutBtn.addEventListener('click', () => {
+        if (currentScale > 0.8) {
+          currentScale -= 0.2;
+          updateScale();
+        }
+      });
+    }
+
+    if (zoomResetBtn) {
+      zoomResetBtn.addEventListener('click', () => {
+        currentScale = 1;
+        updateScale();
+      });
+    }
+
+    if (fullscreenBtn) {
+      fullscreenBtn.addEventListener('click', () => {
+        if (currentScale === 1) {
+          currentScale = 1.4;
+        } else {
+          currentScale = 1;
+        }
+        updateScale();
+      });
+    }
+
+    // Modal Approve Handling
+    const btnApprove = document.getElementById('btn-approve');
+    const modalApprove = document.getElementById('modal-approve');
+    const closeApproveModal = document.getElementById('close-approve-modal');
+    const confirmApproveAction = document.getElementById('confirm-approve-action');
+
+    if (btnApprove && modalApprove) {
+      btnApprove.addEventListener('click', () => {
+        modalApprove.classList.remove('hidden');
+        modalApprove.classList.add('flex');
+      });
+    }
+
+    if (closeApproveModal && modalApprove) {
+      closeApproveModal.addEventListener('click', () => {
+        modalApprove.classList.add('hidden');
+        modalApprove.classList.remove('flex');
+      });
+    }
+
+    // Modal Reject Handling
+    const btnReject = document.getElementById('btn-reject');
+    const modalReject = document.getElementById('modal-reject');
+    const closeRejectModal = document.getElementById('close-reject-modal');
+    const closeRejectX = document.getElementById('close-reject-x');
+    const confirmRejectAction = document.getElementById('confirm-reject-action');
+    const rejectNotes = document.getElementById('reject-notes');
+    const charCount = document.getElementById('char-count');
+    const presetButtons = document.querySelectorAll('.reason-preset');
+
+    if (btnReject && modalReject) {
+      btnReject.addEventListener('click', () => {
+        modalReject.classList.remove('hidden');
+        modalReject.classList.add('flex');
+      });
+    }
+
+    const hideReject = () => {
+      if (modalReject) {
+        modalReject.classList.add('hidden');
+        modalReject.classList.remove('flex');
+      }
+    };
+
+    if (closeRejectModal) closeRejectModal.addEventListener('click', hideReject);
+    if (closeRejectX) closeRejectX.addEventListener('click', hideReject);
+
+    if (rejectNotes && charCount) {
+      rejectNotes.addEventListener('input', (e) => {
+        const len = e.target.value.length;
+        charCount.textContent = `${len} / 500`;
+      });
+    }
+
+    presetButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (rejectNotes) {
+          rejectNotes.value = btn.innerText.trim();
+          if (charCount) {
+            charCount.textContent = `${rejectNotes.value.length} / 500`;
+          }
+        }
+      });
+    });
+
+    // Toast Notification helper
+    const toast = document.getElementById('toast-notif');
+    const toastTitle = document.getElementById('toast-title');
+    const toastDesc = document.getElementById('toast-desc');
+
+    function showToast(title, desc) {
+      if (!toast) return;
+      if (toastTitle) toastTitle.textContent = title;
+      if (toastDesc) toastDesc.textContent = desc;
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+
+    if (confirmApproveAction) {
+      confirmApproveAction.addEventListener('click', () => {
+        if (modalApprove) {
+          modalApprove.classList.add('hidden');
+          modalApprove.classList.remove('flex');
+        }
+        showToast('Pembayaran Dikonfirmasi!', 'Pesanan #ORD-20250428-0914 telah berstatus PAID -> Siap Diproses.');
+      });
+    }
+
+    if (confirmRejectAction) {
+      confirmRejectAction.addEventListener('click', () => {
+        hideReject();
+        showToast('Bukti Pembayaran Ditolak', 'Catatan alasan tersimpan di server audit internal.');
+      });
+    }
+  })();
+</script></main><footer class="w-full border-t border-outline-variant/30 bg-surface-container-low py-space-md"><div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase"><div class="flex items-center gap-space-md"><span>© 2025 HII STRANGER APPAREL GROUP</span><span>•</span><span>INTERNAL CORE MANAGEMENT</span></div><div class="flex items-center gap-space-md"><span>SERVER STATUS: NORMAL</span><span class="font-mono">TZ: UTC+7</span></div></div></footer></div></body></html>

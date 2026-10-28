@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;800&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-low":"#f5f3ef","on-surface-variant":"#464742","surface-container-high":"#eae8e4","surface-bright":"#fbf9f5","background":"#fbf9f5","tertiary-fixed":"#e7e2d9","on-primary-fixed-variant":"#474745","outline":"#767872","surface-container":"#efeeea","on-primary-fixed":"#1c1c1a","on-error":"#ffffff","inverse-primary":"#c9c6c4","secondary":"#536600","surface":"#fbf9f5","on-surface":"#1b1c1a","on-secondary-fixed":"#171e00","on-tertiary-container":"#87837c","primary-fixed":"#e5e2e0","primary-container":"#1c1c1a","on-secondary-container":"#576a00","secondary-fixed":"#c9f300","secondary-fixed-dim":"#b0d500","surface-tint":"#5f5e5d","on-tertiary-fixed":"#1d1c16","tertiary-fixed-dim":"#cbc6be","error-container":"#ffdad6","primary":"#000000","surface-container-lowest":"#ffffff","error":"#ba1a1a","on-tertiary":"#ffffff","tertiary-container":"#1d1c16","on-tertiary-fixed-variant":"#494740","outline-variant":"#c7c7c0","primary-fixed-dim":"#c9c6c4","inverse-surface":"#30312e","on-secondary-fixed-variant":"#3e4c00","surface-container-highest":"#e4e2de","surface-dim":"#dbdad6","on-error-container":"#93000a","tertiary":"#000000","inverse-on-surface":"#f2f0ed","secondary-container":"#c6f000","on-background":"#1b1c1a","on-primary":"#ffffff","surface-variant":"#e4e2de","on-primary-container":"#858382","on-secondary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-sm":"0.5rem","gutter":"0.75rem","margin-desktop":"3rem","space-xs":"0.25rem","space-lg":"1.25rem","space-md":"0.75rem","space-xl":"2rem","gutter-desktop":"1.5rem","margin":"1rem"},"fontFamily":{"headline-md":["Bricolage Grotesque"],"label-md":["Geist"],"price-display":["Bricolage Grotesque"],"display-lg-mobile":["Bricolage Grotesque"],"body-md":["Geist"],"display-lg":["Bricolage Grotesque"],"headline-lg":["Bricolage Grotesque"],"label-caps":["Geist"],"body-sm":["Geist"],"body-lg":["Geist"],"headline-lg-mobile":["Bricolage Grotesque"],"label-lg":["Geist"]},"fontSize":{"headline-md":["22px",{"lineHeight":"26px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"price-display":["20px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"700"}],"display-lg-mobile":["34px",{"lineHeight":"38px","letterSpacing":"-0.025em","fontWeight":"800"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"52px","letterSpacing":"-0.03em","fontWeight":"800"}],"headline-lg":["32px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-caps":["11px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-lg-mobile":["26px",{"lineHeight":"30px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-60 bg-surface-container-low border-r border-outline-variant/40 flex flex-col justify-between z-40"><div class="flex flex-col"><div class="px-space-md py-space-lg border-b border-outline-variant/40"><span class="font-headline-md text-headline-md uppercase tracking-tight text-primary block">Hii Stranger</span><div class="flex items-center gap-space-xs mt-0.5"><span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Admin Portal</span><span class="font-label-caps text-label-caps px-1.5 py-0.5 bg-surface-container-highest rounded text-on-surface-variant">v1.0</span></div></div><div class="px-space-md pt-space-md pb-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Manajemen Toko</span></div><nav class="flex flex-col gap-0.5 px-space-sm" data-active-classes="bg-primary text-on-primary font-bold"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ringkasan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">space_dashboard</span><span>Ringkasan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pesanan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Pesanan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pembayaran" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">payments</span><span>Pembayaran</span></div><span class="px-1.5 py-0.5 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps rounded-full">3 Baru</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="produk" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">checkroom</span><span>Produk</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="kategori" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">category</span><span>Kategori</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="banner" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_carousel</span><span>Banner</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ongkir" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">local_shipping</span><span>Ongkir</span></div></a><div class="my-space-xs border-t border-outline-variant/30"></div><div class="px-space-sm py-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sistem &amp; Kontrol</span></div><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="analitik" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span>Analitik</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Admin</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="maintenance" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">build_circle</span><span>Maintenance</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Super</span></a></nav></div><div class="p-space-md border-t border-outline-variant/40 bg-surface-container"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="inline-block w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-caps text-label-caps text-on-surface">ONLINE / LIVE</span></div><span class="font-label-caps text-label-caps text-on-surface-variant">REGION ID</span></div></div></aside><div class="pl-60 min-h-screen flex flex-col"><header class="fixed top-0 left-60 right-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/40 z-30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md"><span class="hover:text-on-surface cursor-pointer">Admin</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-semibold">Console</span></div><div class="h-4 w-px bg-outline-variant/60 hidden sm:block"></div><div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low border border-outline-variant/40"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sinkron Otomatis 10s</span></div></div><div class="flex items-center gap-space-md"><span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-primary text-on-primary uppercase tracking-widest">SUPERADMIN</span><div class="flex items-center gap-space-sm border-l border-outline-variant/40 pl-space-md"><div class="text-right hidden md:block"><span class="block font-label-md text-label-md text-on-surface leading-tight">HQ Controller</span><span class="block font-label-caps text-label-caps text-on-surface-variant">root@hiistranger.com</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><a class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-error transition-colors" data-path="login" href="#" title="Keluar dari Sistem"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></header><main class="w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full">
+<div class="px-space-md lg:px-space-xl py-space-lg max-w-[1560px] mx-auto w-full">
+<!-- PAGE HEADER -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md mb-space-lg">
+<div class="space-y-1">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-widest">Katalog &amp; SKU Management</span>
+<span>•</span>
+<span class="font-label-caps text-label-caps text-secondary-fixed-dim uppercase tracking-wider">Drop Archive v2.4</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg uppercase tracking-tight text-on-surface">Katalog Produk &amp; Inventaris</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Pengelolaan master data pakaian streetwear, arsip rilis capsule, matriks alokasi ukuran, dan kontrol kuota produksi pre-order.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm self-start lg:self-auto">
+<button class="flex items-center gap-space-xs px-space-md py-2.5 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all font-label-lg text-label-lg active:scale-95" id="btn-export">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Ekspor CSV / XLSX</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-lg py-2.5 rounded-xl bg-secondary-container text-on-secondary-fixed font-label-lg text-label-lg font-bold shadow-sm hover:brightness-105 active:scale-95 transition-all" id="btn-add-product">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>+ Produk Baru</span>
+</button>
+</div>
+</div>
+<!-- METRIC STATS BENTO ROW -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-sm lg:gap-space-md mb-space-lg">
+<!-- Stat 1 -->
+<div class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Total Produk Aktif</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">checkroom</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-display-lg text-display-lg tracking-tight text-on-surface">24</span>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface">5 Kategori</span>
+</div>
+<div class="mt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+          Terdisplay di storefront publik
+        </div>
+</div>
+<!-- Stat 2 -->
+<div class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-error">Restock Alert (&lt;5 pcs)</span>
+<span class="material-symbols-outlined text-[18px] text-error">warning</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-display-lg text-display-lg tracking-tight text-error">3</span>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-bold">Kritis</span>
+</div>
+<div class="mt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+          Perlu mutasi / cetak ulang
+        </div>
+</div>
+<!-- Stat 3 -->
+<div class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Pre-Order Aktif</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">timelapse</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-display-lg text-display-lg tracking-tight text-on-surface">2</span>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-semibold">Batch Runs</span>
+</div>
+<div class="mt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+          93 kuota teralokasi vendor
+        </div>
+</div>
+<!-- Stat 4 -->
+<div class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Total Inventaris Gudang</span>
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div class="mt-space-md flex items-baseline justify-between">
+<span class="font-display-lg text-display-lg tracking-tight text-on-surface">1.420</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">PCS NETT</span>
+</div>
+<div class="mt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+          Valuasi: IDR 482.350.000
+        </div>
+</div>
+</div>
+<!-- FILTER TOOLBAR -->
+<div class="p-space-md rounded-xl bg-surface-container-low mb-space-lg space-y-space-md">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<!-- Search Field -->
+<div class="relative flex-1 max-w-lg">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant">search</span>
+<input class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface text-body-md placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Cari nama artikel, SKU kode, atau slug katalog..." type="text"/>
+</div>
+<!-- Sorting & Display Toggles -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant hidden sm:inline">Urutan:</span>
+<select class="px-3 py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md focus:outline-none">
+<option>Terbaru Diperbarui</option>
+<option>Stok Terendah (Alert First)</option>
+<option>Harga Tertinggi</option>
+<option>Terlaris / Turn Over Tertinggi</option>
+</select>
+<div class="flex items-center bg-surface-container rounded-lg p-0.5">
+<button class="p-1.5 rounded bg-primary text-on-primary">
+<span class="material-symbols-outlined text-[18px]">view_list</span>
+</button>
+<button class="p-1.5 rounded text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Pill Badges Filters -->
+<div class="flex items-center gap-space-sm flex-wrap pt-space-xs">
+<!-- Filter Status -->
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mr-1">Status:</span>
+<button class="px-3 py-1 rounded-full bg-primary text-on-primary font-label-md text-label-md">Semua (24)</button>
+<button class="px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">Aktif (19)</button>
+<button class="px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">Draf (2)</button>
+<button class="px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">Arsip (3)</button>
+</div>
+<span class="text-on-surface-variant/30 hidden md:inline">|</span>
+<!-- Filter Category -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mr-1">Kategori:</span>
+<button class="px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">Semua</button>
+<button class="px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">T-Shirt</button>
+<button class="px-3 py-1 rounded-full bg-primary-fixed-dim text-on-primary-fixed font-label-md text-label-md font-semibold">Outerwear &amp; Hoodie</button>
+<button class="px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">Celana Kargo</button>
+<button class="px-3 py-1 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md">Aksesoris</button>
+</div>
+<span class="text-on-surface-variant/30 hidden lg:inline">|</span>
+<!-- Pre-Order Filter -->
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mr-1">Tipe:</span>
+<button class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-md text-label-md">Ready Stock</button>
+<button class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md font-bold">Pre-Order Aktif</button>
+</div>
+</div>
+</div>
+<!-- MAIN TWO-COLUMN SPLIT: DATA TABLE & QUICK ADJUSTMENT DRAWER -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- DATA TABLE (Left 8 Cols on XL) -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<div class="bg-surface-container-low rounded-2xl overflow-hidden shadow-sm">
+<!-- Table Action Header Subbar -->
+<div class="px-space-md py-space-sm bg-surface-container-high flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 rounded accent-primary cursor-pointer" type="checkbox"/>
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Pilih Masal (0 dipilih)</span>
+</div>
+<div class="flex items-center gap-space-sm text-body-sm font-label-md">
+<span class="text-on-surface-variant">Menampilkan 5 dari 24 Katalog</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-on-surface-variant font-label-caps text-label-caps uppercase bg-surface-container">
+<th class="py-3 pl-space-md pr-2 w-10"></th>
+<th class="py-3 px-space-sm">Artikel &amp; Slug</th>
+<th class="py-3 px-space-sm">Kategori</th>
+<th class="py-3 px-space-sm">Harga Dasar</th>
+<th class="py-3 px-space-sm">Status</th>
+<th class="py-3 px-space-sm">Matriks Varian &amp; Stok</th>
+<th class="py-3 pr-space-md pl-space-sm text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 text-on-surface">
+<!-- ROW 1: Overdyed Tactical Heavy Hoodie (Active Selection) -->
+<tr class="bg-surface-container-lowest/80 hover:bg-surface-container-high transition-colors">
+<td class="py-space-md pl-space-md pr-2 align-top">
+<input checked="" class="w-4 h-4 rounded accent-primary cursor-pointer mt-1" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="flex items-start gap-space-sm">
+<div class="w-14 h-[70px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Dark charcoal streetwear tactical heavyweight hoodie photographed in studio with harsh editorial lighting, hanging cleanly against warm textured concrete" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAthnWIw21CwbWY7CX5B7532Sp7FEMTBm9lwFnrHFdV2CmcmTk_Hwpr0DlKvd8LQ-C_GXEvx-jhittZ05bJdWld6iff2a_hOoQTCQQW2H74DwpD33IhqDVAEh4Ch1_DlnErxseNY_203jTxW4HnIOpEu_7ZHQU7Ik2fiSLk1ft5kNvhvg9t_nq3y73yL45NpOVWmbNrCDSHnjjxcoL5HuQSUz1553X-GntZX83t7GrbRvZZdj6vklZFMw"/>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg font-bold text-on-surface block truncate">Overdyed Tactical Heavy Hoodie</span>
+<span class="font-mono text-body-sm text-on-surface-variant block">slug: overdyed-tactical-hoodie</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant/80 uppercase">SKU: OTH-BLK-01</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md whitespace-nowrap">Outerwear</span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-0.5">
+<div class="font-price-display text-price-display text-on-surface">Rp 489.000</div>
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="line-through text-on-surface-variant text-[11px]">Rp 549.000</span>
+<span class="font-label-caps text-label-caps text-error font-bold">-11%</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-on-secondary-container animate-pulse"></span>
+                      PO (7 Hari)
+                    </span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-1.5">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">S:12</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">M:25</span>
+<button class="px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-label-md text-label-md font-mono font-bold flex items-center gap-0.5 cursor-pointer ring-1 ring-error">
+<span>L:3</span>
+<span class="material-symbols-outlined text-[10px]">edit</span>
+</button>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">XL:18</span>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-between">
+<span>Total: 58 pcs</span>
+<span class="text-secondary font-semibold">Pre-order run #2</span>
+</div>
+</div>
+</td>
+<td class="py-space-md pr-space-md pl-space-sm align-top text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-primary hover:text-on-primary transition-colors" title="Buka Penyesuaian Varian">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Edit Produk">
+<span class="material-symbols-outlined text-[18px]">edit_square</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-error hover:bg-error-container transition-colors" title="Arsipkan">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2: Urban Archive Washed Tee -->
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="py-space-md pl-space-md pr-2 align-top">
+<input class="w-4 h-4 rounded accent-primary cursor-pointer mt-1" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="flex items-start gap-space-sm">
+<div class="w-14 h-[70px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Heavy washed vintage grey oversized graphic t-shirt laid flat on minimal stone surface, minimalist typography back print accent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3PhmnX_OZDuCRIgYqfL3Po8EGTwkX60Rr80eGkGbNb2PaH-uTKCpJ4gnuw1SYJETsWB3dU5pk9d1iKQXwIlicui0U5VdRyBH82eUqtOH7di3011c1LvUySr8WvQW4UtDrz4ykh7ogJYwNUY10UC5n837Ti-ZDwXU1e3AhHtafA0w1xtxktJTaWDr7dvHPKZn4srEqfWxrpYITqI50oHGc7B2WEPtWePKTSt6anYLP0c_5KzLkorkPjg"/>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg font-bold text-on-surface block truncate">Urban Archive Washed Tee</span>
+<span class="font-mono text-body-sm text-on-surface-variant block">slug: urban-archive-washed-tee</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant/80 uppercase">SKU: UAT-GRY-02</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md whitespace-nowrap">T-Shirt</span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-0.5">
+<div class="font-price-display text-price-display text-on-surface">Rp 260.000</div>
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="line-through text-on-surface-variant text-[11px]">Rp 325.000</span>
+<span class="font-label-caps text-label-caps text-error font-bold">-20%</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-on-primary font-label-caps text-label-caps font-bold uppercase tracking-wider">
+                      Aktif
+                    </span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-1.5">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">S:30</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">M:45</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">L:50</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">XL:22</span>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant">
+                        Total: 147 pcs (Sehat)
+                      </div>
+</div>
+</td>
+<td class="py-space-md pr-space-md pl-space-sm align-top text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-primary hover:text-on-primary transition-colors" title="Kelola Varian">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Edit Produk">
+<span class="material-symbols-outlined text-[18px]">edit_square</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-error hover:bg-error-container transition-colors" title="Arsipkan">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3: Tactical Olive Cargo Pant -->
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="py-space-md pl-space-md pr-2 align-top">
+<input class="w-4 h-4 rounded accent-primary cursor-pointer mt-1" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="flex items-start gap-space-sm">
+<div class="w-14 h-[70px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Military olive green relaxed fit tactical cargo pants with modular pockets and heavy utilitarian buckle straps studio portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA28TRaV3z91q9UxFPZfnYb-AmE-DWqF3zKgiUmNDePGqHNIds5asBCCxN3VQkoQnJFTeC2QQiuT7IRHLK-A4hBnslK_lpEr1HZI7ARTxurIF46iFtwHyPMATrARo4cLj8aRU73n6Gk_52ypjgiu34HF469m9Egx4VS0J3BriM1UhfKElt0UJqtPKgC02NdYhT6w1mjfOogtlyO0PvEtDKi5CFfJumA5C_nM1th0KO9VC0D7Uzk8BnF2w"/>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg font-bold text-on-surface block truncate">Tactical Olive Cargo Pant</span>
+<span class="font-mono text-body-sm text-on-surface-variant block">slug: tactical-olive-cargo</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant/80 uppercase">SKU: TOC-OLV-03</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md whitespace-nowrap">Celana Kargo</span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-0.5">
+<div class="font-price-display text-price-display text-on-surface">Rp 459.000</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Harga Normal</span>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-on-secondary-container"></span>
+                      PO (7 Hari)
+                    </span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-1.5">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">30:15</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">32:8</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-md text-label-md font-mono">34:12</span>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant">
+                        Total: 35 pcs
+                      </div>
+</div>
+</td>
+<td class="py-space-md pr-space-md pl-space-sm align-top text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-primary hover:text-on-primary transition-colors" title="Kelola Varian">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Edit Produk">
+<span class="material-symbols-outlined text-[18px]">edit_square</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-error hover:bg-error-container transition-colors" title="Arsipkan">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4: Sand Heavyweight Fleece (Critical Alert) -->
+<tr class="hover:bg-surface-container-high transition-colors bg-error-container/20">
+<td class="py-space-md pl-space-md pr-2 align-top">
+<input class="w-4 h-4 rounded accent-primary cursor-pointer mt-1" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="flex items-start gap-space-sm">
+<div class="w-14 h-[70px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Sand beige heavyweight crewneck sweater fleece hanging in clean avant garde architectural context" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv638bC3vd6b-mW4gDrn51TBBL-ZANeMmd-vnwX7m_bMg3uFrzaQxR5ticsGhqgzhQ28WMF7T8BXmk1Sc3h0BBNh918naqCqrIP6mtgaWaSVCxl5fPJ1qHXJXno_nPf0tOXeZAHKp9T6sRi53d0amyT9XWagXBO9ttSFsXBvhUKLM3CS6DPIgy84Mq5DyKSoKXTWLVXrROExEoXC63ydwh9NraVFXBpIQcHF0bYb9CQp5iptR906FROA"/>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-label-lg font-bold text-on-surface block truncate">Sand Heavyweight Fleece</span>
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+</div>
+<span class="font-mono text-body-sm text-on-surface-variant block">slug: sand-heavyweight-fleece</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant/80 uppercase">SKU: SHF-SND-04</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md whitespace-nowrap">Outerwear</span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-0.5">
+<div class="font-price-display text-price-display text-on-surface">Rp 499.000</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Normal</span>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-on-primary font-label-caps text-label-caps font-bold uppercase tracking-wider">
+                      Aktif
+                    </span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-1.5">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-label-md text-label-md font-mono font-bold">M:2 (Kritis)</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant line-through font-label-md text-label-md font-mono">L:0 (Habis)</span>
+</div>
+<div class="font-label-caps text-label-caps text-error font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">error</span>
+<span>Total: 2 pcs (Stok Menipis)</span>
+</div>
+</div>
+</td>
+<td class="py-space-md pr-space-md pl-space-sm align-top text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="px-2 py-1 rounded-lg bg-error text-on-error font-label-caps text-label-caps uppercase hover:brightness-110 transition-colors" title="Restock Cepat">
+                        Restock
+                      </button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Edit Produk">
+<span class="material-symbols-outlined text-[18px]">edit_square</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-error hover:bg-error-container transition-colors" title="Arsipkan">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 5: Vintage Washed Cap (Archived) -->
+<tr class="hover:bg-surface-container-high transition-colors opacity-75">
+<td class="py-space-md pl-space-md pr-2 align-top">
+<input class="w-4 h-4 rounded accent-primary cursor-pointer mt-1" type="checkbox"/>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="flex items-start gap-space-sm">
+<div class="w-14 h-[70px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container grayscale">
+<img class="w-full h-full object-cover" data-alt="Black washed dad cap with distressed embroidery detail placed on minimal raw marble stone podium" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAchP0PvSZQa8n3OXjQLM68eUl7W8M7SHnKbTT702G3uX9skrJB8QwrqVDvtYUa40_Y-IOVYrsn3t36K0qoh0bk0lmPqNT4OYnSVAYEO93wHjTVBU4d8XMQXxXbLSloUYHTZkTDUtDKD0dyxGb9zbXxVO8H_2o8O4d86uZ1s5dSWCMjcb8Pp6-3qGrw2BMiqeh1zNn4WNuFfeLN1ycHYfDcAn0N22b8prER2yVe-Gxt6E7JZiOp29ZfwQ"/>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg font-bold text-on-surface-variant line-through block truncate">Vintage Washed Cap</span>
+<span class="font-mono text-body-sm text-on-surface-variant/70 block">slug: vintage-washed-cap</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant/60 uppercase">SKU: VWC-ACC-05</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap">Aksesoris</span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-0.5">
+<div class="font-price-display text-price-display text-on-surface-variant">Rp 189.000</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Toko Tutup</span>
+</div>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps font-semibold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px]">archive</span>
+                      Diarsipkan
+                    </span>
+</td>
+<td class="py-space-md px-space-sm align-top">
+<div class="space-y-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-md text-label-md font-mono">One Size: 0</span>
+<div class="font-label-caps text-label-caps text-on-surface-variant/70">
+                        Arsip Rilis 2024
+                      </div>
+</div>
+</td>
+<td class="py-space-md pr-space-md pl-space-sm align-top text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-primary hover:text-on-primary transition-colors" title="Pulihkan / Aktifkan Kembali">
+<span class="material-symbols-outlined text-[18px]">unarchive</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-error hover:bg-error-container transition-colors" title="Hapus Permanen">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- PAGINATION & BACKEND SYNC FOOTER -->
+<div class="p-space-md bg-surface-container flex flex-col sm:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-md text-label-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface">Go REST-Engine synced (latency 18ms)</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="text-on-surface-variant text-body-sm">Halaman 1 dari 5</span>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded-lg bg-surface-container-low text-on-surface-variant/40 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="px-3 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface">2</button>
+<button class="px-3 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface">3</button>
+<span class="px-1 text-on-surface-variant">...</span>
+<button class="px-3 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface">5</button>
+<button class="p-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- QUICK STOCK BULK ACTION CALLOUT -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="p-2 rounded-lg bg-secondary-container text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">inventory</span>
+</div>
+<div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface block">Audit Fisik Berkala Gudang Pusat</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Terakhir diverifikasi oleh Tim Logistik pada 18 Feb 2025 (3 hari lalu).</span>
+</div>
+</div>
+<button class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-container-highest whitespace-nowrap self-start sm:self-auto">
+            Mulai Sesi Opname
+          </button>
+</div>
+</div>
+<!-- RIGHT DRAWER: QUICK STOCK ADJUSTMENT (Right 4 Cols on XL) -->
+<div class="xl:col-span-4 flex flex-col gap-space-md sticky top-20">
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm space-y-space-md">
+<!-- Drawer Header -->
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-error-container text-on-error-container font-bold uppercase tracking-wider">Low Stock Action</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">#STK-MOD-09</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-1">Penyesuaian Stok Cepat</h2>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Product Variant Subject Card -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-center gap-space-sm">
+<div class="w-12 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Studio close-up detail of textured washed slate tactical heavyweight hoodie fabric and sizing label" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxJHn9HFvLEi517Foxx5E6ns9my7q797H3vGM8_QqmeC8Fj7juKOFyN2wCifJJ8uY0_mUXCGrIu9JLo95guHYbOFRJjOYepQayvmzzDstfY4LEppuyn2e9P0QVV-N5a3M99flUOedXohgYu9jVKsYHtpt3bG5I6x4VHiKEr5bYi_dn6Y2uroLlXQg8ULoUIke83cgIGbrFTaHTwA9mJAJHAHV79b-fHfjL86ftchula28JrvVdp6QtTg"/>
+</div>
+<div class="min-w-0 flex-1">
+<span class="font-label-md text-label-md font-bold text-on-surface block truncate">Overdyed Tactical Heavy Hoodie</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Washed Slate / <strong class="text-on-surface">Size L</strong></span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SKU: OTH-BLK-01-L</span>
+<span class="text-error font-bold text-label-caps">• Sisa 3 pcs</span>
+</div>
+</div>
+</div>
+<!-- Adjustment Form -->
+<form class="space-y-space-md" onsubmit="event.preventDefault();">
+<!-- Type Selector -->
+<div class="space-y-1.5">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant">Tipe Mutasi Inventaris</label>
+<div class="grid grid-cols-3 gap-1.5">
+<button class="py-2 px-1 text-center rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold" type="button">
+                  + Restock
+                </button>
+<button class="py-2 px-1 text-center rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high" type="button">
+                  ± Koreksi
+                </button>
+<button class="py-2 px-1 text-center rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high" type="button">
+                  - Cacat / BS
+                </button>
+</div>
+</div>
+<!-- Quantity Input Stepper -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant">Jumlah Perubahan Unit</label>
+<span class="font-label-caps text-label-caps text-secondary font-bold">Stok Akhir: 15 Pcs</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="w-12 h-12 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center font-headline-md text-headline-md select-none active:scale-95" type="button">
+                  -
+                </button>
+<div class="flex-1 relative">
+<input class="w-full text-center py-2.5 h-12 rounded-xl bg-surface-container-low text-on-surface font-price-display text-price-display focus:outline-none focus:ring-1 focus:ring-primary" type="number" value="12"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-caps text-label-caps text-on-surface-variant uppercase">Pcs</span>
+</div>
+<button class="w-12 h-12 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high flex items-center justify-center font-headline-md text-headline-md select-none active:scale-95" type="button">
+                  +
+                </button>
+</div>
+</div>
+<!-- Reason / Memo -->
+<div class="space-y-1.5">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant">Catatan Mutasi Logistik (Wajib)</label>
+<textarea class="w-full p-space-sm rounded-xl bg-surface-container-low text-on-surface text-body-md placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Contoh: Tambahan batch CMT kloter #2 dari vendor Bandung..." rows="2"></textarea>
+</div>
+<!-- Action Button -->
+<button class="w-full py-3 rounded-xl bg-secondary-container text-on-secondary-fixed font-label-lg text-label-lg font-bold shadow-sm hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-space-xs" type="submit">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Simpan Mutasi Stok</span>
+</button>
+</form>
+<!-- Stock Mutation Audit Trail -->
+<div class="pt-space-sm border-t border-outline-variant/30 space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Riwayat Log Mutasi Terakhir</span>
+<span class="font-label-caps text-label-caps text-secondary font-semibold">Audit Terverifikasi</span>
+</div>
+<div class="space-y-2">
+<!-- Log Entry 1 -->
+<div class="p-2 rounded-lg bg-surface-container-low flex items-start justify-between text-body-sm">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface font-bold uppercase">Pesanan Terpenuhi</span>
+<span class="text-on-surface-variant font-mono text-[11px]">#HS-9821</span>
+</div>
+<span class="text-on-surface-variant block text-[11px]">19 Feb 2025 • Oleh System Automatic</span>
+</div>
+<span class="font-mono font-bold text-error">-1 Pcs</span>
+</div>
+<!-- Log Entry 2 -->
+<div class="p-2 rounded-lg bg-surface-container-low flex items-start justify-between text-body-sm">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface font-bold uppercase">Restock Vendor CMT</span>
+<span class="text-on-surface-variant font-mono text-[11px]">Batch #1</span>
+</div>
+<span class="text-on-surface-variant block text-[11px]">15 Feb 2025 • Oleh root@hiistranger</span>
+</div>
+<span class="font-mono font-bold text-secondary">+20 Pcs</span>
+</div>
+<!-- Log Entry 3 -->
+<div class="p-2 rounded-lg bg-surface-container-low flex items-start justify-between text-body-sm">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface font-bold uppercase">Inisialisasi Master</span>
+<span class="text-on-surface-variant font-mono text-[11px]">Drop Launch</span>
+</div>
+<span class="text-on-surface-variant block text-[11px]">10 Feb 2025 • Oleh root@hiistranger</span>
+</div>
+<span class="font-mono font-bold text-secondary">+15 Pcs</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main><footer class="w-full border-t border-outline-variant/30 bg-surface-container-low py-space-md"><div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase"><div class="flex items-center gap-space-md"><span>© 2025 HII STRANGER APPAREL GROUP</span><span>•</span><span>INTERNAL CORE MANAGEMENT</span></div><div class="flex items-center gap-space-md"><span>SERVER STATUS: NORMAL</span><span class="font-mono">TZ: UTC+7</span></div></div></footer></div></body></html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;800&amp;family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-low":"#f5f3ef","on-surface-variant":"#464742","surface-container-high":"#eae8e4","surface-bright":"#fbf9f5","background":"#fbf9f5","tertiary-fixed":"#e7e2d9","on-primary-fixed-variant":"#474745","outline":"#767872","surface-container":"#efeeea","on-primary-fixed":"#1c1c1a","on-error":"#ffffff","inverse-primary":"#c9c6c4","secondary":"#536600","surface":"#fbf9f5","on-surface":"#1b1c1a","on-secondary-fixed":"#171e00","on-tertiary-container":"#87837c","primary-fixed":"#e5e2e0","primary-container":"#1c1c1a","on-secondary-container":"#576a00","secondary-fixed":"#c9f300","secondary-fixed-dim":"#b0d500","surface-tint":"#5f5e5d","on-tertiary-fixed":"#1d1c16","tertiary-fixed-dim":"#cbc6be","error-container":"#ffdad6","primary":"#000000","surface-container-lowest":"#ffffff","error":"#ba1a1a","on-tertiary":"#ffffff","tertiary-container":"#1d1c16","on-tertiary-fixed-variant":"#494740","outline-variant":"#c7c7c0","primary-fixed-dim":"#c9c6c4","inverse-surface":"#30312e","on-secondary-fixed-variant":"#3e4c00","surface-container-highest":"#e4e2de","surface-dim":"#dbdad6","on-error-container":"#93000a","tertiary":"#000000","inverse-on-surface":"#f2f0ed","secondary-container":"#c6f000","on-background":"#1b1c1a","on-primary":"#ffffff","surface-variant":"#e4e2de","on-primary-container":"#858382","on-secondary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-sm":"0.5rem","gutter":"0.75rem","margin-desktop":"3rem","space-xs":"0.25rem","space-lg":"1.25rem","space-md":"0.75rem","space-xl":"2rem","gutter-desktop":"1.5rem","margin":"1rem"},"fontFamily":{"headline-md":["Bricolage Grotesque"],"label-md":["Geist"],"price-display":["Bricolage Grotesque"],"display-lg-mobile":["Bricolage Grotesque"],"body-md":["Geist"],"display-lg":["Bricolage Grotesque"],"headline-lg":["Bricolage Grotesque"],"label-caps":["Geist"],"body-sm":["Geist"],"body-lg":["Geist"],"headline-lg-mobile":["Bricolage Grotesque"],"label-lg":["Geist"]},"fontSize":{"headline-md":["22px",{"lineHeight":"26px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"600"}],"price-display":["20px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"700"}],"display-lg-mobile":["34px",{"lineHeight":"38px","letterSpacing":"-0.025em","fontWeight":"800"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"52px","letterSpacing":"-0.03em","fontWeight":"800"}],"headline-lg":["32px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-caps":["11px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"700"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-lg-mobile":["26px",{"lineHeight":"30px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-60 bg-surface-container-low border-r border-outline-variant/40 flex flex-col justify-between z-40"><div class="flex flex-col"><div class="px-space-md py-space-lg border-b border-outline-variant/40"><span class="font-headline-md text-headline-md uppercase tracking-tight text-primary block">Hii Stranger</span><div class="flex items-center gap-space-xs mt-0.5"><span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">Admin Portal</span><span class="font-label-caps text-label-caps px-1.5 py-0.5 bg-surface-container-highest rounded text-on-surface-variant">v1.0</span></div></div><div class="px-space-md pt-space-md pb-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Manajemen Toko</span></div><nav class="flex flex-col gap-0.5 px-space-sm" data-active-classes="bg-primary text-on-primary font-bold"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ringkasan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">space_dashboard</span><span>Ringkasan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pesanan" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Pesanan</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="pembayaran" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">payments</span><span>Pembayaran</span></div><span class="px-1.5 py-0.5 bg-secondary-container text-on-secondary-container font-label-caps text-label-caps rounded-full">3 Baru</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="produk" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">checkroom</span><span>Produk</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="kategori" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">category</span><span>Kategori</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="banner" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">view_carousel</span><span>Banner</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ongkir" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">local_shipping</span><span>Ongkir</span></div></a><div class="my-space-xs border-t border-outline-variant/30"></div><div class="px-space-sm py-space-xs"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sistem &amp; Kontrol</span></div><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="analitik" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">analytics</span><span>Analitik</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Admin</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="maintenance" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">build_circle</span><span>Maintenance</span></div><span class="px-1.5 py-0.5 bg-surface-container-highest text-on-surface-variant font-label-caps text-label-caps rounded uppercase">Super</span></a></nav></div><div class="p-space-md border-t border-outline-variant/40 bg-surface-container"><div class="flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="inline-block w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-caps text-label-caps text-on-surface">ONLINE / LIVE</span></div><span class="font-label-caps text-label-caps text-on-surface-variant">REGION ID</span></div></div></aside><div class="pl-60 min-h-screen flex flex-col"><header class="fixed top-0 left-60 right-0 h-16 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/40 z-30 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md"><span class="hover:text-on-surface cursor-pointer">Admin</span><span class="material-symbols-outlined text-[14px]">chevron_right</span><span class="text-on-surface font-semibold">Console</span></div><div class="h-4 w-px bg-outline-variant/60 hidden sm:block"></div><div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low border border-outline-variant/40"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Sinkron Otomatis 10s</span></div></div><div class="flex items-center gap-space-md"><span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-primary text-on-primary uppercase tracking-widest">SUPERADMIN</span><div class="flex items-center gap-space-sm border-l border-outline-variant/40 pl-space-md"><div class="text-right hidden md:block"><span class="block font-label-md text-label-md text-on-surface leading-tight">HQ Controller</span><span class="block font-label-caps text-label-caps text-on-surface-variant">root@hiistranger.com</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><a class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-error transition-colors" data-path="login" href="#" title="Keluar dari Sistem"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></header><main class="w-full pt-16 bg-surface flex-1"><div class="flex flex-col w-full">
+<div class="px-space-md lg:px-space-xl py-space-lg space-y-space-lg">
+<!-- Top Metadata & Title Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase tracking-wider mb-1">
+<span>Katalog</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-primary font-bold">Kategori &amp; Taksonomi</span>
+</div>
+<div class="flex items-baseline gap-space-md">
+<h1 class="font-headline-lg text-headline-lg uppercase tracking-tight text-primary">MANAJEMEN KATEGORI</h1>
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant uppercase font-semibold">5 Taksonomi Terdaftar</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-2xl">
+          Kelola hierarki taksonomi pakaian streetwear, pengurutan display navigasi storefront, dan pengaturan dependensi integritas produk rujukan.
+        </p>
+</div>
+<!-- Quick Action / Metrics badge -->
+<div class="flex items-center gap-space-sm self-start md:self-auto bg-surface-container-low p-1.5 rounded-xl">
+<div class="px-3 py-1.5 rounded-lg bg-surface-container-lowest shadow-sm flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase">Katalog Live: 4 Kategori</span>
+</div>
+<div class="px-3 py-1.5 rounded-lg text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">inventory_2</span>
+<span class="font-label-caps text-label-caps uppercase">29 Produk Terkait</span>
+</div>
+</div>
+</div>
+<!-- Backend Integrity Protocol Alert Banner (HTTP 409 Rule) -->
+<div class="bg-surface-container-low rounded-xl p-space-md lg:p-space-lg shadow-sm relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-secondary-fixed/20 blur-2xl pointer-events-none"></div>
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container text-on-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px] text-secondary-fixed">shield_lock</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-tertiary-container text-secondary-fixed uppercase tracking-wider font-bold">Protokol Sistem 409 Conflict</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Aturan Integritas Data Toko</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mt-1 leading-relaxed">
+              Kategori yang memiliki relasi produk aktif <span class="font-bold underline decoration-error/40 underline-offset-2">tidak dapat dihapus permanen</span>. Permintaan delete pada taksonomi terhubung akan ditolak oleh API gateway dengan status <code class="font-mono text-body-sm font-semibold bg-surface-container-high px-1 py-0.5 rounded">409 CONFLICT</code> demi mencegah orphaned products dan riwayat nota pesanan rusak.
+            </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Solusi aman: Nonaktifkan status kategori untuk menyembunyikannya dari navigasi katalog pembeli tanpa merusak database.
+            </p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-space-xs pl-12 lg:pl-0">
+<button class="px-3 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5" onclick="document.getElementById('conflict-modal').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>Simulasi Peringatan 409</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Main Dual Section (Split Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Column: Form Tambah / Edit Kategori -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-md">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block">Panel Taksonomi</span>
+<h2 class="font-headline-md text-headline-md text-primary uppercase" id="form-mode-title">Tambah Kategori Baru</h2>
+</div>
+<span class="font-label-caps text-label-caps px-2 py-1 rounded bg-secondary-container text-on-secondary-container uppercase font-bold" id="form-mode-badge">Mode Buat</span>
+</div>
+<form class="flex flex-col gap-space-md" id="category-form" onsubmit="event.preventDefault();">
+<!-- Nama Kategori -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="cat-name">
+<span>Nama Kategori</span>
+<span class="font-label-caps text-label-caps text-error uppercase">*Wajib</span>
+</label>
+<input class="w-full h-12 px-space-md rounded-xl bg-surface-container-low text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-colors" id="cat-name" name="name" oninput="autoGenerateSlug(this.value)" placeholder="Contoh: Hoodie &amp; Fleece" required="" type="text"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Label nama yang tampil pada menu navigasi utama &amp; filter webstore.</span>
+</div>
+<!-- Slug Kategori -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="cat-slug">
+<span>Slug URL Otomatis</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">RFC-3986 Standard</span>
+</label>
+<div class="relative flex items-center">
+<span class="absolute left-3 font-mono text-body-sm text-on-surface-variant select-none">/collections/</span>
+<input class="w-full h-12 pl-28 pr-space-md rounded-xl bg-surface-container-low font-mono text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-colors" id="cat-slug" name="slug" placeholder="hoodie-fleece" required="" type="text"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hanya gunakan huruf kecil (a-z), angka (0-9), dan tanda strip (-).</span>
+</div>
+<!-- Deskripsi Singkat -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface" for="cat-desc">Deskripsi Koleksi / SEO Summary</label>
+<span class="font-label-caps text-label-caps text-on-surface-variant" id="char-counter">0 / 300</span>
+</div>
+<textarea class="w-full p-space-md rounded-xl bg-surface-container-low text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-colors resize-none" id="cat-desc" maxlength="300" name="description" oninput="document.getElementById('char-counter').innerText = `${this.value.length} / 300`" placeholder="Rangkuman konsep kurasi garmen ini untuk meta deskripsi SEO dan sub-heading kategori publik..." rows="3"></textarea>
+</div>
+<!-- Grid: Sort Order & Status Toggle -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md pt-space-xs">
+<!-- Pengurutan Tampilan (Sort Order) -->
+<div class="flex flex-col gap-1">
+<label class="font-label-md text-label-md text-on-surface" for="cat-order">Urutan Posisi (Sort Order)</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[18px]">format_list_numbered</span>
+<input class="w-full h-12 pl-10 pr-3 rounded-xl bg-surface-container-low font-headline-md text-headline-md text-on-surface focus:outline-none focus:bg-surface-container-lowest transition-colors" id="cat-order" max="99" min="1" name="sort_order" type="number" value="6"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Prioritas 1-10 pada navbar atas.</span>
+</div>
+<!-- Saklar Status Kategori -->
+<div class="flex flex-col justify-between p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Publikasikan</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="cat-status" onchange="toggleStatusLabel(this.checked)" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="mt-2">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container uppercase" id="status-label">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Aktif (Live Publik)
+                  </span>
+</div>
+</div>
+</div>
+<!-- Tombol Aksi Form -->
+<div class="flex items-center gap-space-sm pt-space-md">
+<button class="flex-1 h-12 px-space-md rounded-xl bg-secondary-container hover:bg-secondary-fixed text-on-secondary-fixed font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-sm" type="submit">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Simpan Kategori</span>
+</button>
+<button class="h-12 px-space-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg transition-colors flex items-center justify-center" onclick="resetCategoryForm()" type="button">
+<span>Reset</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Curated Editorial Preview Card -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-center gap-space-md">
+<div class="w-16 h-20 rounded-lg overflow-hidden shrink-0 bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Monochrome minimalist streetwear lookbook garment hanger showcasing textured oversized cotton hoodie with studio light and high contrast shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaOvT5NcmpzagSD2AnDaKknwWS3h5A5kmiHtNU2KOzdq-ZzanT0GeOWgcNHUfeq_C-kNu9MaFkMJbdgKxNXeWrTQ7jhVczPtdohMOwkNoTq0P8W6yZVPwWeX-5FexNGH7srTx7lEzCYmZuXzZWIiAfcUWxKFth1l4dbmRRgKHEdujhInZKfNmn96Dn3fTVLDZSDUx5pPMmyTqJ_pz3kR1WkKmewIcno8tS4mlv_4kGW4eo9T9UjjIFPA"/>
+</div>
+<div class="flex-1 min-w-0">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block">Standar Taksonomi Hii Stranger</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-0.5 line-clamp-2">
+              Koleksi drop berkala disusun berdasarkan siluet garmen independen. Setiap nama kategori harus singkat, tegas, dan merepresentasikan arsip drop rilis studio.
+            </p>
+</div>
+</div>
+</div>
+<!-- Right Column: Daftar & Tabel Kategori -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<!-- Filter Toolbar & Counter -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-sm">
+<!-- Search input -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-3 rounded-lg bg-surface-container-low text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-highest transition-colors" id="search-input" oninput="filterCategoryTable(this.value)" placeholder="Cari taksonomi atau slug..." type="text"/>
+</div>
+<!-- Status Filter Pills -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-lg shrink-0">
+<button class="filter-chip px-3 py-1 rounded-md font-label-caps text-label-caps uppercase font-bold bg-primary text-on-primary transition-all" onclick="setFilter('ALL', this)" type="button">
+              Semua (5)
+            </button>
+<button class="filter-chip px-3 py-1 rounded-md font-label-caps text-label-caps uppercase text-on-surface-variant hover:text-on-surface transition-all" onclick="setFilter('ACTIVE', this)" type="button">
+              Aktif (4)
+            </button>
+<button class="filter-chip px-3 py-1 rounded-md font-label-caps text-label-caps uppercase text-on-surface-variant hover:text-on-surface transition-all" onclick="setFilter('INACTIVE', this)" type="button">
+              Nonaktif (1)
+            </button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider w-14 text-center">Pos</th>
+<th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Taksonomi Kategori</th>
+<th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Slug URL</th>
+<th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Produk Terkait</th>
+<th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="py-3 px-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-right pr-6">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container" id="category-table-body">
+<!-- ROW 1: T-Shirt -->
+<tr class="hover:bg-surface-container-low/60 transition-colors category-row" data-name="t-shirt" data-products="12" data-status="ACTIVE">
+<td class="py-4 px-4 text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-surface-container-highest font-mono text-body-sm font-bold text-on-surface">1</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">T-Shirt</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Heavyweight cotton cut &amp; sew graphic t-shirts.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-mono text-body-sm text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">/t-shirt</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">checkroom</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">12 Produk Aktif</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      AKTIF
+                    </span>
+</td>
+<td class="py-4 px-4 text-right pr-6">
+<div class="inline-flex items-center justify-end gap-1">
+<!-- Edit -->
+<button class="p-1.5 rounded-lg text-on-surface hover:bg-surface-container-high transition-colors" onclick="editCategoryRow('T-Shirt', 't-shirt', 'Heavyweight cotton cut &amp; sew graphic t-shirts.', 1, true)" title="Edit Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<!-- Nonaktifkan -->
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" onclick="toggleCategoryState(this, 'T-Shirt')" title="Sembunyikan dari Publik" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+</button>
+<!-- Hapus (Disabled - 409 Constraint) -->
+<div class="relative group inline-block">
+<button class="p-1.5 rounded-lg text-outline-variant cursor-not-allowed opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+<!-- Tooltip -->
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover:block z-50 w-52 p-2 rounded-lg bg-inverse-surface text-inverse-on-surface text-left shadow-lg pointer-events-none">
+<span class="font-label-caps text-label-caps uppercase block text-secondary-fixed mb-0.5 font-bold">Kategori Terkunci (409)</span>
+<span class="font-body-sm text-body-sm block leading-tight text-white/90">Memiliki 12 produk terkait. Nonaktifkan kategori jika ingin menyembunyikan.</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- ROW 2: Outerwear & Hoodie -->
+<tr class="hover:bg-surface-container-low/60 transition-colors category-row" data-name="outerwear &amp; hoodie" data-products="8" data-status="ACTIVE">
+<td class="py-4 px-4 text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-surface-container-highest font-mono text-body-sm font-bold text-on-surface">2</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Outerwear &amp; Hoodie</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">French terry oversized jackets, zip hoodies, and bombers.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-mono text-body-sm text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">/outerwear</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">checkroom</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">8 Produk Aktif</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      AKTIF
+                    </span>
+</td>
+<td class="py-4 px-4 text-right pr-6">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface hover:bg-surface-container-high transition-colors" onclick="editCategoryRow('Outerwear &amp; Hoodie', 'outerwear', 'French terry oversized jackets, zip hoodies, and bombers.', 2, true)" title="Edit Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" onclick="toggleCategoryState(this, 'Outerwear &amp; Hoodie')" title="Sembunyikan dari Publik" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+</button>
+<!-- Hapus Disabled -->
+<div class="relative group inline-block">
+<button class="p-1.5 rounded-lg text-outline-variant cursor-not-allowed opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover:block z-50 w-52 p-2 rounded-lg bg-inverse-surface text-inverse-on-surface text-left shadow-lg pointer-events-none">
+<span class="font-label-caps text-label-caps uppercase block text-secondary-fixed mb-0.5 font-bold">Kategori Terkunci (409)</span>
+<span class="font-body-sm text-body-sm block leading-tight text-white/90">Memiliki 8 produk terkait. Nonaktifkan kategori bila ingin menyembunyikan.</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- ROW 3: Celana Kargo -->
+<tr class="hover:bg-surface-container-low/60 transition-colors category-row" data-name="celana kargo" data-products="6" data-status="ACTIVE">
+<td class="py-4 px-4 text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-surface-container-highest font-mono text-body-sm font-bold text-on-surface">3</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Celana Kargo</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Tactical utilitarian baggy bottom wear &amp; wide tracks.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-mono text-body-sm text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">/cargo-pants</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">checkroom</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">6 Produk Aktif</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      AKTIF
+                    </span>
+</td>
+<td class="py-4 px-4 text-right pr-6">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface hover:bg-surface-container-high transition-colors" onclick="editCategoryRow('Celana Kargo', 'cargo-pants', 'Tactical utilitarian baggy bottom wear &amp; wide tracks.', 3, true)" title="Edit Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" onclick="toggleCategoryState(this, 'Celana Kargo')" title="Sembunyikan dari Publik" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+</button>
+<div class="relative group inline-block">
+<button class="p-1.5 rounded-lg text-outline-variant cursor-not-allowed opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover:block z-50 w-52 p-2 rounded-lg bg-inverse-surface text-inverse-on-surface text-left shadow-lg pointer-events-none">
+<span class="font-label-caps text-label-caps uppercase block text-secondary-fixed mb-0.5 font-bold">Kategori Terkunci (409)</span>
+<span class="font-body-sm text-body-sm block leading-tight text-white/90">Memiliki 6 produk terkait. Nonaktifkan kategori bila ingin menyembunyikan.</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- ROW 4: Aksesoris & Topi -->
+<tr class="hover:bg-surface-container-low/60 transition-colors category-row" data-name="aksesoris &amp; topi" data-products="3" data-status="ACTIVE">
+<td class="py-4 px-4 text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-surface-container-highest font-mono text-body-sm font-bold text-on-surface">4</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Aksesoris &amp; Topi</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Structured 6-panel caps, tote bags, and silver jewelry.</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-mono text-body-sm text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">/accessories</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">checkroom</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">3 Produk Aktif</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      AKTIF
+                    </span>
+</td>
+<td class="py-4 px-4 text-right pr-6">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface hover:bg-surface-container-high transition-colors" onclick="editCategoryRow('Aksesoris &amp; Topi', 'accessories', 'Structured 6-panel caps, tote bags, and silver jewelry.', 4, true)" title="Edit Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" onclick="toggleCategoryState(this, 'Aksesoris &amp; Topi')" title="Sembunyikan dari Publik" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+</button>
+<div class="relative group inline-block">
+<button class="p-1.5 rounded-lg text-outline-variant cursor-not-allowed opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+<div class="absolute right-0 bottom-full mb-1 hidden group-hover:block z-50 w-52 p-2 rounded-lg bg-inverse-surface text-inverse-on-surface text-left shadow-lg pointer-events-none">
+<span class="font-label-caps text-label-caps uppercase block text-secondary-fixed mb-0.5 font-bold">Kategori Terkunci (409)</span>
+<span class="font-body-sm text-body-sm block leading-tight text-white/90">Memiliki 3 produk terkait. Nonaktifkan kategori bila ingin menyembunyikan.</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- ROW 5: Footwear Archive (0 Produk, Nonaktif, Aman Dihapus 204) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors category-row bg-surface-container-low/30" data-name="footwear archive" data-products="0" data-status="INACTIVE">
+<td class="py-4 px-4 text-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-surface-container-high font-mono text-body-sm font-bold text-on-surface-variant">5</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface-variant font-bold line-through">Footwear Archive</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Koleksi sepatu boot sol tebal drop musim lalu (Arsip nonaktif).</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="font-mono text-body-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded opacity-70">/footwear</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-50">block</span>
+<span class="font-label-md text-label-md text-on-surface-variant">0 Produk (Kosong)</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                      NONAKTIF
+                    </span>
+</td>
+<td class="py-4 px-4 text-right pr-6">
+<div class="inline-flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-lg text-on-surface hover:bg-surface-container-high transition-colors" onclick="editCategoryRow('Footwear Archive', 'footwear', 'Koleksi sepatu boot sol tebal drop musim lalu (Arsip nonaktif).', 5, false)" title="Edit Kategori" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-secondary-container hover:bg-secondary-container/20 transition-colors" onclick="toggleCategoryState(this, 'Footwear Archive')" title="Aktifkan ke Katalog Publik" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">visibility</span>
+</button>
+<!-- Hapus Aman (0 Relasi -> Status Aman 204 No Content) -->
+<button class="p-1.5 rounded-lg text-error hover:bg-error-container/40 transition-colors" onclick="confirmDeleteSafe('Footwear Archive', this)" title="Hapus Taksonomi Permanen (0 Relasi)" type="button">
+<span class="material-symbols-outlined text-[18px]">delete_forever</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty filter feedback (hidden by default) -->
+<div class="hidden p-space-xl text-center" id="no-result">
+<span class="material-symbols-outlined text-[36px] text-on-surface-variant">folder_off</span>
+<p class="font-headline-md text-headline-md text-on-surface mt-2 uppercase">Kategori Tidak Ditemukan</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Coba sesuaikan kata kunci pencarian atau ubah tab status filter.</p>
+</div>
+<!-- Table Bottom Bar -->
+<div class="p-space-md bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase">
+<span>Menampilkan 5 dari 5 entitas taksonomi terindeks</span>
+<div class="flex items-center gap-space-md">
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                Public Sync: Terkoneksi Storefront
+              </span>
+</div>
+</div>
+</div>
+<!-- Callout Banner: Edukasi Integritas Relasi Produk -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-start gap-space-md shadow-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 text-on-surface">
+<span class="material-symbols-outlined text-[18px]">sync_problem</span>
+</div>
+<div class="flex-1">
+<span class="font-label-caps text-label-caps text-on-surface font-bold uppercase tracking-wider block">Catatan Operasional Storefront</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-relaxed">
+              Integritas Data Relasi: Kategori dengan produk terhubung dilindungi dari penghapusan fatal. Gunakan toggle status <strong>Nonaktif</strong> untuk mengarsipkan kategori dari katalog publik tanpa merusak riwayat transaksi pesanan lama.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Dialog / Modal Simulasi 409 Conflict Visual Preview -->
+<div class="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm hidden flex items-center justify-center p-4" id="conflict-modal">
+<div class="bg-surface-container-lowest max-w-lg w-full rounded-2xl p-space-lg shadow-2xl relative">
+<div class="flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px] text-error">warning</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps px-2 py-0.5 rounded bg-error-container text-on-error-container font-mono uppercase font-bold">HTTP 409 CONFLICT</span>
+<button class="text-on-surface-variant hover:text-on-surface" onclick="document.getElementById('conflict-modal').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mt-1">Penghapusan Kategori Ditolak</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 leading-relaxed">
+            Sistem mendeteksi bahwa kategori <strong class="text-on-surface">"T-Shirt"</strong> masih digunakan oleh <strong class="text-on-surface">12 produk aktif</strong> di katalog database.
+          </p>
+<!-- Raw Code Response Box -->
+<div class="mt-3 p-3 rounded-lg bg-surface-container font-mono text-body-sm text-on-surface space-y-1">
+<div class="text-error font-semibold">// Backend Validation Exception</div>
+<div>STATUS: <span class="text-error">409 Conflict</span></div>
+<div>CODE: <span class="text-on-surface">CATEGORY_HAS_ACTIVE_RELATIONS</span></div>
+<div class="text-on-surface-variant">MESSAGE: "Cannot delete category with 12 active SKU references."</div>
+</div>
+<div class="mt-4 p-3 rounded-xl bg-surface-container-low">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface font-bold block mb-1">Aksi yang Disarankan:</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Alihkan kategori ke status <strong>"Nonaktif"</strong>. Kategori ini akan langsung hilang dari filter storefront dan menu navigasi pengunjung tanpa menghapus rekaman produk.
+            </p>
+</div>
+<div class="flex items-center justify-end gap-space-sm mt-space-lg">
+<button class="px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md" onclick="document.getElementById('conflict-modal').classList.add('hidden')" type="button">
+              Tutup Penjelasan
+            </button>
+<button class="px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold" onclick="document.getElementById('conflict-modal').classList.add('hidden')" type="button">
+              Mengerti Protokol
+            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Toast Notification Template -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-3" id="toast">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]" id="toast-icon">check_circle</span>
+<span class="font-label-md text-label-md" id="toast-message">Operasi kategori berhasil.</span>
+</div>
+<script>
+    function autoGenerateSlug(name) {
+      const slugInput = document.getElementById('cat-slug');
+      if (!slugInput.dataset.manualEdited) {
+        const slug = name
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/[\s_-]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+        slugInput.value = slug;
+      }
+    }
+
+    document.getElementById('cat-slug').addEventListener('input', function() {
+      this.dataset.manualEdited = "true";
+    });
+
+    function toggleStatusLabel(isActive) {
+      const label = document.getElementById('status-label');
+      if (isActive) {
+        label.className = "inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container uppercase";
+        label.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Aktif (Live Publik)';
+      } else {
+        label.className = "inline-flex items-center gap-1 font-label-caps text-label-caps font-bold px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant uppercase";
+        label.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Nonaktif (Disembunyikan)';
+      }
+    }
+
+    function editCategoryRow(name, slug, desc, order, isActive) {
+      document.getElementById('cat-name').value = name;
+      document.getElementById('cat-slug').value = slug;
+      document.getElementById('cat-slug').dataset.manualEdited = "true";
+      document.getElementById('cat-desc').value = desc;
+      document.getElementById('cat-order').value = order;
+      document.getElementById('char-counter').innerText = `${desc.length} / 300`;
+      
+      const statusCheckbox = document.getElementById('cat-status');
+      statusCheckbox.checked = isActive;
+      toggleStatusLabel(isActive);
+
+      document.getElementById('form-mode-title').innerText = 'Edit Kategori: ' + name;
+      const modeBadge = document.getElementById('form-mode-badge');
+      modeBadge.innerText = 'Mode Sunting';
+      modeBadge.className = 'font-label-caps text-label-caps px-2 py-1 rounded bg-surface-container-highest text-on-surface uppercase font-bold';
+
+      showToast(`Memuat data "${name}" ke dalam panel formulir.`);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function resetCategoryForm() {
+      document.getElementById('category-form').reset();
+      delete document.getElementById('cat-slug').dataset.manualEdited;
+      document.getElementById('char-counter').innerText = '0 / 300';
+      toggleStatusLabel(true);
+
+      document.getElementById('form-mode-title').innerText = 'Tambah Kategori Baru';
+      const modeBadge = document.getElementById('form-mode-badge');
+      modeBadge.innerText = 'Mode Buat';
+      modeBadge.className = 'font-label-caps text-label-caps px-2 py-1 rounded bg-secondary-container text-on-secondary-container uppercase font-bold';
+
+      showToast('Formulir taksonomi dikembalikan ke kondisi default.');
+    }
+
+    function toggleCategoryState(btn, catName) {
+      showToast(`Status visibilitas untuk "${catName}" telah dialihkan.`);
+    }
+
+    function confirmDeleteSafe(catName, btn) {
+      if (confirm(`Hapus permanen kategori "${catName}"? Karena kategori ini memiliki 0 produk terhubung, sistem mengizinkan penghapusan aman (204 No Content).`)) {
+        const row = btn.closest('tr');
+        row.style.opacity = '0.3';
+        setTimeout(() => {
+          row.remove();
+          showToast(`Kategori "${catName}" berhasil dihapus dari sistem database.`);
+        }, 300);
+      }
+    }
+
+    let activeFilterStatus = 'ALL';
+    function setFilter(status, btnElement) {
+      activeFilterStatus = status;
+      document.querySelectorAll('.filter-chip').forEach(b => {
+        b.className = 'filter-chip px-3 py-1 rounded-md font-label-caps text-label-caps uppercase text-on-surface-variant hover:text-on-surface transition-all';
+      });
+      btnElement.className = 'filter-chip px-3 py-1 rounded-md font-label-caps text-label-caps uppercase font-bold bg-primary text-on-primary transition-all';
+      applyFilters();
+    }
+
+    function filterCategoryTable(query) {
+      applyFilters(query);
+    }
+
+    function applyFilters(query) {
+      const q = (query !== undefined ? query : document.getElementById('search-input').value).toLowerCase().trim();
+      const rows = document.querySelectorAll('.category-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowStatus = row.dataset.status;
+        const rowName = row.dataset.name;
+        const matchesStatus = (activeFilterStatus === 'ALL') || (rowStatus === activeFilterStatus);
+        const matchesQuery = rowName.includes(q);
+
+        if (matchesStatus && matchesQuery) {
+          row.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+
+      const noResult = document.getElementById('no-result');
+      if (visibleCount === 0) {
+        noResult.classList.remove('hidden');
+      } else {
+        noResult.classList.add('hidden');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
+    }
+  </script>
+</div></main><footer class="w-full border-t border-outline-variant/30 bg-surface-container-low py-space-md"><div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase"><div class="flex items-center gap-space-md"><span>© 2025 HII STRANGER APPAREL GROUP</span><span>•</span><span>INTERNAL CORE MANAGEMENT</span></div><div class="flex items-center gap-space-md"><span>SERVER STATUS: NORMAL</span><span class="font-mono">TZ: UTC+7</span></div></div></footer></div></body></html>
