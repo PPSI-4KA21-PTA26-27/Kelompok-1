@@ -3,8 +3,8 @@
 Urusan HTTP saja: baca request, validasi input, panggil service, kirim respons. Tidak ada aturan bisnis atau SQL di sini.
 
 - [x] Health check
-- [ ] auth: daftar, masuk, lupa kata sandi, reset
-- [ ] akun: profil pelanggan, ubah alamat
+- [x] auth: daftar, masuk, lupa kata sandi, reset
+- [x] akun: profil pelanggan, ganti kata sandi. Alamat tidak ada di server: desain menyimpannya di browser
 - [ ] katalog: beranda, list produk, detail produk, kategori, banner
 - [ ] keranjang
 - [ ] checkout & order: buat order, daftar pesanan saya, detail pesanan

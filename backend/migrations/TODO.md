@@ -3,8 +3,8 @@
 File SQL skema database, berpasangan `.up.sql` dan `.down.sql`. Jangan edit migrasi yang sudah dijalankan; tambah file baru.
 
 - [x] 000001 users
-- [ ] users: tambah nama lengkap, no. HP/WhatsApp, role (customer/admin)
-- [ ] password_reset_tokens (lupa kata sandi)
+- [x] 000002 users: tambah nama lengkap, no. HP/WhatsApp, role (username jadi boleh kosong, tidak dihapus)
+- [x] 000003 password_reset_tokens (lupa kata sandi)
 - [ ] categories
 - [ ] products (nama, deskripsi, harga, pre-order + estimasi hari, status aktif)
 - [ ] product_variants (warna, ukuran, SKU, stok)

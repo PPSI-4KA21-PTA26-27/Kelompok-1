@@ -2,7 +2,7 @@
 
 Struct data/domain yang mewakili tabel database dan bentuk request/response.
 
-- [ ] User, Role
+- [x] User, Role
 - [ ] Category, Product, ProductVariant, Banner
 - [ ] StockMovement (tipe: restock / koreksi / cacat)
 - [ ] Cart, CartItem

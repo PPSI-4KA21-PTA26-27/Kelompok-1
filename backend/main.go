@@ -20,9 +20,14 @@ func main() {
 
 	cfg := config.Load()
 
+	handler, err := routes.New(cfg)
+	if err != nil {
+		log.Fatalf("gagal menyiapkan route: %v", err)
+	}
+
 	srv := &http.Server{
 		Addr:              ":" + cfg.Port,
-		Handler:           routes.New(),
+		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      15 * time.Second,

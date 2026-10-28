@@ -2,7 +2,7 @@
 
 Aturan bisnis aplikasi. Memanggil repository, dipanggil handlers.
 
-- [ ] AuthService: register, login, JWT, lupa/reset kata sandi, hash password
+- [x] AuthService: register, login, JWT, lupa/reset kata sandi, hash password
 - [ ] CatalogService: produk aktif, varian, label pre-order
 - [ ] CartService: tambah/ubah/hapus item, cek stok
 - [ ] OrderService: hitung subtotal + ongkir, generate kode unik (+Rp1 s/d +Rp999) di server, buat order, ubah status + catat log

@@ -23,3 +23,12 @@ func JSON(w http.ResponseWriter, status int, data any) {
 func Error(w http.ResponseWriter, status int, message string) {
 	write(w, status, map[string]string{"error": message})
 }
+
+// ValidationError mengirim error per field dengan format
+// {"error": "...", "fields": {"email": "..."}} supaya frontend bisa menandai input yang salah.
+func ValidationError(w http.ResponseWriter, fields map[string]string) {
+	write(w, http.StatusUnprocessableEntity, map[string]any{
+		"error":  "data yang dikirim tidak valid",
+		"fields": fields,
+	})
+}
