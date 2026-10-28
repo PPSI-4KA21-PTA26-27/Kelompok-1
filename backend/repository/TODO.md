@@ -2,8 +2,8 @@
 
 Akses database saja: query SQL (parameterized) lewat `db.DB`. Tidak ada aturan bisnis di sini.
 
-- [ ] UserRepository (create, cari by email/username/id, update profil, update password)
-- [ ] ResetTokenRepository
+- [x] UserRepository (create, cari by email/id, update profil, update password)
+- [x] ResetTokenRepository
 - [ ] CategoryRepository, ProductRepository (list + filter + pagination, detail + varian), BannerRepository
 - [ ] StockRepository (kurangi/tambah stok + catat mutasi dalam satu transaksi)
 - [ ] CartRepository

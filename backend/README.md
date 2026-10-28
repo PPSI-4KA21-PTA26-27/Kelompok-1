@@ -185,7 +185,53 @@ Urutan:
 2. Buat halaman per tahap, **setelah** endpoint backend tahap itu jalan. Frontend tidak boleh memakai endpoint karangan atau data palsu.
 3. Urutan halaman mengikuti tahap backend: auth -> beranda/katalog/detail -> keranjang -> checkout/pesanan -> pembayaran QRIS -> admin -> maintenance -> drop/VIP.
 
+## Tahap 1 — cara menjalankan
+
+Tambahkan ke `backend/.env` (server tidak mau jalan kalau `JWT_SECRET` kosong atau kurang dari 32 karakter):
+
+```
+JWT_SECRET=<isi acak, minimal 32 karakter>
+JWT_TTL_MINUTES=15
+FRONTEND_URL=http://localhost:3000
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=Hii Stranger <noreply@domain-kamu.com>
+```
+
+Buat `JWT_SECRET` acak (PowerShell):
+
+```powershell
+$b = New-Object byte[] 48; [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)
+```
+
+Lalu dari folder `backend`: `go run ./cmd/migrate` (menjalankan migrasi 000002 dan 000003), kemudian `go run .`.
+
+| Method + path | Akses | Fungsi |
+| --- | --- | --- |
+| `POST /api/v1/auth/register` | publik | Daftar, langsung dapat token |
+| `POST /api/v1/auth/login` | publik | Masuk, dapat token |
+| `POST /api/v1/auth/forgot-password` | publik | Kirim tautan reset ke email (selalu 200) |
+| `POST /api/v1/auth/reset-password` | publik | Sandi baru dengan token dari email |
+| `GET /api/v1/me` | login | Data akun sendiri |
+| `PUT /api/v1/me` | login | Ubah nama dan nomor HP |
+| `PUT /api/v1/me/password` | login | Ganti kata sandi |
+
+Token dikirim di header `Authorization: Bearer <token>` dan berlaku 15 menit. Keluar akun cukup dengan membuang token di klien (token disimpan di memori, sesuai desain).
+
+Akun admin pertama: daftar seperti biasa, lalu ubah rolenya lewat SQL (pendaftaran publik tidak bisa membuat admin):
+
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'email-kamu@contoh.com';
+```
+
+Email reset kata sandi memakai SMTP bawaan Go dan butuh port STARTTLS (587). Kalau `SMTP_*` kosong, server tetap jalan tapi email reset tidak terkirim (ada peringatan di log).
+
 ## Status
 
-Sudah ada: health check, Logger, Recover, koneksi PostgreSQL, runner migrasi, migrasi `users`.
-Belum ada: semua fitur tahap 1–8.
+Sudah ada: health check, Logger, Recover, koneksi PostgreSQL, runner migrasi, tahap 1 (auth & akun).
+Belum ada: tahap 2–8, CORS, dan pengiriman email SMTP yang sudah dites sungguhan.
+Tahap 1 sudah dites langsung ke server lokal + PostgreSQL (21 skenario lolos) selain unit test, build, dan vet. Rincian perubahan kode ada di `TODO.md` bagian "Riwayat perubahan tahap 1".
+
+Perhatian: `PORT` di `.env` harus angka saja (`PORT=8080`), bukan alamat lengkap.
