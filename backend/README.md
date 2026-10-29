@@ -228,6 +228,399 @@ UPDATE users SET role = 'admin' WHERE email = 'email-kamu@contoh.com';
 
 Email reset kata sandi memakai SMTP bawaan Go dan butuh port STARTTLS (587). Kalau `SMTP_*` kosong, server tetap jalan tapi email reset tidak terkirim (ada peringatan di log).
 
+## Daftar File yang Dibuat pada Setiap Tahap
+
+Bagian ini merinci file yang perlu dibuat **ketika mulai mengerjakan tahap tersebut**. Daftar mengikuti cakupan dan urutan pada dokumen ini. Nama file adalah usulan penamaan yang jelas, bukan klaim bahwa semua file tersebut sudah ada di repository. Sebelum membuat file, cek struktur aktual dan gunakan file yang sudah tersedia. Untuk migrasi, selalu lanjutkan dari nomor terakhir yang benar-benar ada.
+
+### Tahap 0 — Fondasi
+
+Buat atau lengkapi file berikut sesuai kondisi proyek:
+
+```text
+backend/
+├── config/
+│   └── config.go
+├── response/
+│   └── response.go
+├── middleware/
+│   ├── cors.go
+│   └── request_size.go
+├── db/
+│   └── postgres.go
+├── routes/
+│   └── routes.go
+└── main.go
+```
+
+- `config/config.go` — membaca dan memvalidasi konfigurasi environment, termasuk `JWT_SECRET`, masa berlaku token, dan origin CORS sesuai kebutuhan tahap.
+- `response/response.go` — format JSON sukses/error dan error validasi per field.
+- `middleware/cors.go` — konfigurasi CORS untuk origin frontend.
+- `middleware/request_size.go` — membatasi ukuran request body.
+- `db/postgres.go` — koneksi dan pengaturan pool PostgreSQL.
+- `routes/routes.go` — registrasi route dasar dan health check jika belum tersedia.
+- `main.go` — merangkai konfigurasi, koneksi database, middleware, route, dan server jika entry point belum tersedia.
+
+File yang sudah ada seperti logger, recover, koneksi database, route health check, atau entry point tidak perlu dibuat ulang.
+
+### Tahap 1 — Auth & akun
+
+Buat atau lengkapi file berikut:
+
+```text
+backend/
+├── migrations/
+│   ├── 000002_create_users.up.sql
+│   ├── 000002_create_users.down.sql
+│   ├── 000003_create_password_reset_tokens.up.sql
+│   └── 000003_create_password_reset_tokens.down.sql
+├── models/
+│   ├── user.go
+│   └── password_reset_token.go
+├── repository/
+│   ├── user_repository.go
+│   └── password_reset_token_repository.go
+├── services/
+│   ├── auth_service.go
+│   └── account_service.go
+├── middleware/
+│   ├── auth.go
+│   ├── require_admin.go
+│   └── rate_limit.go
+├── handlers/
+│   ├── auth_handler.go
+│   └── account_handler.go
+└── routes/
+    ├── auth_routes.go
+    └── account_routes.go
+```
+
+- Migrasi `users` — menyimpan data akun, nama lengkap, nomor HP/WA, role, dan password hash sesuai desain.
+- Migrasi `password_reset_tokens` — menyimpan token reset kata sandi.
+- `models/user.go` — struct `User` dan role yang diperlukan; jangan pernah mengirim `password_hash` ke API.
+- `models/password_reset_token.go` — struct token reset.
+- `repository/user_repository.go` — query database untuk pengguna.
+- `repository/password_reset_token_repository.go` — query database untuk token reset.
+- `services/auth_service.go` — registrasi, login, dan alur lupa/reset kata sandi.
+- `services/account_service.go` — membaca dan memperbarui data akun serta mengganti kata sandi.
+- `middleware/auth.go` — validasi token JWT.
+- `middleware/require_admin.go` — membatasi akses khusus admin.
+- `middleware/rate_limit.go` — membatasi percobaan login, registrasi, dan lupa kata sandi.
+- `handlers/auth_handler.go` — handler register, login, forgot password, dan reset password.
+- `handlers/account_handler.go` — handler `/me`, pembaruan profil, dan penggantian kata sandi.
+- `routes/auth_routes.go` — route `/auth/*`.
+- `routes/account_routes.go` — route `/me`.
+
+Dokumen sumber menyebut migrasi tahap 1 bernomor `000002` dan `000003`. Gunakan nomor tersebut hanya jika memang belum terpakai; jangan menimpa migrasi yang sudah ada.
+
+Dependency yang dipasang saat mulai tahap 1:
+
+```powershell
+go get github.com/golang-jwt/jwt/v5
+go get golang.org/x/crypto
+```
+
+Konfigurasi `.env` tahap 1 mengikuti bagian **Tahap 1 — cara menjalankan** pada dokumen ini.
+
+### Tahap 2 — Katalog
+
+Buat atau lengkapi file berikut:
+
+```text
+backend/
+├── migrations/
+│   ├── [nomor berikutnya]_create_categories.up.sql
+│   ├── [nomor berikutnya]_create_categories.down.sql
+│   ├── [nomor berikutnya]_create_products.up.sql
+│   ├── [nomor berikutnya]_create_products.down.sql
+│   ├── [nomor berikutnya]_create_product_variants.up.sql
+│   ├── [nomor berikutnya]_create_product_variants.down.sql
+│   ├── [nomor berikutnya]_create_banners.up.sql
+│   └── [nomor berikutnya]_create_banners.down.sql
+├── models/
+│   ├── category.go
+│   ├── product.go
+│   ├── product_variant.go
+│   └── banner.go
+├── repository/
+│   ├── category_repository.go
+│   ├── product_repository.go
+│   └── banner_repository.go
+├── services/
+│   └── catalog_service.go
+├── handlers/
+│   ├── category_handler.go
+│   ├── product_handler.go
+│   └── banner_handler.go
+├── routes/
+│   └── catalog_routes.go
+└── uploads/
+    └── .gitkeep
+```
+
+- Migrasi membuat tabel kategori, produk, varian produk, dan banner.
+- `models/` berisi struct untuk kategori, produk, varian, dan banner.
+- `repository/` menangani query daftar produk dengan filter/pagination, detail produk beserta varian, kategori, dan banner.
+- `services/catalog_service.go` menangani aturan katalog, termasuk label pre-order.
+- `handlers/` menangani endpoint katalog publik.
+- `routes/catalog_routes.go` mendaftarkan `/products`, `/categories`, dan `/banners`.
+- `uploads/.gitkeep` hanya diperlukan jika folder upload kosong dan perlu dipertahankan di Git. File gambar yang diunggah tidak di-commit.
+
+Nama file migrasi di atas merupakan nama dasar. Ganti `[nomor berikutnya]` dengan nomor unik berurutan sesuai format migrasi proyek. Jangan menyalin teks placeholder itu secara literal.
+
+### Tahap 3 — Keranjang
+
+Buat atau lengkapi file berikut:
+
+```text
+backend/
+├── migrations/
+│   ├── [nomor berikutnya]_create_carts.up.sql
+│   ├── [nomor berikutnya]_create_carts.down.sql
+│   ├── [nomor berikutnya]_create_cart_items.up.sql
+│   └── [nomor berikutnya]_create_cart_items.down.sql
+├── models/
+│   ├── cart.go
+│   └── cart_item.go
+├── repository/
+│   └── cart_repository.go
+├── services/
+│   └── cart_service.go
+├── handlers/
+│   └── cart_handler.go
+└── routes/
+    └── cart_routes.go
+```
+
+- Migrasi membuat tabel `carts` dan `cart_items`.
+- `models/cart.go` dan `models/cart_item.go` menyimpan bentuk data keranjang.
+- `repository/cart_repository.go` menangani query keranjang.
+- `services/cart_service.go` menerapkan aturan keranjang dan pengecekan stok.
+- `handlers/cart_handler.go` menangani request keranjang.
+- `routes/cart_routes.go` mendaftarkan `/cart` dengan akses login.
+
+Gunakan nomor migrasi unik berikutnya; jangan gunakan placeholder sebagai nomor migrasi sungguhan.
+
+### Tahap 4 — Checkout & order
+
+Buat atau lengkapi file berikut:
+
+```text
+backend/
+├── migrations/
+│   ├── [nomor berikutnya]_create_shipping_rates.up.sql
+│   ├── [nomor berikutnya]_create_shipping_rates.down.sql
+│   ├── [nomor berikutnya]_create_stock_movements.up.sql
+│   ├── [nomor berikutnya]_create_stock_movements.down.sql
+│   ├── [nomor berikutnya]_create_orders.up.sql
+│   ├── [nomor berikutnya]_create_orders.down.sql
+│   ├── [nomor berikutnya]_create_order_items.up.sql
+│   ├── [nomor berikutnya]_create_order_items.down.sql
+│   ├── [nomor berikutnya]_create_order_status_logs.up.sql
+│   └── [nomor berikutnya]_create_order_status_logs.down.sql
+├── models/
+│   ├── shipping_rate.go
+│   ├── stock_movement.go
+│   ├── order.go
+│   ├── order_item.go
+│   └── order_status_log.go
+├── repository/
+│   ├── shipping_rate_repository.go
+│   ├── stock_repository.go
+│   └── order_repository.go
+├── services/
+│   ├── shipping_service.go
+│   ├── stock_service.go
+│   └── order_service.go
+├── handlers/
+│   └── order_handler.go
+└── routes/
+    └── order_routes.go
+```
+
+- Migrasi menambahkan skema ongkir, mutasi stok, pesanan, item pesanan, dan log status pesanan.
+- `repository/order_repository.go` harus membuat order dan item order dalam satu transaksi.
+- `services/shipping_service.go` menangani ongkir.
+- `services/stock_service.go` menangani pengecekan dan perubahan stok.
+- `services/order_service.go` menghitung subtotal dan ongkir, membuat kode unik tambahan Rp1–Rp999 di server, dan mengikuti aturan pengiriman pre-order satu paket.
+- `handlers/order_handler.go` menangani checkout dan endpoint pesanan.
+- `routes/order_routes.go` mendaftarkan endpoint `/orders`.
+
+Buat migrasi memakai nomor berikutnya yang belum terpakai.
+
+### Tahap 5 — Pembayaran QRIS
+
+Buat atau lengkapi file berikut:
+
+```text
+backend/
+├── config/
+│   └── qris.go
+├── migrations/
+│   ├── [nomor berikutnya]_create_payments.up.sql
+│   ├── [nomor berikutnya]_create_payments.down.sql
+│   ├── [nomor berikutnya]_create_settings.up.sql
+│   └── [nomor berikutnya]_create_settings.down.sql
+├── models/
+│   ├── payment.go
+│   └── setting.go
+├── repository/
+│   ├── payment_repository.go
+│   └── setting_repository.go
+├── services/
+│   └── payment_service.go
+├── handlers/
+│   └── payment_handler.go
+└── routes/
+    └── payment_routes.go
+```
+
+- `config/qris.go` — konfigurasi data QRIS dan nama merchant.
+- Migrasi — tabel pembayaran dan pengaturan, termasuk pengaturan subsidi QRIS Rp10.000.
+- `models/payment.go` dan `models/setting.go` — bentuk data pembayaran dan pengaturan.
+- Repository — query pembayaran dan pengaturan.
+- `services/payment_service.go` — aturan pembayaran dan subsidi QRIS.
+- `handlers/payment_handler.go` — request pembayaran dan unggah bukti bayar.
+- `routes/payment_routes.go` — route `/orders/{id}/payment`.
+- Bukti bayar disimpan di folder `uploads/` saat aplikasi berjalan; validasi tipe dan ukuran file.
+
+### Tahap 6 — Admin
+
+Buat atau lengkapi file berikut sesuai urutan pengerjaan admin:
+
+```text
+backend/
+├── handlers/
+│   ├── admin_order_handler.go
+│   ├── admin_payment_handler.go
+│   ├── admin_product_handler.go
+│   ├── admin_category_handler.go
+│   ├── admin_banner_handler.go
+│   ├── admin_shipping_handler.go
+│   ├── admin_setting_handler.go
+│   └── admin_analytics_handler.go
+├── services/
+│   ├── admin_order_service.go
+│   ├── admin_payment_service.go
+│   ├── admin_product_service.go
+│   ├── admin_category_service.go
+│   ├── admin_banner_service.go
+│   ├── admin_shipping_service.go
+│   ├── admin_setting_service.go
+│   └── admin_analytics_service.go
+└── routes/
+    └── admin_routes.go
+```
+
+Repository dan model baru **tidak otomatis wajib dibuat**. Periksa repository/model dari tahap sebelumnya dan tambahkan hanya jika operasi admin membutuhkan query atau bentuk data baru.
+
+Urutan implementasi:
+1. Pesanan dan verifikasi pembayaran; catat perubahan di `order_status_logs`.
+2. Produk dan stok; wajib ada catatan mutasi dan stok tidak boleh minus.
+3. Kategori dan banner.
+4. Ongkir per kurir dan provinsi.
+5. Toggle subsidi QRIS.
+6. Ringkasan dan analitik, setelah data fitur sebelumnya tersedia.
+
+Semua endpoint admin berada di `/admin/*` dan harus dilindungi `RequireAdmin`. Migrasi baru hanya diperlukan jika skema database memang belum memiliki kolom/tabel yang dibutuhkan.
+
+### Tahap 7 — Maintenance storefront
+
+Buat atau lengkapi file berikut:
+
+```text
+backend/
+├── migrations/
+│   ├── [nomor berikutnya]_create_maintenance_settings.up.sql
+│   ├── [nomor berikutnya]_create_maintenance_settings.down.sql
+│   ├── [nomor berikutnya]_create_maintenance_subscribers.up.sql
+│   └── [nomor berikutnya]_create_maintenance_subscribers.down.sql
+├── models/
+│   └── maintenance_subscriber.go
+├── repository/
+│   ├── maintenance_repository.go
+│   └── maintenance_subscriber_repository.go
+├── services/
+│   └── maintenance_service.go
+├── middleware/
+│   └── maintenance.go
+├── handlers/
+│   ├── store_status_handler.go
+│   └── admin_maintenance_handler.go
+└── routes/
+    └── maintenance_routes.go
+```
+
+- Migrasi — pengaturan mode maintenance dan tabel pelanggan notifikasi.
+- `models/maintenance_subscriber.go` — bentuk data pelanggan notifikasi.
+- Repository — query pengaturan maintenance dan pelanggan notifikasi.
+- `services/maintenance_service.go` — aturan mode maintenance dan notifikasi.
+- `middleware/maintenance.go` — memblokir endpoint toko untuk pelanggan, sementara admin tetap dapat mengaksesnya.
+- Handler dan route — status publik `/store/status` serta pengaturan melalui endpoint admin.
+
+### Tahap 8 — Drop 05 / VIP (jika masuk scope)
+
+Buat atau lengkapi file berikut:
+
+```text
+backend/
+├── config/
+│   └── whatsapp.go
+├── migrations/
+│   ├── [nomor berikutnya]_create_waitlist.up.sql
+│   └── [nomor berikutnya]_create_waitlist.down.sql
+├── models/
+│   └── waitlist.go
+├── repository/
+│   └── waitlist_repository.go
+├── services/
+│   ├── waitlist_service.go
+│   └── vip_service.go
+├── handlers/
+│   ├── waitlist_handler.go
+│   └── vip_handler.go
+└── routes/
+    ├── waitlist_routes.go
+    └── vip_routes.go
+```
+
+- `config/whatsapp.go` — kontak WhatsApp toko.
+- Migrasi — tabel waitlist.
+- `models/waitlist.go` — bentuk data waitlist.
+- `repository/waitlist_repository.go` — query waitlist.
+- `services/waitlist_service.go` — aturan pendaftaran waitlist.
+- `services/vip_service.go` — aturan akses VIP.
+- Handler dan route — waitlist serta endpoint VIP yang disepakati.
+
+Tahap ini dikerjakan hanya jika Drop 05/VIP masuk scope proyek.
+
+### File test yang dibuat seiring pengerjaan
+
+Buat test pada tahap terkait, bukan semuanya di awal:
+
+```text
+config/config_test.go
+response/response_test.go
+middleware/auth_test.go
+services/auth_service_test.go
+services/catalog_service_test.go
+services/cart_service_test.go
+services/order_service_test.go
+services/payment_service_test.go
+```
+
+Daftar tersebut adalah titik awal yang disarankan. Tambahkan test untuk repository, handler, dan fitur lain sesuai kebutuhan serta pola test proyek yang sudah ada.
+
+### Catatan penting sebelum membuat file
+
+- Daftar ini merinci file per tahap, tetapi tidak berarti seluruh file harus dibuat sekaligus.
+- Nama file adalah konvensi yang disarankan; ikuti pola yang sudah dipakai proyek bila berbeda.
+- Jangan membuat ulang `main.go`, `config.go`, koneksi DB, middleware, model, repository, atau handler yang sudah ada.
+- Jangan menyalin `[nomor berikutnya]` secara literal ke nama migrasi. Tentukan nomor berdasarkan file migrasi aktual.
+- Jangan mengedit migrasi yang sudah dijalankan; buat migrasi baru jika skema perlu berubah.
+- Tetap ikuti urutan pengerjaan dan pemeriksaan kualitas di bagian **Urutan pengerjaan** dan **Aturan kerja**.
+
+---
+
 ## Status
 
 Sudah ada: health check, Logger, Recover, koneksi PostgreSQL, runner migrasi, tahap 1 (auth & akun).
