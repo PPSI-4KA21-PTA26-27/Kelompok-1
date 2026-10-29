@@ -1,3 +1,4 @@
 -- Add up migration script here
 -- TODO 2 Buat categories
-s 
+-- Hanif pukamak
+s
