@@ -228,6 +228,20 @@ UPDATE users SET role = 'admin' WHERE email = 'email-kamu@contoh.com';
 
 Email reset kata sandi memakai SMTP bawaan Go dan butuh port STARTTLS (587). Kalau `SMTP_*` kosong, server tetap jalan tapi email reset tidak terkirim (ada peringatan di log).
 
+## Tahap 2 — endpoint katalog
+
+Semua publik (tanpa login) dan hanya membaca. Daftar query, aturan respons, dan kolom tabel yang dibutuhkan ada di `TODO.md` bagian "Riwayat perubahan tahap 2".
+
+| Method + path | Fungsi |
+| --- | --- |
+| `GET /api/v1/categories` | Kategori aktif |
+| `GET /api/v1/products` | Daftar produk (filter kategori, pencarian, ketersediaan, urutan, paginasi) |
+| `GET /api/v1/products/{slug}` | Detail produk + varian |
+| `GET /api/v1/banners` | Banner yang sedang tayang (filter `position`) |
+| `GET /api/v1/uploads/{name}` | Gambar unggahan |
+
+Endpoint data membutuhkan tabel katalog dari migrasi; sebelum itu dijalankan, responsnya 500.
+
 ## Daftar File yang Dibuat pada Setiap Tahap
 
 Bagian ini merinci file yang perlu dibuat **ketika mulai mengerjakan tahap tersebut**. Daftar mengikuti cakupan dan urutan pada dokumen ini. Nama file adalah usulan penamaan yang jelas, bukan klaim bahwa semua file tersebut sudah ada di repository. Sebelum membuat file, cek struktur aktual dan gunakan file yang sudah tersedia. Untuk migrasi, selalu lanjutkan dari nomor terakhir yang benar-benar ada.
@@ -623,8 +637,8 @@ Daftar tersebut adalah titik awal yang disarankan. Tambahkan test untuk reposito
 
 ## Status
 
-Sudah ada: health check, Logger, Recover, koneksi PostgreSQL, runner migrasi, tahap 1 (auth & akun).
-Belum ada: tahap 2–8, CORS, dan pengiriman email SMTP yang sudah dites sungguhan.
+Sudah ada: health check, Logger, Recover, koneksi PostgreSQL, runner migrasi, tahap 1 (auth & akun), tahap 2 sisi backend publik (kategori, produk, banner, gambar; tinggal menunggu migrasi tabelnya dari tim).
+Belum ada: tahap 3–8, CORS, dan pengiriman email SMTP yang sudah dites sungguhan.
 Tahap 1 sudah dites langsung ke server lokal + PostgreSQL (21 skenario lolos) selain unit test, build, dan vet. Rincian perubahan kode ada di `TODO.md` bagian "Riwayat perubahan tahap 1".
 
 Perhatian: `PORT` di `.env` harus angka saja (`PORT=8080`), bukan alamat lengkap.

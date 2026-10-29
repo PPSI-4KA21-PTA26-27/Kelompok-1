@@ -5,7 +5,7 @@ Alur: handlers -> services -> repository -> db. Detail per folder ada di `TODO.m
 ## Urutan kerja
 
 1. [x] Auth & akun — daftar_akun, masuk_akun, lupa_kata_sandi, akun_pelanggan (selesai, lihat "Riwayat perubahan tahap 1" di bawah)
-2. [ ] Katalog — beranda, katalog_produk, detail_produk, editorial, kategori, banner
+2. [ ] Katalog — beranda, katalog_produk, detail_produk, editorial, kategori, banner (BE publik sudah dikerjakan, tinggal menunggu migrasi tabelnya; lihat "Riwayat perubahan tahap 2")
 3. [ ] Keranjang — keranjang_belanja
 4. [ ] Checkout & order — checkout_pesanan, daftar_pesanan, detail_pesanan (alamat, ongkir, pre-order)
 5. [ ] Pembayaran QRIS — detail_pesanan_pembayaran_qris (kode unik, bukti bayar, verifikasi)
@@ -69,3 +69,56 @@ Risiko yang diketahui:
 - `backend/.env` sudah ter-commit di Git (commit "Update"). `.gitignore` baru belum mencabutnya dari Git; perlu `git rm --cached backend/.env` dan ganti password database kalau isinya rahasia asli.
 - Rate limit disimpan di memori satu server (hilang saat restart, tidak dibagi antar-server) dan memakai IP langsung dari koneksi; kalau nanti di belakang reverse proxy, IP asli perlu diambil dari proxy yang dipercaya.
 - Role di token berlaku sampai token habis (maks 15 menit), jadi perubahan role baru terasa setelah masuk ulang.
+
+## Riwayat perubahan tahap 2 (katalog, BE sampai banner)
+
+Urutan pengerjaan: models -> repository -> services -> uploads -> handlers -> routes. Migrasi TIDAK dikerjakan di sini (tugas tim; file migrasi katalog saat ini masih kosong).
+
+Endpoint publik baru (prefix `/api/v1`, tanpa login, hanya membaca):
+
+| Method + path | Fungsi |
+| --- | --- |
+| `GET /categories` | Kategori aktif, urut `sort_order` |
+| `GET /products` | Daftar produk aktif. Query opsional: `category` (slug), `q`, `availability` (all / in_stock / preorder), `sort` (terbaru / harga_terendah / harga_tertinggi / nama_az), `page`, `limit` (1-50, bawaan 12). Respons: `items`, `page`, `limit`, `total` |
+| `GET /products/{slug}` | Detail produk + varian |
+| `GET /banners` | Banner yang sedang tayang (aktif dan dalam jadwal). Query opsional: `position` (hero / announcement / mid_feed / catalog) |
+| `GET /uploads/{name}` | Gambar unggahan |
+
+Query tidak valid -> 422 `{"error", "fields"}`. Produk tidak ada atau nonaktif -> 404. Produk hanya tampil kalau produk dan kategorinya sama-sama aktif.
+
+File BARU:
+- `models/category.go`, `models/product.go`, `models/banner.go`
+- `repository/category.go`, `repository/product.go`, `repository/banner.go`
+- `services/upload.go`: ImageStore (simpan gambar: cek tipe dari isi file, maks 2 MB, nama acak; sajikan dengan nama yang sudah dicek). Belum dipakai endpoint unggah; pemanggilnya baru ada di tahap admin.
+- `handlers/catalog.go`, `handlers/upload.go`, `routes/catalog.go`
+- Test: `services/catalog_test.go`, `services/upload_test.go`, `repository/product_test.go`, `handlers/catalog_test.go`
+
+File DIUBAH:
+- `services/catalog.go`: isinya tadinya hanya `TODO` dan `func main()` placeholder; sekarang CatalogService (validasi filter, diskon, label pre-order, status stok).
+- `routes/routes.go`: memanggil `registerCatalogRoutes`.
+- `.gitignore`: `uploads/*` tidak di-commit (kecuali `TODO.md`).
+- `TODO.md` tiap folder dan `README.md`: centang dan status.
+
+Kontrak skema untuk migrasi (kolom yang dipakai query; nama dan tipe harus cocok, atau kabari supaya query disesuaikan):
+
+```
+categories:       id, name, slug (unik), description, sort_order, is_active
+products:         id, category_id -> categories.id, name, slug (unik), description,
+                  price (BIGINT rupiah), original_price (BIGINT, boleh NULL = tidak diskon),
+                  is_preorder, preorder_days (boleh NULL), image_url, is_active, created_at
+product_variants: id, product_id -> products.id, color, size, sku, stock (INT, CHECK stock >= 0)
+banners:          id, title, position (hero | announcement | mid_feed | catalog), image_url, link_url,
+                  cta_label, sort_order, starts_at (boleh NULL), ends_at (boleh NULL), is_active
+```
+
+Hasil pengecekan:
+- `go build`, `go vet`, `go test -race ./...`: lolos.
+- Query dicoba ke PostgreSQL lokal memakai tabel TEMP sesuai kontrak di atas (bukan tabel dari migrasi tim): filter, pencarian (karakter % dan _ dibaca literal), urutan, paginasi, detail + varian, jadwal banner. File pengecekannya sudah dihapus.
+- Server dijalankan sungguhan: route baru terdaftar tanpa bentrok, validasi 422, path traversal 404. Endpoint data membalas 500 generik sampai tabel katalog ada (detail SQL hanya di log server).
+
+BELUM ada / diketahui:
+- Tabel katalog dari migrasi tim. Sebelum itu jalan, endpoint data tidak bisa mengembalikan data. Catatan: `migrations/20261029004406_create_categories.up.sql` berisi teks nyasar (`Hanif pukamak` dan huruf `s`) yang akan membuat migrasi itu gagal.
+- Desain detail produk menampilkan beberapa foto, tapi kontrak di atas hanya satu `image_url` per produk. Kalau mau banyak foto, perlu tabel/kolom baru (keputusan tim migrasi).
+- Spesifikasi material, panduan ukuran, dan batas "maks. 3 pcs / transaksi" belum ada di skema; deskripsi teks bebas dipakai dulu.
+- Endpoint unggah gambar (admin) dan rate limit untuk endpoint publik katalog belum ada.
+- `models/catalog.go` dan `repository/catalog.go` (tipe `Katalog`, tabel `katalog`) tidak dipakai kode baru; tidak ada migrasi untuk tabel itu. Belum dihapus, menunggu keputusan.
