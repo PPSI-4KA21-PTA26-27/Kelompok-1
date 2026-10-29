@@ -1,2 +1,6 @@
 # Rahasia lokal, jangan di-commit.
 .env
+
+# Gambar unggahan (produk, banner, bukti bayar), jangan di-commit. TODO.md tetap ikut.
+uploads/*
+!uploads/TODO.md

@@ -3,7 +3,7 @@
 Aturan bisnis aplikasi. Memanggil repository, dipanggil handlers.
 
 - [x] AuthService: register, login, JWT, lupa/reset kata sandi, hash password
-- [ ] CatalogService: produk aktif, varian, label pre-order
+- [x] CatalogService: produk aktif, varian, label pre-order (+ kategori, banner, penyimpan gambar upload)
 - [ ] CartService: tambah/ubah/hapus item, cek stok
 - [ ] OrderService: hitung subtotal + ongkir, generate kode unik (+Rp1 s/d +Rp999) di server, buat order, ubah status + catat log
 - [ ] Pre-order: kalau ada item pre-order, seluruh item dikirim dalam satu paket (sesuai desain checkout)
