@@ -1,2 +1,1 @@
--- Add down migration script here
-DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS categories;
