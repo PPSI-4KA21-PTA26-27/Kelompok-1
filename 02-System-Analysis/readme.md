@@ -20,4 +20,4 @@ Berikut merupakan dokumen spesifikasi kebutuhan perangkat lunak (*Software Requi
 | No. | Nama Dokumen | Keterangan |
 |:---:|---|---|
 | 1 | [Draft SRS PPSI](Draft_SRS_PPSI.pdf) | Rancangan awal spesifikasi kebutuhan sistem |
-| 2 | [SRS PPSI Final](SRS_PPSI_Final.pdf) | Dokumen spesifikasi kebutuhan sistem yang telah difinalisasi |
+| 2 | [Final_SRS PPSI](SRS_PPSI_Final.pdf) | Dokumen spesifikasi kebutuhan sistem yang telah difinalisasi |
