@@ -4,7 +4,7 @@
 
 Folder ini berisi dokumen analisis kebutuhan sistem (*System Analysis*) pada proyek pengembangan website e-commerce **Hii Stranger**.
 
-Dokumen ini disusun untuk mengidentifikasi kebutuhan sistem, menentukan ruang lingkup pengembangan, serta menjadi acuan dalam proses perancangan dan pengembangan website.
+Dokumen disusun untuk mengidentifikasi kebutuhan sistem, menentukan ruang lingkup pengembangan, serta menjadi acuan dalam proses perancangan dan pengembangan website.
 
 ### 📄 Requirement Document
 
@@ -15,9 +15,9 @@ Dokumen ini disusun untuk mengidentifikasi kebutuhan sistem, menentukan ruang li
 
 ### 📝 Software Requirements Specification (SRS)
 
-Berikut merupakan dokumen SRS yang memuat spesifikasi kebutuhan sistem website e-commerce Hii Stranger.
+Berikut merupakan dokumen spesifikasi kebutuhan perangkat lunak (*Software Requirements Specification*) untuk pengembangan website e-commerce Hii Stranger.
 
 | No. | Nama Dokumen | Keterangan |
 |:---:|---|---|
-| 1 | [Draft SRS PPSI](Draft_SRS_PPSI.pdf) | Dokumen rancangan awal spesifikasi kebutuhan sistem |
-| 2 | [Finalisasi SRS PPSI](Finalisasi_SRS_PPSI.pdf) | Dokumen spesifikasi kebutuhan sistem yang telah difinalisasi |
+| 1 | [Draft SRS PPSI](Draft_SRS_PPSI.pdf) | Rancangan awal spesifikasi kebutuhan sistem |
+| 2 | [SRS PPSI Final](SRS_PPSI_Final.pdf) | Dokumen spesifikasi kebutuhan sistem yang telah difinalisasi |
