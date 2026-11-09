@@ -1,5 +1,5 @@
 ## Software Design Document (SDD)
 
-Dokumen Software Design Document dapat dilihat melalui link berikut:
+Dokumen perancangan sistem Hii Stranger dapat diakses melalui tautan berikut:
 
-📄 [Download Software Design Document (SDD)](./draft%20sdd%201.1.docx)
+📄 [Draft SDD Hii Stranger v1.0](Draft%20SDD_Hii_Stranger_v1.0.docx)
