@@ -1,9 +1,0 @@
-# Rahasia lokal, jangan di-commit (contoh nilai ada di .env.example).
-.env
-
-# Hasil build
-*.exe
-/bin/
-
-tmp/
-dump.rdb
