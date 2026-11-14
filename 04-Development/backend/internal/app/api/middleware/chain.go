@@ -1,0 +1,16 @@
+// Package middleware berisi pembungkus http.Handler untuk kebutuhan lintas endpoint.
+package middleware
+
+import "net/http"
+
+// Middleware membungkus sebuah http.Handler.
+type Middleware = func(http.Handler) http.Handler
+
+// Chain membungkus h dengan mws. Middleware pertama menjadi lapisan terluar,
+// sehingga dijalankan paling awal.
+func Chain(h http.Handler, mws ...Middleware) http.Handler {
+	for i := len(mws) - 1; i >= 0; i-- {
+		h = mws[i](h)
+	}
+	return h
+}

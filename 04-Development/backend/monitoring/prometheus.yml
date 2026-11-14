@@ -1,0 +1,14 @@
+# Konfigurasi Prometheus untuk backend Hii Stranger (lokal, dibuat ringan).
+# Jalankan dari folder Prometheus, dengan batas penyimpanan supaya disk & RAM tidak membengkak:
+#   prometheus.exe --config.file="<path>/backend/monitoring/prometheus.yml" --storage.tsdb.retention.time=2d --storage.tsdb.retention.size=300MB
+# Lalu buka http://localhost:9090 -> Status > Targets, target "hii-stranger-api" harus UP.
+global:
+  scrape_interval: 30s      # ambil data tiap 30 detik (cukup untuk lokal)
+  evaluation_interval: 1m
+
+scrape_configs:
+  - job_name: hii-stranger-api
+    metrics_path: /metrics
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ["localhost:8080"]   # samakan dengan PORT di .env

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Test - Hii Stranger</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1b1f24;--muted:#5f6b7a;--line:#e2e6ea;--code:#f0f2f5;--accent:#2563eb;
+--get:#0f7b4a;--post:#1d4ed8;--put:#a15c00;--patch:#7c3aed;--delete:#c0262d}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1216;--card:#171b21;--text:#e6e9ee;--muted:#98a2b3;--line:#2a3039;--code:#0c0f13;--accent:#60a5fa;
+--get:#34d399;--post:#60a5fa;--put:#fbbf24;--patch:#c4b5fd;--delete:#f87171}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 16px}
+.wrap{max-width:1000px;margin:0 auto}
+h1{font-size:18px;margin:0 0 8px}
+.bar{display:grid;grid-template-columns:1fr 2fr 1fr;gap:8px}
+@media (max-width:700px){.bar{grid-template-columns:1fr}}
+label{display:block;font-size:12px;color:var(--muted)}
+input,textarea{width:100%;font:13px/1.45 ui-monospace,Consolas,monospace;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+textarea{resize:vertical;min-height:60px;background:var(--code)}
+main{padding:16px}
+.note{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--muted);font-size:13px}
+.note ol{margin:6px 0 0;padding-left:20px}
+h2{font-size:15px;margin:24px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.ep{background:var(--card);border:1px solid var(--line);border-radius:8px;margin:8px 0;overflow:hidden}
+.ep summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;padding:9px 12px;flex-wrap:wrap}
+.ep summary::-webkit-details-marker{display:none}
+.m{font:700 12px ui-monospace,Consolas,monospace;min-width:58px;text-align:center;padding:2px 6px;border-radius:4px;border:1px solid currentColor}
+.GET{color:var(--get)}.POST{color:var(--post)}.PUT{color:var(--put)}.PATCH{color:var(--patch)}.DELETE{color:var(--delete)}
+.path{font-family:ui-monospace,Consolas,monospace;word-break:break-all;flex:1}
+.auth{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.body{padding:0 12px 12px;display:grid;gap:8px}
+.d{color:var(--muted)}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+button{font:12px system-ui,sans-serif;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:6px;padding:5px 10px}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.ok{border-color:var(--get);color:var(--get)}
+pre{margin:0;background:var(--code);border:1px solid var(--line);border-radius:6px;padding:8px;overflow:auto;font:12px/1.45 ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>API Test &middot; Hii Stranger <span class="d" id="count" style="font-size:13px;font-weight:400"></span></h1>
+<div class="bar">
+<div><label for="base">Base URL</label><input id="base" value="http://localhost:8080/api/v1"></div>
+<div><label for="token">Token (Bearer) &mdash; dari response login</label><input id="token" placeholder="eyJhbGciOi..."></div>
+<div><label for="filter">Cari endpoint</label><input id="filter" placeholder="products, POST, admin..."></div>
+</div>
+</div></header>
+<main class="wrap">
+<div class="note">
+Ubah URL (ganti <code>{id}</code> dengan UUID asli) dan body JSON langsung di kartu, lalu salin. Perintah curl memakai format bash (Git Bash); di PowerShell pakai <code>curl.exe</code> dan sesuaikan tanda kutipnya, atau tempel URL + body ke Postman/Thunder Client.
+<ol>
+<li>Register &rarr; Login &rarr; tempel token di atas.</li>
+<li>Endpoint <b>Admin</b> butuh user dengan role <code>admin</code> (ubah kolom <code>role</code> di tabel users lewat psql untuk admin pertama).</li>
+<li>Alur belanja: tambah ke keranjang &rarr; pilih wilayah &rarr; cek ongkir &rarr; checkout &rarr; buat tagihan &rarr; unggah bukti &rarr; admin review &rarr; admin isi pengiriman.</li>
+</ol>
+</div>
+<div id="list"></div>
+</main>
+<script>
+var ENDPOINTS = [{"g":"Umum","m":"GET","p":"/health","a":"P","d":"Cek server hidup.","b":null,"q":null,"f":null},{"g":"Auth","m":"POST","p":"/auth/register","a":"P","d":"Daftar akun customer. Rate limit 10/menit per IP.","b":{"name":"Budi Santoso","email":"budi@example.com","password":"Rahasia123!","phone":"081234567890"},"q":null,"f":null},{"g":"Auth","m":"POST","p":"/auth/login","a":"P","d":"Login, ambil access token dari response lalu tempel di kolom Token di atas.","b":{"email":"budi@example.com","password":"Rahasia123!"},"q":null,"f":null},{"g":"User","m":"GET","p":"/users/me","a":"L","d":"Profil user yang login.","b":null,"q":null,"f":null},{"g":"User","m":"PATCH","p":"/users/me","a":"L","d":"Ubah profil. Semua field opsional; \"phone\": null menghapus nomor.","b":{"name":"Budi S.","phone":"081298765432"},"q":null,"f":null},{"g":"User","m":"PUT","p":"/users/me/password","a":"L","d":"Ganti password. Rate limit 10/menit.","b":{"current_password":"Rahasia123!","new_password":"RahasiaBaru123!"},"q":null,"f":null},{"g":"Kategori","m":"GET","p":"/categories","a":"O","d":"Daftar kategori. Admin + include_inactive=true menampilkan yang nonaktif. Publik di-cache Redis (lihat header X-Cache).","b":null,"q":"include_inactive=true","f":null},{"g":"Kategori","m":"GET","p":"/categories/{categoryId}","a":"O","d":"Detail kategori.","b":null,"q":null,"f":null},{"g":"Kategori","m":"POST","p":"/categories","a":"A","d":"Buat kategori.","b":{"name":"Kaos","is_active":true},"q":null,"f":null},{"g":"Kategori","m":"PATCH","p":"/categories/{categoryId}","a":"A","d":"Ubah kategori (field opsional).","b":{"name":"Kaos Polos","is_active":false},"q":null,"f":null},{"g":"Kategori","m":"DELETE","p":"/categories/{categoryId}","a":"A","d":"Hapus kategori.","b":null,"q":null,"f":null},{"g":"Produk","m":"GET","p":"/products","a":"O","d":"Daftar produk. sort: name | -name | price | -price. status hanya berlaku untuk admin.","b":null,"q":"page=1&limit=20&q=kaos&category_id=&availability_type=ready&min_price=50000&max_price=300000&sort=price","f":null},{"g":"Produk","m":"GET","p":"/products/{productId}","a":"O","d":"Detail produk beserta varian & gambar.","b":null,"q":null,"f":null},{"g":"Produk","m":"POST","p":"/products","a":"A","d":"Buat produk. price = string desimal. availability_type: ready | preorder (po_estimate_days wajib untuk preorder). status: active | inactive.","b":{"category_id":"00000000-0000-0000-0000-000000000000","name":"Kaos Basic Hitam","description":"Kaos katun combed 30s.","price":"150000","discount_percent":10,"weight_gram":250,"availability_type":"ready","po_estimate_days":null,"status":"active"},"q":null,"f":null},{"g":"Produk","m":"PATCH","p":"/products/{productId}","a":"A","d":"Ubah produk (semua field opsional).","b":{"price":"135000","discount_percent":0,"status":"inactive"},"q":null,"f":null},{"g":"Produk","m":"DELETE","p":"/products/{productId}","a":"A","d":"Hapus produk.","b":null,"q":null,"f":null},{"g":"Varian","m":"POST","p":"/products/{productId}/variants","a":"A","d":"Tambah varian.","b":{"sku":"KBH-M-BLK","size":"M","color":"Hitam","stock":20},"q":null,"f":null},{"g":"Varian","m":"PATCH","p":"/products/{productId}/variants/{variantId}","a":"A","d":"Ubah varian (field opsional).","b":{"stock":15},"q":null,"f":null},{"g":"Varian","m":"DELETE","p":"/products/{productId}/variants/{variantId}","a":"A","d":"Hapus varian.","b":null,"q":null,"f":null},{"g":"Gambar Produk","m":"POST","p":"/products/{productId}/images","a":"A","d":"Tambah gambar (URL dari /admin/uploads/images).","b":{"image_url":"https://res.cloudinary.com/nama-cloud/image/upload/v1/hii-stranger/kaos.jpg","sort_order":0,"is_primary":true},"q":null,"f":null},{"g":"Gambar Produk","m":"PATCH","p":"/products/{productId}/images/{imageId}","a":"A","d":"Ubah gambar (field opsional).","b":{"sort_order":1,"is_primary":false},"q":null,"f":null},{"g":"Gambar Produk","m":"DELETE","p":"/products/{productId}/images/{imageId}","a":"A","d":"Hapus gambar.","b":null,"q":null,"f":null},{"g":"Upload","m":"POST","p":"/admin/uploads/images","a":"A","d":"Unggah gambar ke Cloudinary. multipart/form-data, field \"file\": jpeg/png/webp, maks 5 MB. Response berisi url.","b":null,"q":null,"f":"file"},{"g":"Keranjang","m":"GET","p":"/cart","a":"L","d":"Isi keranjang user.","b":null,"q":null,"f":null},{"g":"Keranjang","m":"DELETE","p":"/cart","a":"L","d":"Kosongkan keranjang.","b":null,"q":null,"f":null},{"g":"Keranjang","m":"POST","p":"/cart/items","a":"L","d":"Tambah item ke keranjang.","b":{"variant_id":"00000000-0000-0000-0000-000000000000","quantity":2},"q":null,"f":null},{"g":"Keranjang","m":"PATCH","p":"/cart/items/{cartItemId}","a":"L","d":"Ubah jumlah item.","b":{"quantity":3},"q":null,"f":null},{"g":"Keranjang","m":"DELETE","p":"/cart/items/{cartItemId}","a":"L","d":"Hapus item.","b":null,"q":null,"f":null},{"g":"Banner","m":"GET","p":"/banners","a":"O","d":"Daftar banner. Admin + include_inactive=true menampilkan yang nonaktif.","b":null,"q":"include_inactive=true","f":null},{"g":"Banner","m":"POST","p":"/banners","a":"A","d":"Buat banner.","b":{"image_url":"https://res.cloudinary.com/nama-cloud/image/upload/v1/hii-stranger/banner.jpg","link_url":"https://tokokamu.com/promo","sort_order":0,"is_active":true},"q":null,"f":null},{"g":"Banner","m":"PATCH","p":"/banners/{bannerId}","a":"A","d":"Ubah banner (field opsional).","b":{"sort_order":1,"is_active":false},"q":null,"f":null},{"g":"Banner","m":"DELETE","p":"/banners/{bannerId}","a":"A","d":"Hapus banner.","b":null,"q":null,"f":null},{"g":"Pengaturan Situs","m":"GET","p":"/site-settings","a":"P","d":"Status mode maintenance.","b":null,"q":null,"f":null},{"g":"Pengaturan Situs","m":"PUT","p":"/site-settings","a":"A","d":"Ubah mode maintenance (field opsional).","b":{"maintenance_mode":true,"maintenance_message":"Toko sedang perbaikan, kembali lagi nanti ya."},"q":null,"f":null},{"g":"Wilayah & Ongkir","m":"GET","p":"/regions/provinces","a":"P","d":"Daftar provinsi (RajaOngkir).","b":null,"q":null,"f":null},{"g":"Wilayah & Ongkir","m":"GET","p":"/regions/provinces/{provinceId}/cities","a":"P","d":"Kota/kabupaten dalam provinsi.","b":null,"q":null,"f":null},{"g":"Wilayah & Ongkir","m":"GET","p":"/regions/cities/{cityId}/districts","a":"P","d":"Kecamatan dalam kota.","b":null,"q":null,"f":null},{"g":"Wilayah & Ongkir","m":"GET","p":"/regions/districts/{districtId}/subdistricts","a":"P","d":"Kelurahan dalam kecamatan.","b":null,"q":null,"f":null},{"g":"Wilayah & Ongkir","m":"GET","p":"/shipping/costs","a":"L","d":"Ongkir termurah isi keranjang ke kelurahan tujuan. cart_item_ids opsional (pisah koma), kosong = semua item.","b":null,"q":"subdistrict_id=1&cart_item_ids=","f":null},{"g":"Order","m":"GET","p":"/orders","a":"L","d":"Daftar order milik user.","b":null,"q":"page=1&limit=20","f":null},{"g":"Order","m":"POST","p":"/orders","a":"L","d":"Checkout. ID wilayah dari /regions/..., ongkir dihitung ulang server. cart_item_ids opsional (kosong = semua item).","b":{"recipient_name":"Budi Santoso","recipient_phone":"081234567890","shipping_address":"Jl. Merdeka No. 10, RT 01/RW 02","province_id":1,"city_id":1,"district_id":1,"subdistrict_id":1,"cart_item_ids":["00000000-0000-0000-0000-000000000000"]},"q":null,"f":null},{"g":"Order","m":"GET","p":"/orders/{orderId}","a":"L","d":"Detail order (pemilik atau admin).","b":null,"q":null,"f":null},{"g":"Order","m":"GET","p":"/admin/orders","a":"A","d":"Semua order. Filter opsional.","b":null,"q":"page=1&limit=20&user_id=&order_number=&order_status=pending_payment","f":null},{"g":"Order","m":"PUT","p":"/admin/orders/{orderId}/status","a":"A","d":"Ubah status order. order_status: pending_payment | paid | processing | shipped | completed | cancelled.","b":{"order_status":"shipped","tracking_number":"P2411050001","courier_name":"POS Indonesia"},"q":null,"f":null},{"g":"Pembayaran","m":"GET","p":"/orders/{orderId}/payment","a":"L","d":"Data pembayaran order.","b":null,"q":null,"f":null},{"g":"Pembayaran","m":"POST","p":"/orders/{orderId}/payment","a":"L","d":"Buat tagihan. method: bank_transfer | ewallet.","b":{"method":"bank_transfer"},"q":null,"f":null},{"g":"Pembayaran","m":"GET","p":"/orders/{orderId}/payment/proof","a":"L","d":"Unduh berkas bukti bayar (bukan JSON).","b":null,"q":null,"f":null},{"g":"Pembayaran","m":"PUT","p":"/orders/{orderId}/payment/proof","a":"L","d":"Unggah bukti bayar. multipart/form-data, field \"file\": jpeg/png/webp/pdf, maks 2 MB.","b":null,"q":null,"f":"file"},{"g":"Pembayaran","m":"GET","p":"/admin/payments","a":"A","d":"Semua pembayaran. status: pending | approved | rejected.","b":null,"q":"page=1&limit=20&status=pending&order_id=","f":null},{"g":"Pembayaran","m":"POST","p":"/admin/payments/{paymentId}/review","a":"A","d":"Verifikasi pembayaran. status: approved | rejected.","b":{"status":"approved"},"q":null,"f":null},{"g":"Pengiriman","m":"GET","p":"/orders/{orderId}/shipment","a":"L","d":"Data pengiriman order.","b":null,"q":null,"f":null},{"g":"Pengiriman","m":"PUT","p":"/orders/{orderId}/shipment","a":"A","d":"Isi/ubah pengiriman. coverage_status: covered | not_covered. shipping_status: pending | shipped | delivered | returned.","b":{"courier_name":"POS Indonesia","tracking_number":"P2411050001","coverage_status":"covered","shipping_status":"shipped"},"q":null,"f":null},{"g":"Admin User","m":"GET","p":"/admin/users","a":"A","d":"Daftar user. role: customer | admin, status: active | inactive.","b":null,"q":"page=1&limit=20&q=&role=customer&status=active","f":null},{"g":"Admin User","m":"GET","p":"/admin/users/{userId}","a":"A","d":"Detail user.","b":null,"q":null,"f":null},{"g":"Admin User","m":"PATCH","p":"/admin/users/{userId}","a":"A","d":"Ubah role/status user (field opsional).","b":{"role":"admin","status":"active"},"q":null,"f":null}];
+var AUTH = {P:"Publik", O:"Publik / token opsional", L:"Login", A:"Admin"};
+
+function $(id){return document.getElementById(id)}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]})}
+function shq(s){return "'"+String(s).replace(/'/g,"'\\''")+"'"}
+
+function fullURL(card){return $("base").value.replace(/\/+$/,"")+card.querySelector(".u").value.trim()}
+
+function curl(card,ep){
+  var parts=["curl -i -X "+ep.m+" "+shq(fullURL(card))];
+  var tok=$("token").value.trim();
+  if(ep.a!=="P"){parts.push("-H "+shq("Authorization: Bearer "+(tok||"<TOKEN>")))}
+  if(ep.f){parts.push("-F "+shq(ep.f+"=@C:/path/ke/berkas.jpg"))}
+  var ta=card.querySelector("textarea");
+  if(ta){parts.push("-H 'Content-Type: application/json'");parts.push("--data-raw "+shq(compact(ta.value)))}
+  return parts.join(" \\\n  ");
+}
+function compact(s){try{return JSON.stringify(JSON.parse(s))}catch(e){return s.trim()}}
+
+function copy(btn,text){
+  var done=function(){var t=btn.textContent;btn.textContent="Tersalin";btn.classList.add("ok");setTimeout(function(){btn.textContent=t;btn.classList.remove("ok")},1200)};
+  if(navigator.clipboard&&window.isSecureContext!==false){navigator.clipboard.writeText(text).then(done,function(){fallback(text);done()})}else{fallback(text);done()}
+}
+function fallback(text){var t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();try{document.execCommand("copy")}catch(e){}t.remove()}
+
+function render(){
+  var list=$("list"),html="",group="";
+  ENDPOINTS.forEach(function(ep,i){
+    if(ep.g!==group){group=ep.g;html+='<h2 data-g="'+esc(group)+'">'+esc(group)+'</h2>'}
+    var url=ep.p+(ep.q?"?"+ep.q:"");
+    html+='<details class="ep" data-i="'+i+'" data-g="'+esc(ep.g)+'"><summary>'+
+      '<span class="m '+ep.m+'">'+ep.m+'</span><span class="path">'+esc(ep.p)+'</span><span class="auth">'+AUTH[ep.a]+'</span></summary>'+
+      '<div class="body"><div class="d">'+esc(ep.d)+'</div>'+
+      '<div><label>URL (path relatif terhadap Base URL)</label><input class="u" value="'+esc(url)+'"></div>'+
+      (ep.b?'<div><label>Body JSON</label><textarea rows="'+(JSON.stringify(ep.b,null,2).split("\n").length)+'">'+esc(JSON.stringify(ep.b,null,2))+'</textarea></div>':'')+
+      (ep.f?'<div class="d">Body: <b>multipart/form-data</b>, field <code>'+ep.f+'</code> berisi berkas.</div>':'')+
+      '<div><label>curl</label><pre class="c"></pre></div>'+
+      '<div class="row">'+
+      (ep.b?'<button data-act="body">Salin body JSON</button>':'')+
+      '<button data-act="url">Salin URL</button><button data-act="curl">Salin curl</button>'+
+      (ep.b?'<button data-act="reset">Reset body</button>':'')+
+      '</div></div></details>';
+  });
+  list.innerHTML=html;
+  $("count").textContent="("+ENDPOINTS.length+" endpoint)";
+  refreshAll();
+}
+function refresh(card){var ep=ENDPOINTS[card.dataset.i];card.querySelector(".c").textContent=curl(card,ep)}
+function refreshAll(){document.querySelectorAll(".ep").forEach(refresh)}
+
+document.addEventListener("input",function(e){
+  var card=e.target.closest(".ep");
+  if(card){refresh(card);return}
+  if(e.target.id==="base"||e.target.id==="token"){store("apitest."+e.target.id,e.target.value);refreshAll()}
+  if(e.target.id==="filter")applyFilter();
+});
+document.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-act]");if(!b)return;
+  var card=b.closest(".ep"),ep=ENDPOINTS[card.dataset.i],ta=card.querySelector("textarea");
+  if(b.dataset.act==="body")copy(b,ta.value);
+  if(b.dataset.act==="url")copy(b,fullURL(card));
+  if(b.dataset.act==="curl")copy(b,curl(card,ep));
+  if(b.dataset.act==="reset"){ta.value=JSON.stringify(ep.b,null,2);refresh(card)}
+});
+function applyFilter(){
+  var q=$("filter").value.trim().toLowerCase(),seen={};
+  document.querySelectorAll(".ep").forEach(function(c){
+    var ep=ENDPOINTS[c.dataset.i],hit=!q||(ep.m+" "+ep.p+" "+ep.g+" "+ep.d+" "+AUTH[ep.a]).toLowerCase().indexOf(q)>=0;
+    c.classList.toggle("hidden",!hit);if(hit)seen[ep.g]=1;
+  });
+  document.querySelectorAll("h2[data-g]").forEach(function(h){h.classList.toggle("hidden",!seen[h.dataset.g])});
+}
+["base","token"].forEach(function(id){var v=store("apitest."+id);if(v)$(id).value=v});
+render();
+</script>
+</body>
+</html>

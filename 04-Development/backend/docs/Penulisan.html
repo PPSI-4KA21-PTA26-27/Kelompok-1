@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panduan Menulis Fitur (Pemula)</title>
+<style>
+:root{--bg:#fafaf9;--fg:#1c1917;--mut:#57534e;--line:#e7e5e4;--card:#fff;--acc:#2563eb;--code:#f5f5f4}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--fg:#fafaf9;--mut:#a8a29e;--line:#44403c;--card:#292524;--acc:#60a5fa;--code:#0c0a09}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.7 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:780px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.7rem;margin:0 0 6px}h2{font-size:1.25rem;margin:38px 0 12px}
+.mut{color:var(--mut)}
+code{background:var(--code);padding:1px 6px;border-radius:4px;font-size:.9em}
+pre{background:var(--code);padding:14px;border-radius:8px;overflow-x:auto;font-size:.9rem;line-height:1.5}
+pre code{padding:0;background:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:10px}
+.card b{display:block}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.flow .s{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.95rem}
+.flow .a{color:var(--mut)}
+.steps{list-style:none;padding:0;margin:0;counter-reset:n}
+.steps>li{counter-increment:n;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px 12px 52px;margin-bottom:10px;position:relative}
+.steps>li::before{content:counter(n);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font-weight:600;text-align:center;line-height:26px;font-size:.9rem}
+.steps b{display:block}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}
+th{color:var(--mut)}
+.tip{border-left:4px solid var(--acc);background:var(--card);padding:10px 14px;border-radius:0 8px 8px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Panduan Menulis Fitur (Pemula)</h1>
+<p class="mut">Satu fitur (misal produk) = satu folder di <code>internal/app/api/</code>. Isinya 4 file kecil, masing-masing punya satu tugas.</p>
+
+<h2>1. Bayangkan seperti restoran</h2>
+<div class="card"><b>routes.go &mdash; papan nama pintu</b>Menentukan alamat URL mana dilayani siapa. Contoh: <code>GET /products</code> dilayani <code>List</code>.</div>
+<div class="card"><b>handler.go &mdash; pelayan</b>Menerima pesanan dari pengguna, mengecek isinya benar atau tidak, lalu mengirim jawaban.</div>
+<div class="card"><b>service.go &mdash; manajer</b>Memegang aturan. Contoh: "pembeli biasa hanya boleh lihat produk yang aktif".</div>
+<div class="card"><b>repository.go &mdash; juru gudang</b>Satu-satunya yang bicara ke database (ambil, simpan, ubah, hapus).</div>
+<div class="card"><b>model.go &mdash; daftar menu</b>Bentuk datanya: produk punya nama, harga, dan seterusnya.</div>
+
+<p><b>Perjalanan satu permintaan:</b></p>
+<div class="flow"><span class="s">Pengguna</span><span class="a">&rarr;</span><span class="s">routes</span><span class="a">&rarr;</span><span class="s">handler</span><span class="a">&rarr;</span><span class="s">service</span><span class="a">&rarr;</span><span class="s">repository</span><span class="a">&rarr;</span><span class="s">database</span></div>
+<p class="mut">Jawabannya kembali lewat jalan yang sama.</p>
+
+<h2>2. Cara termudah membuat fitur baru</h2>
+<div class="tip">Jangan mulai dari kosong. Buka folder <code>category/</code> atau <code>product/</code> yang sudah jadi, lalu tiru polanya.</div>
+<ol class="steps" style="margin-top:14px">
+<li><b>Lihat contekannya</b>Buka <code>api/openapi.yaml</code> (isi permintaan dan jawaban yang diminta) dan file di folder <code>migrations/</code> (nama kolom tabel).</li>
+<li><b>model.go</b>Tulis bentuk datanya, sesuai kolom tabel.</li>
+<li><b>repository.go</b>Tulis perintah database: ambil daftar, ambil satu, buat, ubah, hapus.</li>
+<li><b>service.go</b>Panggil repository. Kalau ada aturan, tambahkan di sini. Kalau tidak ada, cukup teruskan saja.</li>
+<li><b>handler.go</b>Baca permintaan, cek isinya, panggil service, kirim jawaban.</li>
+<li><b>server.go</b>Sambungkan: repository &rarr; service &rarr; handler (lihat bagian <code>category</code> di file itu, tinggal tiru).</li>
+<li><b>routes.go</b>Daftarkan URL-nya (tiru bagian <code>categories</code>).</li>
+<li><b>Tes</b>Jalankan perintah di bagian 4, lalu coba lewat Postman.</li>
+</ol>
+<p class="mut">Kenapa urutannya begini? Yang paling bawah (data) ditulis dulu, yang paling atas (URL) terakhir. Jadi setiap langkah bisa dicek sebelum lanjut.</p>
+
+<h2>3. Isi handler: selalu 5 langkah ini</h2>
+<pre><code>1. Ambil ID / filter dari URL
+2. Baca isi (body) yang dikirim pengguna
+3. Cek isinya benar atau tidak  -> kalau salah, jawab 422
+4. Panggil service
+5. Kirim jawaban (sukses, atau error yang sesuai)</code></pre>
+
+<h2>4. Cek sebelum bilang selesai</h2>
+<p>Buka terminal di folder <code>backend</code>, ganti <code>nama</code> dengan nama folder fiturmu:</p>
+<pre><code>gofmt -l internal/app/api/nama      # kalau ada nama file keluar, berarti belum rapi
+go vet ./internal/app/api/nama/     # cari kesalahan
+go test ./internal/app/api/nama/    # jalankan tes</code></pre>
+<p>Kalau ketiganya tidak menampilkan error, coba endpoint-nya lewat Postman.</p>
+
+<h2>5. Kode jawaban (status code)</h2>
+<div class="tablewrap"><table>
+<tr><th>Kode</th><th>Artinya</th></tr>
+<tr><td>200 / 201 / 204</td><td>Berhasil (ambil atau ubah / buat / hapus)</td></tr>
+<tr><td>400</td><td>Kirimannya rusak</td></tr>
+<tr><td>401</td><td>Belum login</td></tr>
+<tr><td>403</td><td>Sudah login, tapi bukan admin</td></tr>
+<tr><td>404</td><td>Datanya tidak ada</td></tr>
+<tr><td>409</td><td>Bentrok (misal data masih dipakai)</td></tr>
+<tr><td>422</td><td>Isi yang dikirim tidak valid</td></tr>
+</table></div>
+
+<h2>6. Tiga aturan penting</h2>
+<ul>
+<li>Jangan bikin file atau fungsi yang belum dibutuhkan. Mulai dari yang paling sederhana.</li>
+<li>Jangan kirim pesan error database ke pengguna. Cukup catat dengan <code>slog</code>.</li>
+<li>Jangan bilang selesai sebelum langkah 4 lolos dan endpoint sudah dicoba.</li>
+</ul>
+
+<h2>7. Progres fitur</h2>
+<p>Sudah: User, Category, Product. Berikutnya: Variants &amp; images, Banner, Site settings, Shipping rates, Cart, Order, Payment, Shipment.</p>
+</main>
+</body>
+</html>

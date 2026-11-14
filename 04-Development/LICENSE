@@ -1,0 +1,21 @@
+HII STRANGER — PROPRIETARY SOFTWARE LICENSE
+Hak Cipta (c) 2026 Hii Stranger. Seluruh hak dilindungi undang-undang.
+
+Perangkat lunak ini, termasuk kode sumber backend dan frontend, skema basis data,
+spesifikasi API (backend/api/openapi.yaml), desain antarmuka, dokumentasi, serta
+seluruh aset di repositori ini (selanjutnya "Perangkat Lunak") adalah milik
+eksklusif Hii Stranger dan bersifat RAHASIA.
+
+1. Tidak ada lisensi open source. Perangkat Lunak TIDAK dirilis di bawah lisensi
+   open source apa pun (termasuk MIT, Apache, atau GPL).
+2. Penggunaan hanya diizinkan untuk karyawan, kontraktor, atau pihak lain yang
+   mendapat izin tertulis dari Hii Stranger, semata-mata untuk keperluan internal
+   Hii Stranger.
+3. Dilarang, tanpa izin tertulis: menyalin, mempublikasikan, mendistribusikan,
+   menyublisensikan, menjual, mengunggah ke repositori publik, atau membuat karya
+   turunan untuk pihak lain, baik sebagian maupun seluruhnya.
+4. Komponen pihak ketiga tetap tunduk pada lisensinya masing-masing; lihat
+   THIRD_PARTY_NOTICES.md. Lisensi ini tidak mengubah hak pemilik komponen tersebut.
+5. Perangkat Lunak disediakan "SEBAGAIMANA ADANYA" tanpa jaminan apa pun.
+
+Pertanyaan perizinan: hubungi pemilik Hii Stranger.

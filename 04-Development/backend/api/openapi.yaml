@@ -1,0 +1,3977 @@
+openapi: 3.0.3
+
+info:
+  title: Hii Stranger Commerce API (Internal)
+  version: 1.2.8
+  license:
+    name: Proprietary — seluruh hak dilindungi. Lihat berkas LICENSE di root repositori.
+  x-confidentiality: internal
+  description: |
+    **RAHASIA — DOKUMEN INTERNAL HII STRANGER.** Spesifikasi ini adalah milik perusahaan dan tidak
+    dilisensikan untuk publik. Dilarang menyalin, mempublikasikan, atau membagikan ke pihak ketiga
+    tanpa izin tertulis. Format OpenAPI hanyalah standar penulisan; memakainya tidak membuat API ini
+    open source.
+
+    Kontrak REST API backend toko online. Skema disusun dari folder `migrations/`.
+
+    ## Konvensi
+    - Base path `/api/v1` (selalu mengarah ke versi terbaru). Versi lengkap juga dilayani di `/api/v<versi>` (mis. `/api/v1.2.8`); versi aktif ada di header `X-API-Version`. Body request dan response berformat JSON, kecuali upload dan unduh bukti pembayaran.
+    - Response sukses dibungkus `{ "data": ..., "meta": ... }`. `meta` hanya ada pada response daftar.
+    - Response error selalu berbentuk `{ "error": { "code", "message", "details" } }`.
+      Detail internal (stack trace, SQL, secret) tidak pernah dikirim ke client.
+    - Autentikasi memakai header `Authorization: Bearer <JWT>`. `user_id` dan `role` selalu diambil dari token,
+      tidak pernah dari body request.
+    - Peran: `public` (tanpa token), `customer`, `staff`, dan `owner` (tabel `roles`, dirujuk `users.role_id`).
+      Role dibaca dari token, jadi perubahan role berlaku setelah user login ulang.
+      - `customer`: satu-satunya role yang boleh memakai keranjang, cek ongkir, checkout, daftar order sendiri,
+        membuat tagihan, dan mengunggah bukti bayar. Owner/staff ditolak 403 (ditegakkan di server).
+      - `staff`: mengelola katalog, banner, pesanan, pembayaran, pengiriman, dan jurnal. Pengaturan situs,
+        pengguna, dan analitik pendapatan hanya `owner`.
+      - `owner`: seluruh hak `staff` ditambah kelola pengguna, pengaturan situs, dan analitik; tidak dapat berbelanja.
+      Pada deskripsi endpoint, "admin" berarti `owner` atau `staff`.
+      Resource milik user (cart, order, payment, shipment) hanya bisa diakses pemiliknya, staff, atau owner.
+    - Mode maintenance ditegakkan server: saat `site_settings.maintenance_mode` aktif, semua request dijawab
+      503 dengan `error.code = maintenance` dan `error.message` berisi `maintenance_message`, kecuali request
+      dengan token `staff`/`owner` serta `GET /health`, `GET /site-settings`, `POST /auth/login`,
+      `POST /auth/password/forgot`, `POST /auth/password/reset`, `POST /auth/verify-email`, dan `GET /users/me`.
+      Perubahan status berlaku paling lambat 5 detik.
+    - Rate limit: selain batas auth/publik yang tercantum per endpoint, semua endpoint terautentikasi dibatasi
+      per user per menit (mutasi pelanggan 60, GET 120, upload gambar/bukti transfer 20, admin 120) dan
+      menjawab 429 `too_many_requests` dengan header `Retry-After`.
+    - Bila server sedang menangani terlalu banyak request bersamaan, semua endpoint kecuali `GET /health`
+      dapat menjawab 503 dengan `error.code = server_busy` dan header `Retry-After`.
+    - Checkout mewajibkan email terverifikasi (`email_verified_at` terisi); bila belum, server menjawab
+      403 dengan `error.code = email_not_verified`.
+    - Semua ID memakai UUID. `site_settings` hanya berisi satu baris (dijaga indeks unik), sehingga endpoint-nya tidak memakai ID.
+    - Pagination memakai `page` (mulai dari 1) dan `limit` (default 20, maksimum 100).
+
+    ## Catatan terkait skema database
+    - Uang (`NUMERIC`) dikirim sebagai string desimal, misalnya `"150000"` atau `"150000.50"`, agar tidak ada
+      kesalahan pembulatan. `discount_percent` dikirim sebagai angka biasa.
+    - Waktu (`created_at`, `updated_at`, `payment_due_at`, dst.) dikirim dalam format RFC 3339 (UTC).
+    - Kolom `role`, `status`, `availability_type`, `order_status`, `payment.status`, `coverage_status`,
+      dan `shipping_status` adalah `TEXT`. `users.status` dan `posts.status` dibatasi CHECK constraint;
+      `role` diambil dari tabel `roles` dan `banners.placement` dari tabel `banner_placements` (kode
+      `hero`, `main`, `catalog`); nilai lain divalidasi aplikasi. Field `image_url` pada banner disimpan
+      di kolom `desktop_image_url`.
+    - Ongkir dihitung lewat RajaOngkir sampai tingkat kelurahan. Client memilih wilayah dari `/regions/...`,
+      mengecek pilihan kurir di `/shipping/costs`, lalu mengirim ID wilayah + kurir saat checkout. Server
+      menghitung ulang ongkir dan menyimpan nama wilayah di order.
+    - Verifikasi email memakai tabel `email_verifications` (hanya hash SHA-256 token yang disimpan, berlaku
+      24 jam, sekali pakai). Tidak ada refresh token; masa berlaku access token diatur `ACCESS_TOKEN_TTL`.
+    - Pembayaran hanya QRIS statis toko. Tagihan dibuat otomatis saat checkout dengan nominal
+      `total_amount + unique_code` (1–999). Order `pending_payment` yang melewati `payment_due_at` tanpa
+      bukti yang sedang diverifikasi dibatalkan otomatis oleh server dan stoknya dikembalikan.
+    - Respons GET publik (produk, kategori, banner, jurnal, pengaturan) di-cache maksimal 30 detik.
+
+servers:
+  - url: /api/v1
+    description: Relatif terhadap host tempat API berjalan
+
+tags:
+  - name: System
+    description: Pemeriksaan kesehatan layanan.
+  - name: Auth
+    description: Pendaftaran dan login.
+  - name: Users
+    description: Profil sendiri dan manajemen user oleh admin.
+  - name: Categories
+    description: Kategori produk.
+  - name: Products
+    description: Produk beserta varian dan gambarnya.
+  - name: Banners
+    description: Banner kampanye/event terjadwal (hero, utama, katalog).
+  - name: Journal
+    description: Artikel jurnal/blog. Publik membaca artikel terbit; admin & staff mengelola.
+  - name: Admin
+    description: Dashboard ringkasan operasional.
+  - name: Uploads
+    description: Unggah gambar ke Cloudinary (admin & staff).
+  - name: Site Settings
+    description: Pengaturan situs, termasuk mode maintenance.
+  - name: Shipping
+    description: Wilayah (provinsi, kota, kecamatan, kelurahan) dan cek ongkir via RajaOngkir.
+  - name: Cart
+    description: Keranjang belanja milik user.
+  - name: Orders
+    description: Checkout dan pengelolaan order.
+  - name: Payments
+    description: Pembayaran, bukti bayar, dan verifikasi admin.
+  - name: Shipments
+    description: Pengiriman order.
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      tags: [System]
+      operationId: getHealth
+      summary: Cek kesehatan layanan
+      description: "Hak akses: public."
+      security: []
+      responses:
+        "200":
+          description: Layanan berjalan.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [status]
+                    properties:
+                      status:
+                        type: string
+                        example: ok
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ---------------------------------------------------------------- Auth
+  /auth/register:
+    post:
+      tags: [Auth]
+      operationId: register
+      summary: Daftar akun customer
+      description: |
+        Hak akses: public. Akun baru selalu berperan `customer`. Role tidak dapat ditentukan dari request.
+        Email dinormalisasi (trim dan huruf kecil) sebelum disimpan.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Akun dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: Login dan dapatkan access token
+      description: |
+        Hak akses: public. Akun dengan status selain `active` ditolak. Pesan error untuk email tidak ditemukan
+        dan password salah dibuat sama agar keberadaan akun tidak bocor.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login berhasil.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # --------------------------------------------------------------- Users
+  /users/me:
+    get:
+      tags: [Users]
+      operationId: getMyProfile
+      summary: Profil user yang sedang login
+      description: "Hak akses: semua user yang login."
+      responses:
+        "200":
+          description: Profil user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags: [Users]
+      operationId: updateMyProfile
+      summary: Ubah profil sendiri
+      description: "Hak akses: semua user yang login. Email, role, dan status tidak dapat diubah lewat endpoint ini."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Profil diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /users/me/password:
+    put:
+      tags: [Users]
+      operationId: changeMyPassword
+      summary: Ganti password sendiri
+      description: "Hak akses: semua user yang login. Password lama wajib diverifikasi."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        "204":
+          description: Password diganti.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/users:
+    get:
+      tags: [Users]
+      operationId: adminListUsers
+      summary: Daftar semua user
+      description: "Hak akses: admin."
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: q
+          in: query
+          description: Cari berdasarkan nama atau email (mengandung teks, tidak peka huruf besar/kecil).
+          schema:
+            type: string
+            maxLength: 100
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Daftar user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/users/{userId}:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    get:
+      tags: [Users]
+      operationId: adminGetUser
+      summary: Detail user
+      description: "Hak akses: admin."
+      responses:
+        "200":
+          description: Detail user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags: [Users]
+      operationId: adminUpdateUser
+      summary: Ubah role atau status user
+      description: |
+        Hak akses: admin. Admin tidak boleh menurunkan role atau menonaktifkan akunnya sendiri
+        (ditolak dengan 409).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUpdateUserRequest"
+      responses:
+        "200":
+          description: User diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ---------------------------------------------------------- Categories
+  /categories:
+    get:
+      tags: [Categories]
+      operationId: listCategories
+      summary: Daftar kategori
+      description: |
+        Hak akses: public. Secara default hanya kategori aktif (`is_active = true`) yang dikembalikan.
+        Parameter `include_inactive=true` hanya berlaku untuk admin; selain admin menerima 403.
+      security:
+        - {}
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: include_inactive
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Daftar kategori, diurutkan berdasarkan nama.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryListEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Categories]
+      operationId: createCategory
+      summary: Buat kategori
+      description: "Hak akses: admin. Nama kategori harus unik."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryCreate"
+      responses:
+        "201":
+          description: Kategori dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /categories/{categoryId}:
+    parameters:
+      - $ref: "#/components/parameters/CategoryId"
+    get:
+      tags: [Categories]
+      operationId: getCategory
+      summary: Detail kategori
+      description: "Hak akses: public. Kategori nonaktif hanya terlihat oleh admin (selain itu 404)."
+      security:
+        - {}
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Detail kategori.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags: [Categories]
+      operationId: updateCategory
+      summary: Ubah kategori
+      description: "Hak akses: admin."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryUpdate"
+      responses:
+        "200":
+          description: Kategori diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Categories]
+      operationId: deleteCategory
+      summary: Hapus kategori
+      description: |
+        Hak akses: admin. Produk yang memakai kategori ini tidak ikut terhapus; `category_id` produk menjadi
+        `null` (ON DELETE SET NULL).
+      responses:
+        "204":
+          description: Kategori dihapus.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------------------ Products
+  /products:
+    get:
+      tags: [Products]
+      operationId: listProducts
+      summary: Daftar produk
+      description: |
+        Hak akses: public. Pengguna non-admin hanya melihat produk yang berstatus tayang. Nilai status yang
+        berarti "tayang" ditetapkan aplikasi. Parameter `status` hanya berlaku untuk admin.
+      security:
+        - {}
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: q
+          in: query
+          description: Cari berdasarkan nama produk (mengandung teks, tidak peka huruf besar/kecil).
+          schema:
+            type: string
+            maxLength: 100
+        - name: category_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: availability_type
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Hanya untuk admin.
+          schema:
+            type: string
+        - name: min_price
+          in: query
+          schema:
+            $ref: "#/components/schemas/Money"
+        - name: max_price
+          in: query
+          schema:
+            $ref: "#/components/schemas/Money"
+        - name: sort
+          in: query
+          description: Awalan `-` berarti menurun. `newest` = produk terbaru dulu.
+          schema:
+            type: string
+            enum: [name, -name, price, -price, newest]
+            default: name
+      responses:
+        "200":
+          description: Daftar produk.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Products]
+      operationId: createProduct
+      summary: Buat produk
+      description: |
+        Hak akses: admin. Varian dan gambar ditambahkan lewat endpoint tersendiri.
+        Jika `availability_type` adalah pre-order, `po_estimate_days` perlu diisi (aturan aplikasi).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductCreate"
+      responses:
+        "201":
+          description: Produk dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /products/{productId}:
+    parameters:
+      - $ref: "#/components/parameters/ProductId"
+    get:
+      tags: [Products]
+      operationId: getProduct
+      summary: Detail produk beserta varian dan gambar
+      description: "Hak akses: public. Produk yang belum tayang hanya terlihat oleh admin (selain itu 404)."
+      security:
+        - {}
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Detail produk.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDetailEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags: [Products]
+      operationId: updateProduct
+      summary: Ubah produk
+      description: "Hak akses: admin."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpdate"
+      responses:
+        "200":
+          description: Produk diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Products]
+      operationId: deleteProduct
+      summary: Hapus produk
+      description: |
+        Hak akses: admin. Varian dan gambar ikut terhapus (CASCADE). Produk yang sudah pernah dipesan tidak dapat
+        dihapus (order_items memakai RESTRICT) dan menghasilkan 409; ubah statusnya menjadi tidak tayang.
+      responses:
+        "204":
+          description: Produk dihapus.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /products/{productId}/variants:
+    parameters:
+      - $ref: "#/components/parameters/ProductId"
+    post:
+      tags: [Products]
+      operationId: createProductVariant
+      summary: Tambah varian produk
+      description: "Hak akses: admin. SKU harus unik di seluruh produk."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VariantCreate"
+      responses:
+        "201":
+          description: Varian dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VariantEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /products/{productId}/variants/{variantId}:
+    parameters:
+      - $ref: "#/components/parameters/ProductId"
+      - $ref: "#/components/parameters/VariantId"
+    patch:
+      tags: [Products]
+      operationId: updateProductVariant
+      summary: Ubah varian produk
+      description: "Hak akses: admin."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VariantUpdate"
+      responses:
+        "200":
+          description: Varian diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VariantEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Products]
+      operationId: deleteProductVariant
+      summary: Hapus varian produk
+      description: |
+        Hak akses: admin. Item keranjang yang memakai varian ini ikut terhapus. Varian yang sudah pernah dipesan
+        tidak dapat dihapus dan menghasilkan 409.
+      responses:
+        "204":
+          description: Varian dihapus.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /products/{productId}/images:
+    parameters:
+      - $ref: "#/components/parameters/ProductId"
+    post:
+      tags: [Products]
+      operationId: createProductImage
+      summary: Tambah gambar produk
+      description: |
+        Hak akses: admin. Gambar direferensikan lewat URL. Jika `is_primary` bernilai true, gambar utama
+        sebelumnya otomatis menjadi non-utama sehingga tiap produk hanya punya satu gambar utama.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageCreate"
+      responses:
+        "201":
+          description: Gambar ditambahkan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /products/{productId}/images/{imageId}:
+    parameters:
+      - $ref: "#/components/parameters/ProductId"
+      - $ref: "#/components/parameters/ImageId"
+    patch:
+      tags: [Products]
+      operationId: updateProductImage
+      summary: Ubah gambar produk
+      description: "Hak akses: admin."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImageUpdate"
+      responses:
+        "200":
+          description: Gambar diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Products]
+      operationId: deleteProductImage
+      summary: Hapus gambar produk
+      description: "Hak akses: admin."
+      responses:
+        "204":
+          description: Gambar dihapus.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------------------- Uploads
+  /admin/uploads/images:
+    post:
+      tags: [Uploads]
+      operationId: adminUploadImage
+      summary: Unggah gambar ke Cloudinary
+      description: |
+        Hak akses: admin, staff. Menyimpan gambar (JPEG, PNG, atau WebP, maksimal 5 MB) ke Cloudinary dan
+        mengembalikan URL https-nya. URL tersebut lalu dikirim sebagai `image_url` ke
+        `POST /products/{productId}/images` atau `POST /banners`. Tipe diperiksa dari isi berkas.
+        Bila kredensial Cloudinary belum diisi di server, hasilnya 503.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Gambar tersimpan.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [url]
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "502":
+          description: Cloudinary gagal menerima gambar.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Layanan unggah belum dikonfigurasi.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ------------------------------------------------------------- Banners
+  /banners:
+    get:
+      tags: [Banners]
+      operationId: listBanners
+      summary: Daftar banner
+      description: |
+        Hak akses: public. Default hanya banner yang sedang tayang: `is_active = true` dan waktu sekarang
+        berada di antara `starts_at` dan `ends_at` (bila diisi), diurutkan menurut `sort_order` naik.
+        `include_inactive=true` (admin saja, selain admin 403) mengembalikan semua banner termasuk yang
+        terjadwal, berakhir, dan nonaktif; field `status` menunjukkan kondisinya.
+      security:
+        - {}
+        - bearerAuth: []
+      parameters:
+        - name: placement
+          in: query
+          schema:
+            $ref: "#/components/schemas/BannerPlacement"
+        - name: include_inactive
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Daftar banner.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BannerListEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Banners]
+      operationId: createBanner
+      summary: Buat banner
+      description: "Hak akses: admin."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerCreate"
+      responses:
+        "201":
+          description: Banner dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BannerEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /banners/{bannerId}:
+    parameters:
+      - $ref: "#/components/parameters/BannerId"
+    patch:
+      tags: [Banners]
+      operationId: updateBanner
+      summary: Ubah banner
+      description: "Hak akses: admin."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerUpdate"
+      responses:
+        "200":
+          description: Banner diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BannerEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Banners]
+      operationId: deleteBanner
+      summary: Hapus banner
+      description: "Hak akses: admin."
+      responses:
+        "204":
+          description: Banner dihapus.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------------- Site settings
+  /site-settings:
+    get:
+      tags: [Site Settings]
+      operationId: getSiteSettings
+      summary: Pengaturan situs (mode maintenance)
+      description: "Hak akses: public. Dibaca client untuk menampilkan halaman maintenance."
+      security: []
+      responses:
+        "200":
+          description: Pengaturan situs.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettingsEnvelope"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Site Settings]
+      operationId: updateSiteSettings
+      summary: Ubah pengaturan situs
+      description: |
+        Hak akses: admin. Tabel hanya memiliki satu baris pengaturan (singleton), jadi endpoint ini
+        mengganti seluruh isinya. Saat maintenance aktif, server menjawab request pelanggan dan pengunjung
+        dengan 503 `maintenance` (lihat Konvensi), sedangkan staff dan owner tetap dilayani.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteSettingsUpdate"
+      responses:
+        "200":
+          description: Pengaturan diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettingsEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ----------------------------------------------------- Regions & ongkir
+  /regions/provinces:
+    get:
+      tags: [Shipping]
+      operationId: listProvinces
+      summary: Daftar provinsi
+      description: "Hak akses: public. Data dari RajaOngkir, di-cache server 24 jam."
+      security: []
+      responses:
+        "200":
+          $ref: "#/components/responses/RegionList"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          $ref: "#/components/responses/UpstreamError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /regions/provinces/{provinceId}/cities:
+    parameters:
+      - name: provinceId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      tags: [Shipping]
+      operationId: listCities
+      summary: Daftar kota/kabupaten dalam provinsi
+      description: "Hak akses: public. ID tidak dikenal menghasilkan daftar kosong."
+      security: []
+      responses:
+        "200":
+          $ref: "#/components/responses/RegionList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          $ref: "#/components/responses/UpstreamError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /regions/cities/{cityId}/districts:
+    parameters:
+      - name: cityId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      tags: [Shipping]
+      operationId: listDistricts
+      summary: Daftar kecamatan dalam kota/kabupaten
+      description: "Hak akses: public."
+      security: []
+      responses:
+        "200":
+          $ref: "#/components/responses/RegionList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          $ref: "#/components/responses/UpstreamError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /regions/districts/{districtId}/subdistricts:
+    parameters:
+      - name: districtId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      tags: [Shipping]
+      operationId: listSubdistricts
+      summary: Daftar kelurahan/desa dalam kecamatan
+      description: "Hak akses: public. id kelurahan dipakai untuk cek ongkir dan checkout."
+      security: []
+      responses:
+        "200":
+          $ref: "#/components/responses/RegionList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          $ref: "#/components/responses/UpstreamError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /shipping/costs:
+    get:
+      tags: [Shipping]
+      operationId: getShippingCosts
+      summary: Cek ongkir isi keranjang ke kelurahan tujuan
+      description: |
+        Hak akses: customer (admin/staff 403). Berat paket dihitung server dari keranjang (berat produk x jumlah).
+        Asal pengiriman adalah kelurahan toko. Kurir ditentukan toko (saat ini POS Indonesia) dan layanan
+        termurahnya dipakai otomatis; pelanggan tidak memilih kurir. Nilai ini sama dengan ongkir saat checkout.
+      parameters:
+        - name: subdistrict_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+        - name: cart_item_ids
+          in: query
+          description: Daftar UUID item keranjang dipisah koma. Kosong berarti seluruh keranjang.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ongkir dan layanan kurir yang akan dipakai.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShippingCostQuoteEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          $ref: "#/components/responses/UpstreamError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  # ---------------------------------------------------------------- Cart
+  /cart:
+    get:
+      tags: [Cart]
+      operationId: getCart
+      summary: Isi keranjang milik user
+      description: "Hak akses: customer (keranjang miliknya sendiri). Admin/staff ditolak 403."
+      responses:
+        "200":
+          description: Isi keranjang.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Cart]
+      operationId: clearCart
+      summary: Kosongkan keranjang
+      description: "Hak akses: customer (keranjang miliknya sendiri). Menghapus semua item; keranjang kosong tetap 204. Admin/staff ditolak 403."
+      responses:
+        "204":
+          description: Keranjang dikosongkan.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /cart/items:
+    post:
+      tags: [Cart]
+      operationId: addCartItem
+      summary: Tambah item ke keranjang
+      description: |
+        Hak akses: customer (admin/staff 403). Produk nonaktif ditolak seperti varian yang tidak ada (404). Database tidak membatasi satu varian per user, jadi aplikasi menggabungkan:
+        bila varian sudah ada di keranjang, jumlahnya ditambah. Total jumlah tidak boleh melebihi stok varian.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CartItemCreate"
+      responses:
+        "201":
+          description: Item ditambahkan (atau digabung dengan item yang ada).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartItemEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /cart/items/{cartItemId}:
+    parameters:
+      - $ref: "#/components/parameters/CartItemId"
+    patch:
+      tags: [Cart]
+      operationId: updateCartItem
+      summary: Ubah jumlah item keranjang
+      description: "Hak akses: customer pemilik item. Jumlah tidak boleh melebihi stok varian."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CartItemUpdate"
+      responses:
+        "200":
+          description: Item diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartItemEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Cart]
+      operationId: deleteCartItem
+      summary: Hapus item dari keranjang
+      description: "Hak akses: customer pemilik item. Item milik user lain dijawab 404."
+      responses:
+        "204":
+          description: Item dihapus.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # -------------------------------------------------------------- Orders
+  /orders:
+    get:
+      tags: [Orders]
+      operationId: listMyOrders
+      summary: Daftar order milik user
+      description: "Hak akses: customer (hanya order miliknya sendiri), terbaru dulu. Owner/staff → 403; gunakan `/admin/orders`."
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: order_status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Daftar order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderListItemEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Orders]
+      operationId: createOrder
+      summary: Checkout dari keranjang
+      description: |
+        Hak akses: customer dengan email terverifikasi. Admin/staff → 403 `forbidden`; email belum
+        terverifikasi → 403 `email_not_verified`. Server menghitung `subtotal`, `shipping_cost`, dan
+        `total_amount`; nilai tersebut tidak diterima dari client. Seluruh proses (cek role & verifikasi,
+        cek stok, buat order dan item, buat tagihan QRIS, kurangi stok, kosongkan item keranjang yang
+        dipakai) berjalan dalam satu transaksi. Response sudah berisi `payment` (QRIS) dan `payment_due_at`.
+        `product_name`, `size`, dan `unit_price` pada item order disalin saat checkout sebagai snapshot.
+        Jika tujuan belum punya tarif ongkir, hasilnya 404.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderCreate"
+      responses:
+        "201":
+          description: Order dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderDetailEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /orders/{orderId}:
+    parameters:
+      - $ref: "#/components/parameters/OrderId"
+    get:
+      tags: [Orders]
+      operationId: getOrder
+      summary: Detail order
+      description: |
+        Hak akses: pemilik order atau admin. Order milik user lain dijawab 404 agar keberadaannya tidak bocor.
+      responses:
+        "200":
+          description: Detail order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderDetailEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/orders:
+    get:
+      tags: [Orders]
+      operationId: adminListOrders
+      summary: Daftar semua order
+      description: "Hak akses: admin."
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: order_status
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: q
+          in: query
+          description: Cari sebagian nomor order atau nama penerima (tidak peka huruf besar/kecil).
+          schema:
+            type: string
+            maxLength: 100
+        - name: order_number
+          in: query
+          deprecated: true
+          description: Alias lama untuk `q`.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Daftar order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderListItemEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/orders/{orderId}/status:
+    parameters:
+      - $ref: "#/components/parameters/OrderId"
+    put:
+      tags: [Orders]
+      operationId: adminUpdateOrderStatus
+      summary: Ubah status order
+      description: |
+        Hak akses: admin. Transisi yang diizinkan: pending_payment -> cancelled; paid -> processing/cancelled;
+        processing -> shipped/cancelled; shipped -> completed (paid diatur lewat verifikasi pembayaran).
+        Transisi tidak valid dijawab 409. Saat ke `shipped`, `tracking_number` wajib: data pengiriman ikut
+        disimpan dalam transaksi yang sama dan pelanggan menerima email berisi status, kurir, dan no. resi.
+        Kurir selalu kurir pilihan pelanggan saat checkout (`courier_code` + `courier_service`).
+        Pembatalan mengembalikan stok.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderStatusUpdate"
+      responses:
+        "200":
+          description: Status diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------------------ Payments
+  /orders/{orderId}/payment:
+    parameters:
+      - $ref: "#/components/parameters/OrderId"
+    get:
+      tags: [Payments]
+      operationId: getOrderPayment
+      summary: Pembayaran milik order
+      description: "Hak akses: pemilik order atau admin. Bukti pembayaran tidak ikut dikirim di JSON."
+      responses:
+        "200":
+          description: Data pembayaran.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Payments]
+      operationId: createOrderPayment
+      summary: Buat pembayaran untuk order
+      description: |
+        Hak akses: customer pemilik order. Hanya untuk order lama yang belum punya tagihan, karena checkout
+        sudah membuat tagihan QRIS otomatis. Server menentukan `amount` (total order ditambah `unique_code`),
+        `unique_code`, dan `status` awal. Order yang sudah punya pembayaran dijawab 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentCreate"
+      responses:
+        "201":
+          description: Pembayaran dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /orders/{orderId}/payment/proof:
+    parameters:
+      - $ref: "#/components/parameters/OrderId"
+    get:
+      tags: [Payments]
+      operationId: getPaymentProof
+      summary: Unduh bukti pembayaran
+      description: |
+        Hak akses: pemilik order, staff, atau owner. Berkas disimpan di Cloudinary (`payments.proof_url`) dan
+        diambil server lalu diteruskan, sehingga alamat Cloudinary tidak pernah dikirim ke client.
+        `Content-Type` response sama dengan `proof_type`.
+      responses:
+        "200":
+          description: Berkas bukti pembayaran.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Payments]
+      operationId: uploadPaymentProof
+      summary: Unggah bukti pembayaran
+      description: |
+        Hak akses: customer pemilik order. Berkas diunggah ke Cloudinary dan alamatnya disimpan di
+        `payments.proof_url`; bila Cloudinary belum dikonfigurasi, hasilnya 503.
+        Tipe diperiksa dari isi berkas, bukan hanya dari header atau ekstensi. Batas ukuran ditetapkan server
+        (disarankan 2 MB). Mengunggah ulang menggantikan bukti sebelumnya selama pembayaran belum disetujui.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Gambar JPEG, PNG, atau WebP, atau berkas PDF.
+            encoding:
+              file:
+                contentType: image/jpeg, image/png, image/webp, application/pdf
+      responses:
+        "200":
+          description: Bukti tersimpan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /admin/payments:
+    get:
+      tags: [Payments]
+      operationId: adminListPayments
+      summary: Daftar semua pembayaran
+      description: "Hak akses: admin. Dipakai untuk antrean verifikasi pembayaran."
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: order_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: q
+          in: query
+          description: >-
+            Cari sebagian nomor order, ID pembayaran, nama pelanggan, atau email
+            pelanggan (tidak peka huruf besar/kecil). Digabung (AND) dengan filter
+            lain; kosong berarti tanpa pencarian.
+          schema:
+            type: string
+            maxLength: 100
+      responses:
+        "200":
+          description: Daftar pembayaran.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentListEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/payments/{paymentId}/review:
+    parameters:
+      - $ref: "#/components/parameters/PaymentId"
+    post:
+      tags: [Payments]
+      operationId: adminReviewPayment
+      summary: Verifikasi (setujui atau tolak) pembayaran
+      description: |
+        Hak akses: admin. `reviewed_by` diisi dari ID admin pada token, dan `reviewed_at` diisi waktu server.
+        Pembayaran harus sudah memiliki bukti; jika belum, hasilnya 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentReview"
+      responses:
+        "200":
+          description: Pembayaran diverifikasi.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ----------------------------------------------------------- Shipments
+  /orders/{orderId}/shipment:
+    parameters:
+      - $ref: "#/components/parameters/OrderId"
+    get:
+      tags: [Shipments]
+      operationId: getOrderShipment
+      summary: Pengiriman milik order
+      description: "Hak akses: pemilik order atau admin. Belum ada pengiriman dijawab 404."
+      responses:
+        "200":
+          description: Data pengiriman.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShipmentEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Shipments]
+      operationId: adminUpsertOrderShipment
+      summary: Buat atau perbarui pengiriman order
+      description: |
+        Hak akses: admin. Satu order hanya punya satu pengiriman (UNIQUE `order_id`), sehingga endpoint ini
+        membuat bila belum ada dan memperbarui bila sudah ada. Response 201 untuk pembuatan, 200 untuk pembaruan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShipmentUpsert"
+      responses:
+        "200":
+          description: Pengiriman diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShipmentEnvelope"
+        "201":
+          description: Pengiriman dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShipmentEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------- Verifikasi email
+  /auth/password/forgot:
+    post:
+      tags: [Auth]
+      operationId: forgotPassword
+      summary: Minta tautan reset kata sandi
+      description: |
+        Hak akses: public. Bila email terdaftar, server mengirim email berisi tautan
+        `<APP_URL>/reset-password?token=...` (token sekali pakai, berlaku 1 jam; permintaan baru
+        menggantikan token lama). Selalu 204 untuk email berformat valid, terdaftar atau tidak,
+        supaya keberadaan akun tidak bocor. Rate limit per IP lebih ketat daripada endpoint auth lain.
+        Tetap dapat dipakai saat mode maintenance.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+      responses:
+        "204":
+          description: Permintaan diterima (email dikirim bila akun ada).
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /auth/password/reset:
+    post:
+      tags: [Auth]
+      operationId: resetPassword
+      summary: Setel kata sandi baru dari tautan reset
+      description: |
+        Hak akses: public. Token diambil dari query `token` pada halaman `/reset-password`.
+        Token tidak dikenal, sudah dipakai, atau kedaluwarsa dijawab 410 `reset_invalid`.
+        Setelah berhasil, pengguna login ulang dengan kata sandi baru. Dibatasi rate limit per IP.
+        Tetap dapat dipakai saat mode maintenance.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+      responses:
+        "204":
+          description: Kata sandi diperbarui.
+        "410":
+          description: Tautan reset tidak valid atau kedaluwarsa (`reset_invalid`).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /auth/verify-email:
+    post:
+      tags: [Auth]
+      operationId: verifyEmail
+      summary: Verifikasi email dari tautan
+      description: |
+        Hak akses: public. Token sekali pakai, berlaku 24 jam. Token tidak dikenal/kedaluwarsa dijawab
+        410 `verification_invalid`. Dibatasi rate limit per IP.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyEmailRequest"
+      responses:
+        "200":
+          description: Email terverifikasi.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserEnvelope"
+        "410":
+          description: Tautan tidak valid atau kedaluwarsa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /auth/verification/resend:
+    post:
+      tags: [Auth]
+      operationId: resendVerification
+      summary: Kirim ulang tautan verifikasi
+      description: "Hak akses: user yang login dan belum terverifikasi. Tautan lama otomatis tidak berlaku."
+      responses:
+        "204":
+          description: Tautan dikirim.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------- Aksi pelanggan pada order
+  /orders/{orderId}/cancel:
+    parameters:
+      - $ref: "#/components/parameters/OrderId"
+    post:
+      tags: [Orders]
+      operationId: cancelMyOrder
+      summary: Pelanggan membatalkan order
+      description: |
+        Hak akses: customer pemilik order. Hanya untuk `pending_payment` dan bila bukti bayar tidak sedang
+        diverifikasi (409). Stok dikembalikan dan email dikirim.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderCancelRequest"
+      responses:
+        "200":
+          description: Order dibatalkan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /orders/{orderId}/complete:
+    parameters:
+      - $ref: "#/components/parameters/OrderId"
+    post:
+      tags: [Orders]
+      operationId: completeMyOrder
+      summary: Pelanggan konfirmasi paket diterima
+      description: "Hak akses: customer pemilik order. Hanya dari status `shipped`; status pengiriman menjadi `delivered`."
+      responses:
+        "200":
+          description: Order selesai.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------- Dashboard admin
+  /admin/summary:
+    get:
+      tags: [Admin]
+      operationId: adminSummary
+      summary: Ringkasan operasional
+      description: "Hak akses: admin. Antrean verifikasi, order per status, omzet bulan berjalan, stok menipis (≤ 3), dan 6 order terbaru."
+      responses:
+        "200":
+          description: Ringkasan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SummaryEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/analytics:
+    get:
+      tags: [Admin]
+      operationId: adminAnalytics
+      summary: Laporan pendapatan (UC-19)
+      description: |
+        Hak akses: owner saja (staff ditolak 403). Laporan N hari terakhir (zona WIB, termasuk hari ini)
+        dibandingkan dengan N hari sebelumnya. Pendapatan dihitung dari order berstatus
+        paid, processing, shipped, atau completed.
+      parameters:
+        - name: days
+          in: query
+          required: false
+          schema:
+            type: integer
+            enum: [7, 30, 90]
+            default: 30
+      responses:
+        "200":
+          description: Laporan pendapatan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ------------------------------------------------- Jurnal
+  /posts:
+    get:
+      tags: [Journal]
+      operationId: listPosts
+      summary: Daftar artikel terbit
+      description: "Hak akses: public. Hanya `published` dengan `published_at` sudah lewat, terbaru dulu. Tanpa field `content`."
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: tag
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Daftar artikel.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostListEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /posts/{slug}:
+    get:
+      tags: [Journal]
+      operationId: getPost
+      summary: Detail artikel terbit
+      description: "Hak akses: public. Draf, arsip, dan artikel terjadwal dijawab 404."
+      security: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      responses:
+        "200":
+          description: Artikel.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/posts:
+    get:
+      tags: [Journal]
+      operationId: adminListPosts
+      summary: Semua artikel (semua status)
+      description: "Hak akses: admin, staff. Diurutkan dari yang terakhir diubah."
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/Limit"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/PostStatus"
+        - name: q
+          in: query
+          description: Cari judul.
+          schema:
+            type: string
+            maxLength: 100
+      responses:
+        "200":
+          description: Daftar artikel.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostListEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags: [Journal]
+      operationId: createPost
+      summary: Buat artikel
+      description: |
+        Hak akses: admin, staff. Penulis diambil dari token. Default status `draft`. Status `published`
+        tanpa `published_at` memakai waktu server. Slug harus unik (409).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+      responses:
+        "201":
+          description: Artikel dibuat.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /admin/posts/{postId}:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: [Journal]
+      operationId: adminGetPost
+      summary: Detail artikel (semua status)
+      description: "Hak akses: admin, staff."
+      responses:
+        "200":
+          description: Artikel.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags: [Journal]
+      operationId: updatePost
+      summary: Ubah artikel
+      description: "Hak akses: admin, staff. Field yang tidak dikirim tidak berubah; `product_ids` mengganti seluruh daftar."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+      responses:
+        "200":
+          description: Artikel diperbarui.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostEnvelope"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/ValidationFailed"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Journal]
+      operationId: deletePost
+      summary: Hapus artikel
+      description: "Hak akses: admin, staff. Permanen; gunakan status `archived` untuk menyembunyikan."
+      responses:
+        "204":
+          description: Dihapus.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Access token JWT dari `/auth/login` atau `/auth/register`. Server memverifikasi tanda tangan, masa
+        berlaku, dan claim wajib pada setiap request.
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CategoryId:
+      name: categoryId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ProductId:
+      name: productId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    VariantId:
+      name: variantId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ImageId:
+      name: imageId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BannerId:
+      name: bannerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CartItemId:
+      name: cartItemId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OrderId:
+      name: orderId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PaymentId:
+      name: paymentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Request tidak dapat dibaca (JSON rusak, tipe salah, parameter tidak valid).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: bad_request
+              message: Format request tidak valid.
+    Unauthorized:
+      description: Token tidak ada, tidak valid, atau kedaluwarsa; atau kredensial login salah.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: unauthorized
+              message: Autentikasi diperlukan.
+    Forbidden:
+      description: Token valid tetapi tidak punya izin untuk operasi ini.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: forbidden
+              message: Anda tidak memiliki akses.
+    NotFound:
+      description: Resource tidak ditemukan, atau tidak boleh diketahui keberadaannya oleh pemanggil.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: not_found
+              message: Data tidak ditemukan.
+    Conflict:
+      description: Konflik dengan keadaan data saat ini (nilai unik sudah ada, stok tidak cukup, relasi masih dipakai, transisi tidak valid).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: conflict
+              message: Data sudah ada.
+    ValidationFailed:
+      description: Request terbaca tetapi isinya gagal validasi.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: validation_failed
+              message: Data tidak valid.
+              details:
+                - field: email
+                  message: Format email tidak valid.
+    PayloadTooLarge:
+      description: Ukuran body atau berkas melebihi batas.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: payload_too_large
+              message: Ukuran berkas melebihi batas.
+    UnsupportedMediaType:
+      description: Tipe berkas tidak didukung.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: unsupported_media_type
+              message: Tipe berkas tidak didukung.
+    TooManyRequests:
+      description: Terlalu banyak percobaan. Coba lagi setelah jeda pada header `Retry-After`.
+      headers:
+        Retry-After:
+          description: Detik sebelum boleh mencoba lagi.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: too_many_requests
+              message: Terlalu banyak permintaan.
+    InternalError:
+      description: Kesalahan server. Detail internal tidak dikirim ke client.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: internal_error
+              message: Terjadi kesalahan pada server.
+
+    RegionList:
+      description: Daftar wilayah.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RegionListEnvelope"
+    UpstreamError:
+      description: Layanan RajaOngkir gagal dihubungi.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ServiceUnavailable:
+      description: Layanan pihak ketiga belum dikonfigurasi di server, atau situs sedang maintenance (`error.code = maintenance`).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    # ------------------------------------------------------------ Umum
+    Money:
+      type: string
+      pattern: '^[0-9]+(\.[0-9]+)?$'
+      description: Nilai uang tak negatif sebagai string desimal (kolom NUMERIC).
+      example: "150000"
+
+    PageMeta:
+      type: object
+      required: [page, limit, total]
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+          description: Jumlah seluruh data yang cocok dengan filter.
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              description: Kode error stabil untuk dipakai client.
+            message:
+              type: string
+              description: Pesan yang aman ditampilkan; tidak memuat detail internal.
+            details:
+              type: array
+              description: Rincian kesalahan per field (untuk error validasi).
+              items:
+                type: object
+                required: [field, message]
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+
+    # ------------------------------------------------------------ Users
+    User:
+      type: object
+      description: Pengguna. `password_hash` tidak pernah dikirim.
+      required: [id, name, email, role, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          nullable: true
+        role:
+          $ref: "#/components/schemas/Role"
+        status:
+          type: string
+          enum: [active, inactive]
+        email_verified_at:
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
+          description: Terisi setelah user membuka tautan verifikasi. Wajib terisi untuk checkout.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 72
+          description: Maksimum 72 byte karena batas algoritma bcrypt.
+        phone:
+          type: string
+          maxLength: 20
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    AuthResult:
+      type: object
+      required: [access_token, token_type, expires_in, user]
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          enum: [Bearer]
+        expires_in:
+          type: integer
+          description: Masa berlaku token dalam detik.
+        user:
+          $ref: "#/components/schemas/User"
+
+    UpdateProfileRequest:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+
+    ChangePasswordRequest:
+      type: object
+      required: [current_password, new_password]
+      properties:
+        current_password:
+          type: string
+          format: password
+        new_password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 72
+
+    AdminUpdateUserRequest:
+      type: object
+      minProperties: 1
+      properties:
+        role:
+          $ref: "#/components/schemas/Role"
+        status:
+          type: string
+          enum: [active, inactive]
+
+    # ------------------------------------------------------- Categories
+    Category:
+      type: object
+      required: [id, name, is_active]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        is_active:
+          type: boolean
+
+    CategoryCreate:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        is_active:
+          type: boolean
+          default: true
+
+    CategoryUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        is_active:
+          type: boolean
+
+    # --------------------------------------------------------- Products
+    Product:
+      type: object
+      required: [id, name, price, discount_percent, weight_gram, availability_type, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        category_id:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        price:
+          $ref: "#/components/schemas/Money"
+        discount_percent:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Persentase diskon 0 sampai 100.
+        weight_gram:
+          type: integer
+          minimum: 1
+        availability_type:
+          type: string
+          description: Jenis ketersediaan (misalnya stok siap atau pre-order). Nilai ditetapkan aplikasi.
+          example: ready
+        po_estimate_days:
+          type: integer
+          minimum: 0
+          nullable: true
+          description: Estimasi hari pre-order.
+        status:
+          type: string
+          description: Status penayangan. Nilai ditetapkan aplikasi.
+          example: active
+
+    ProductListItem:
+      allOf:
+        - $ref: "#/components/schemas/Product"
+        - type: object
+          properties:
+            primary_image_url:
+              type: string
+              nullable: true
+              readOnly: true
+              description: URL gambar dengan `is_primary = true`, diturunkan dari tabel product_images.
+            total_stock:
+              type: integer
+              minimum: 0
+              readOnly: true
+              description: Jumlah stok semua varian. 0 berarti habis.
+            variant_count:
+              type: integer
+              minimum: 0
+              readOnly: true
+
+    ProductDetail:
+      allOf:
+        - $ref: "#/components/schemas/Product"
+        - type: object
+          required: [variants, images]
+          properties:
+            variants:
+              type: array
+              items:
+                $ref: "#/components/schemas/Variant"
+            images:
+              type: array
+              description: Diurutkan menurut `sort_order` naik.
+              items:
+                $ref: "#/components/schemas/Image"
+
+    ProductCreate:
+      type: object
+      required: [name, price, weight_gram, availability_type, status]
+      properties:
+        category_id:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+        price:
+          $ref: "#/components/schemas/Money"
+        discount_percent:
+          type: number
+          minimum: 0
+          maximum: 100
+          default: 0
+        weight_gram:
+          type: integer
+          minimum: 1
+        availability_type:
+          type: string
+        po_estimate_days:
+          type: integer
+          minimum: 0
+          nullable: true
+        status:
+          type: string
+
+    ProductUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        category_id:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+        price:
+          $ref: "#/components/schemas/Money"
+        discount_percent:
+          type: number
+          minimum: 0
+          maximum: 100
+        weight_gram:
+          type: integer
+          minimum: 1
+        availability_type:
+          type: string
+        po_estimate_days:
+          type: integer
+          minimum: 0
+          nullable: true
+        status:
+          type: string
+
+    Variant:
+      type: object
+      required: [id, product_id, sku, size, stock]
+      properties:
+        id:
+          type: string
+          format: uuid
+        product_id:
+          type: string
+          format: uuid
+        sku:
+          type: string
+        size:
+          type: string
+        color:
+          type: string
+          nullable: true
+        stock:
+          type: integer
+          minimum: 0
+
+    VariantCreate:
+      type: object
+      required: [sku, size]
+      properties:
+        sku:
+          type: string
+          minLength: 1
+          maxLength: 64
+        size:
+          type: string
+          minLength: 1
+          maxLength: 32
+        color:
+          type: string
+          nullable: true
+          maxLength: 32
+        stock:
+          type: integer
+          minimum: 0
+          default: 0
+
+    VariantUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        sku:
+          type: string
+          minLength: 1
+          maxLength: 64
+        size:
+          type: string
+          minLength: 1
+          maxLength: 32
+        color:
+          type: string
+          nullable: true
+          maxLength: 32
+        stock:
+          type: integer
+          minimum: 0
+
+    Image:
+      type: object
+      required: [id, product_id, image_url, sort_order, is_primary]
+      properties:
+        id:
+          type: string
+          format: uuid
+        product_id:
+          type: string
+          format: uuid
+        image_url:
+          type: string
+          format: uri
+        sort_order:
+          type: integer
+        is_primary:
+          type: boolean
+
+    ImageCreate:
+      type: object
+      required: [image_url]
+      properties:
+        image_url:
+          type: string
+          format: uri
+          description: Hanya skema http atau https yang diterima.
+        sort_order:
+          type: integer
+          default: 0
+        is_primary:
+          type: boolean
+          default: false
+
+    ImageUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        image_url:
+          type: string
+          format: uri
+        sort_order:
+          type: integer
+        is_primary:
+          type: boolean
+
+    # ---------------------------------------------------------- Banners
+    BannerPlacement:
+      type: string
+      enum: [hero, main, catalog]
+      description: |
+        `hero` = carousel atas beranda (rekomendasi 1920×800, mobile 1080×1350);
+        `main` = banner kampanye tengah beranda (1600×1000, mobile 1080×1080);
+        `catalog` = strip atas halaman katalog (1920×480, mobile 1200×525).
+
+    Banner:
+      type: object
+      required: [id, placement, image_url, sort_order, is_active, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        placement:
+          $ref: "#/components/schemas/BannerPlacement"
+        title:
+          type: string
+          nullable: true
+          maxLength: 120
+        subtitle:
+          type: string
+          nullable: true
+          maxLength: 240
+          description: Label kecil di atas judul, mis. nama event.
+        cta_label:
+          type: string
+          nullable: true
+          maxLength: 40
+        image_url:
+          type: string
+          format: uri
+        mobile_image_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Dipakai di layar < 640px bila diisi.
+        link_url:
+          type: string
+          nullable: true
+          description: Path internal (diawali `/`, bukan `//`) atau URL http/https.
+          example: /shop?category=3f2c...
+        sort_order:
+          type: integer
+          minimum: 0
+          maximum: 999
+        is_active:
+          type: boolean
+        starts_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Mulai tayang. Kosong = langsung tayang.
+        ends_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Turun tayang. Harus setelah `starts_at`. Kosong = tanpa batas.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          type: string
+          enum: [live, scheduled, ended, inactive]
+          readOnly: true
+          description: Dihitung server dari `is_active` dan jadwal saat dibaca.
+
+    BannerCreate:
+      type: object
+      required: [image_url]
+      properties:
+        placement:
+          $ref: "#/components/schemas/BannerPlacement"
+        title:
+          type: string
+          nullable: true
+        subtitle:
+          type: string
+          nullable: true
+        cta_label:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          format: uri
+        mobile_image_url:
+          type: string
+          format: uri
+          nullable: true
+        link_url:
+          type: string
+          nullable: true
+        sort_order:
+          type: integer
+          default: 0
+        is_active:
+          type: boolean
+          default: true
+        starts_at:
+          type: string
+          format: date-time
+          nullable: true
+        ends_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    BannerUpdate:
+      description: Field yang tidak dikirim tidak berubah; `null` atau string kosong menghapus field opsional.
+      allOf:
+        - $ref: "#/components/schemas/BannerCreate"
+        - type: object
+          minProperties: 1
+
+    # ---------------------------------------------------- Site settings
+    SiteSettings:
+      type: object
+      required: [maintenance_mode, maintenance_message, payment_window_hours]
+      properties:
+        maintenance_mode:
+          type: boolean
+        maintenance_message:
+          type: string
+        qris_image_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Gambar QRIS statis toko yang ditampilkan di halaman pembayaran.
+        qris_merchant_name:
+          type: string
+          nullable: true
+        qris_nmid:
+          type: string
+          nullable: true
+        payment_window_hours:
+          type: integer
+          minimum: 1
+          maximum: 168
+          description: Batas waktu bayar order baru (jam).
+
+    SiteSettingsUpdate:
+      type: object
+      minProperties: 1
+      description: Semua field opsional; yang tidak dikirim tidak berubah. String kosong pada field QRIS menghapus nilainya.
+      properties:
+        maintenance_mode:
+          type: boolean
+        maintenance_message:
+          type: string
+          minLength: 1
+          maxLength: 500
+        qris_image_url:
+          type: string
+        qris_merchant_name:
+          type: string
+          maxLength: 100
+        qris_nmid:
+          type: string
+          maxLength: 50
+        payment_window_hours:
+          type: integer
+          minimum: 1
+          maximum: 168
+
+    # ---------------------------------------------------- Regions & ongkir
+    Region:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        zip_code:
+          type: string
+          description: Kode pos (terisi pada level kelurahan bila tersedia).
+
+    ShippingOption:
+      type: object
+      required: [courier_code, courier_name, service, cost, etd]
+      properties:
+        courier_code:
+          type: string
+          description: Kode kurir, misalnya pos.
+        courier_name:
+          type: string
+        service:
+          type: string
+          description: Kode layanan kurir.
+        description:
+          type: string
+        cost:
+          $ref: "#/components/schemas/Money"
+        etd:
+          type: string
+          description: Perkiraan lama pengiriman dari kurir.
+
+    ShippingCostQuote:
+      allOf:
+        - $ref: "#/components/schemas/ShippingOption"
+        - type: object
+          required: [weight_gram]
+          properties:
+            weight_gram:
+              type: integer
+              description: Total berat paket (gram) dari keranjang.
+
+    # ------------------------------------------------------------- Cart
+    CartItemView:
+      type: object
+      description: Item keranjang beserta data produk saat ini (diturunkan dari varian dan produk).
+      required: [id, variant_id, product_id, product_name, sku, size, unit_price, quantity, stock, subtotal]
+      properties:
+        id:
+          type: string
+          format: uuid
+        variant_id:
+          type: string
+          format: uuid
+        product_id:
+          type: string
+          format: uuid
+        product_name:
+          type: string
+        sku:
+          type: string
+        size:
+          type: string
+        color:
+          type: string
+          nullable: true
+        unit_price:
+          $ref: "#/components/schemas/Money"
+        quantity:
+          type: integer
+          minimum: 1
+        stock:
+          type: integer
+          minimum: 0
+          description: Stok varian saat ini, agar client dapat memperingatkan bila jumlah melebihi stok.
+        subtotal:
+          $ref: "#/components/schemas/Money"
+        primary_image_url:
+          type: string
+          nullable: true
+
+    Cart:
+      type: object
+      required: [items, subtotal]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItemView"
+        subtotal:
+          $ref: "#/components/schemas/Money"
+
+    CartItemCreate:
+      type: object
+      required: [variant_id, quantity]
+      properties:
+        variant_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+
+    CartItemUpdate:
+      type: object
+      required: [quantity]
+      properties:
+        quantity:
+          type: integer
+          minimum: 1
+
+    # ----------------------------------------------------------- Orders
+    Order:
+      type: object
+      required:
+        - id
+        - order_number
+        - user_id
+        - recipient_name
+        - recipient_phone
+        - shipping_address
+        - shipping_kelurahan
+        - subtotal
+        - shipping_cost
+        - total_amount
+        - order_status
+      properties:
+        id:
+          type: string
+          format: uuid
+        order_number:
+          type: string
+          description: Nomor order unik, dibuat server.
+        user_id:
+          type: string
+          format: uuid
+        recipient_name:
+          type: string
+        recipient_phone:
+          type: string
+        shipping_address:
+          type: string
+        shipping_city:
+          type: string
+          nullable: true
+        shipping_kelurahan:
+          type: string
+        subtotal:
+          $ref: "#/components/schemas/Money"
+        shipping_cost:
+          $ref: "#/components/schemas/Money"
+        total_amount:
+          $ref: "#/components/schemas/Money"
+        order_status:
+          type: string
+          enum: [pending_payment, paid, processing, shipped, completed, cancelled]
+        shipping_district:
+          type: string
+          nullable: true
+          description: Kecamatan.
+        shipping_subdistrict_id:
+          type: integer
+          nullable: true
+        shipping_zip_code:
+          type: string
+          nullable: true
+        courier_code:
+          type: string
+          nullable: true
+        courier_service:
+          type: string
+          nullable: true
+        shipping_etd:
+          type: string
+          nullable: true
+        shipping_weight_gram:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        payment_due_at:
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
+          description: Batas bayar. Lewat dari ini order pending_payment dibatalkan otomatis.
+        cancel_reason:
+          type: string
+          nullable: true
+          readOnly: true
+
+    OrderListItem:
+      allOf:
+        - $ref: "#/components/schemas/Order"
+        - type: object
+          properties:
+            item_count:
+              type: integer
+              description: Jumlah total barang (sum quantity).
+            payment_status:
+              type: string
+              enum: [pending, approved, rejected]
+              nullable: true
+            has_proof:
+              type: boolean
+            customer_email:
+              type: string
+              format: email
+
+    OrderItem:
+      type: object
+      description: Snapshot item saat checkout; tidak berubah walau produk diubah kemudian.
+      required: [id, order_id, product_id, variant_id, product_name, size, unit_price, quantity, subtotal]
+      properties:
+        id:
+          type: string
+          format: uuid
+        order_id:
+          type: string
+          format: uuid
+        product_id:
+          type: string
+          format: uuid
+        variant_id:
+          type: string
+          format: uuid
+        product_name:
+          type: string
+        size:
+          type: string
+        color:
+          type: string
+          nullable: true
+          description: Salinan warna varian saat checkout (SDD D-14).
+        unit_price:
+          $ref: "#/components/schemas/Money"
+        quantity:
+          type: integer
+          minimum: 1
+        subtotal:
+          $ref: "#/components/schemas/Money"
+        image_url:
+          type: string
+          nullable: true
+          readOnly: true
+          description: Gambar utama produk saat ini (bukan snapshot).
+
+    OrderDetail:
+      allOf:
+        - $ref: "#/components/schemas/Order"
+        - type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrderItem"
+            payment:
+              type: object
+              nullable: true
+              allOf:
+                - $ref: "#/components/schemas/Payment"
+            shipment:
+              type: object
+              nullable: true
+              allOf:
+                - $ref: "#/components/schemas/Shipment"
+
+    OrderCreate:
+      type: object
+      required:
+        - recipient_name
+        - recipient_phone
+        - shipping_address
+        - province_id
+        - city_id
+        - district_id
+        - subdistrict_id
+      properties:
+        recipient_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        recipient_phone:
+          type: string
+          minLength: 6
+          maxLength: 20
+        shipping_address:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Nama jalan, nomor rumah, RT/RW.
+        province_id:
+          type: integer
+          description: ID dari `/regions/provinces`.
+        city_id:
+          type: integer
+          description: ID dari `/regions/provinces/{provinceId}/cities`.
+        district_id:
+          type: integer
+          description: ID kecamatan dari `/regions/cities/{cityId}/districts`.
+        subdistrict_id:
+          type: integer
+          description: ID kelurahan dari `/regions/districts/{districtId}/subdistricts`.
+        cart_item_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Item keranjang yang di-checkout. Bila kosong atau tidak dikirim, seluruh isi keranjang dipakai.
+          items:
+            type: string
+            format: uuid
+
+    OrderStatusUpdate:
+      type: object
+      required: [order_status]
+      properties:
+        order_status:
+          type: string
+          minLength: 1
+        tracking_number:
+          type: string
+          maxLength: 100
+          description: No. resi dari kurir. Wajib bila `order_status` = shipped; diabaikan untuk status lain.
+        reason:
+          type: string
+          maxLength: 300
+          description: Alasan pembatalan, dikirim ke pelanggan lewat email. Dipakai saat `order_status` = cancelled.
+
+    # --------------------------------------------------------- Payments
+    Payment:
+      type: object
+      description: Data pembayaran. Isi biner bukti (`proof_data`) tidak dikirim lewat JSON.
+      required: [id, order_id, method, amount, unique_code, status, has_proof]
+      properties:
+        id:
+          type: string
+          format: uuid
+        order_id:
+          type: string
+          format: uuid
+        method:
+          type: string
+          description: "`qris` untuk semua order baru. `bank_transfer`/`ewallet` hanya muncul pada data lama."
+          example: qris
+        amount:
+          $ref: "#/components/schemas/Money"
+        unique_code:
+          type: integer
+          minimum: 0
+          description: Kode unik untuk membedakan transfer.
+        proof_type:
+          type: string
+          nullable: true
+          description: Tipe MIME bukti pembayaran, diturunkan dari ekstensi `proof_url`.
+          example: image/jpeg
+        has_proof:
+          type: boolean
+          readOnly: true
+          description: Diturunkan dari keberadaan `proof_data`.
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+          description: "`pending` = menunggu bukti atau menunggu verifikasi (lihat `has_proof`)."
+        paid_at:
+          type: string
+          format: date-time
+          nullable: true
+        reviewed_by:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID admin yang memverifikasi.
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+
+    AdminPayment:
+      allOf:
+        - $ref: "#/components/schemas/Payment"
+        - type: object
+          properties:
+            order_number:
+              type: string
+            order_status:
+              type: string
+            order_total:
+              $ref: "#/components/schemas/Money"
+            payment_due_at:
+              type: string
+              format: date-time
+              nullable: true
+            customer_name:
+              type: string
+            customer_email:
+              type: string
+              format: email
+
+    PaymentCreate:
+      type: object
+      properties:
+        method:
+          type: string
+          enum: [qris]
+          default: qris
+
+    PaymentReview:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          minLength: 1
+          description: Hasil verifikasi (misalnya disetujui atau ditolak). Nilai ditetapkan aplikasi.
+
+    # -------------------------------------------------------- Shipments
+    Shipment:
+      type: object
+      required: [id, order_id, courier_name, coverage_status, shipping_status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        order_id:
+          type: string
+          format: uuid
+        courier_name:
+          type: string
+          readOnly: true
+          description: Kurir pesanan (kode kurir huruf besar + layanan, mis. "JNE REG"), diturunkan dari order; tidak disimpan di tabel shipments.
+        tracking_number:
+          type: string
+          nullable: true
+        coverage_status:
+          type: string
+          description: Status jangkauan pengiriman ke tujuan. Nilai ditetapkan aplikasi.
+        shipping_status:
+          type: string
+          enum: [pending, shipped, delivered, returned]
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+
+    ShipmentUpsert:
+      type: object
+      required: [coverage_status, shipping_status]
+      properties:
+        tracking_number:
+          type: string
+          nullable: true
+        coverage_status:
+          type: string
+          minLength: 1
+        shipping_status:
+          type: string
+          minLength: 1
+
+    # ------------------------------------------------------- Envelopes
+    AuthEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/AuthResult"
+    UserEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/User"
+    UserListEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        meta:
+          $ref: "#/components/schemas/PageMeta"
+    CategoryEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Category"
+    CategoryListEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+        meta:
+          $ref: "#/components/schemas/PageMeta"
+    ProductEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Product"
+    ProductDetailEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/ProductDetail"
+    ProductListEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductListItem"
+        meta:
+          $ref: "#/components/schemas/PageMeta"
+    VariantEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Variant"
+    ImageEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Image"
+    BannerEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Banner"
+    BannerListEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Banner"
+    SiteSettingsEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/SiteSettings"
+    RegionListEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Region"
+    ShippingCostQuoteEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/ShippingCostQuote"
+    CartEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Cart"
+    CartItemEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/CartItemView"
+    OrderEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Order"
+    OrderDetailEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/OrderDetail"
+    PaymentEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Payment"
+    PaymentListEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminPayment"
+        meta:
+          $ref: "#/components/schemas/PageMeta"
+    ShipmentEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Shipment"
+
+    # ---------------------------------------------------- Role, admin, jurnal
+    Role:
+      type: string
+      enum: [customer, staff, owner]
+
+    VerifyEmailRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+          minLength: 20
+          maxLength: 200
+          description: Token dari tautan `/verify-email?token=...` di email.
+
+    ForgotPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+          description: Dinormalisasi (trim, huruf kecil) oleh server.
+
+    ResetPasswordRequest:
+      type: object
+      required: [token, password]
+      properties:
+        token:
+          type: string
+          minLength: 20
+          maxLength: 200
+          description: Token dari tautan `/reset-password?token=...` di email.
+        password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 72
+          description: Kata sandi baru (8 sampai 72 byte, batas bcrypt).
+
+    OrderCancelRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          maxLength: 300
+
+    Summary:
+      type: object
+      properties:
+        status_counts:
+          type: object
+          additionalProperties:
+            type: integer
+          description: Jumlah order per `order_status`.
+        proofs_to_review:
+          type: integer
+        orders_today:
+          type: integer
+        revenue_month:
+          $ref: "#/components/schemas/Money"
+        paid_orders_month:
+          type: integer
+        low_stock:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id: { type: string, format: uuid }
+              product_name: { type: string }
+              variant_id: { type: string, format: uuid }
+              sku: { type: string }
+              size: { type: string }
+              color: { type: string, nullable: true }
+              stock: { type: integer }
+        recent:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderListItem"
+
+    PostStatus:
+      type: string
+      enum: [draft, published, archived]
+
+    Post:
+      type: object
+      required: [id, slug, title, status, created_at, updated_at, read_minutes]
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+        title: { type: string }
+        excerpt: { type: string, nullable: true }
+        cover_image_url: { type: string, format: uri, nullable: true }
+        tag: { type: string, nullable: true }
+        status: { $ref: "#/components/schemas/PostStatus" }
+        author_id: { type: string, format: uuid, nullable: true }
+        author_name: { type: string, nullable: true }
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Waktu terbit. Bila di masa depan, artikel terjadwal (belum tampil publik).
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        read_minutes: { type: integer, minimum: 1 }
+
+    PostProduct:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        price: { $ref: "#/components/schemas/Money" }
+        discount_percent: { type: number }
+        primary_image_url: { type: string, nullable: true }
+        total_stock: { type: integer }
+        status: { type: string }
+
+    PostDetail:
+      allOf:
+        - $ref: "#/components/schemas/Post"
+        - type: object
+          properties:
+            content:
+              type: string
+              description: Markdown sederhana (judul, daftar, kutipan, tebal/miring, tautan, gambar).
+            product_ids:
+              type: array
+              items: { type: string, format: uuid }
+            products:
+              type: array
+              description: Produk terkait. Untuk publik hanya produk aktif.
+              items: { $ref: "#/components/schemas/PostProduct" }
+
+    PostInput:
+      type: object
+      description: Untuk PATCH semua field opsional; `slug` kosong dibuat otomatis dari judul.
+      properties:
+        title: { type: string, minLength: 3, maxLength: 160 }
+        slug: { type: string, maxLength: 160 }
+        excerpt: { type: string, nullable: true, maxLength: 300 }
+        content: { type: string, maxLength: 60000, description: "Minimal 50 karakter untuk status published." }
+        cover_image_url: { type: string, nullable: true }
+        tag: { type: string, nullable: true, maxLength: 40 }
+        status: { $ref: "#/components/schemas/PostStatus" }
+        published_at: { type: string, format: date-time, nullable: true }
+        product_ids:
+          type: array
+          maxItems: 12
+          items: { type: string, format: uuid }
+
+    OrderListItemEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderListItem"
+        meta:
+          $ref: "#/components/schemas/PageMeta"
+
+    SummaryEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Summary"
+
+    AnalyticsTotals:
+      type: object
+      required: [revenue, paid_orders, all_orders, cancelled, buyers, items_sold]
+      properties:
+        revenue:
+          type: string
+          description: Rupiah dalam bentuk string desimal.
+          example: "1250000.00"
+        paid_orders:
+          type: integer
+        all_orders:
+          type: integer
+        cancelled:
+          type: integer
+        buyers:
+          type: integer
+        items_sold:
+          type: integer
+
+    Analytics:
+      type: object
+      required: [days, current, previous, series, top_products, statuses]
+      properties:
+        days:
+          type: integer
+          enum: [7, 30, 90]
+        current:
+          $ref: "#/components/schemas/AnalyticsTotals"
+        previous:
+          $ref: "#/components/schemas/AnalyticsTotals"
+        series:
+          type: array
+          description: Satu titik per hari (WIB).
+          items:
+            type: object
+            required: [date, revenue, orders]
+            properties:
+              date:
+                type: string
+                format: date
+              revenue:
+                type: string
+              orders:
+                type: integer
+        top_products:
+          type: array
+          items:
+            type: object
+            required: [product_id, name, quantity, revenue]
+            properties:
+              product_id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              quantity:
+                type: integer
+              revenue:
+                type: string
+        statuses:
+          type: object
+          description: Jumlah order per status pada periode berjalan.
+          additionalProperties:
+            type: integer
+
+    AnalyticsEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Analytics"
+
+    PostEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/PostDetail"
+
+    PostListEnvelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+        meta:
+          $ref: "#/components/schemas/PageMeta"
