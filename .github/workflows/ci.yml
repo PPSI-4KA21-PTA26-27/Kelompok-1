@@ -14,7 +14,7 @@ jobs:
     defaults: { run: { working-directory: 04-Development/backend } }
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with: { go-version-file: 04-Development/backend/go.mod, cache-dependency-path: 04-Development/backend/go.sum }
       - run: make vet test
       - run: make sec
