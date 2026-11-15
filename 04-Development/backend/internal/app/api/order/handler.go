@@ -275,6 +275,26 @@ func (h *Handler) writeError(w http.ResponseWriter, r *http.Request, op string, 
 	return true
 }
 
+// rtrw: kosong (opsional) atau 1-3 digit angka.
+func rtrw(v string) bool {
+	if len(v) > 3 {
+		return false
+	}
+	for _, r := range v {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
+}
+
+func pad3(v string) string {
+	if v == "" {
+		return "-"
+	}
+	return strings.Repeat("0", 3-len(v)) + v
+}
+
 // input memvalidasi dan merapikan body checkout.
 func (req createRequest) input() (CheckoutInput, []response.FieldError) {
 	in := CheckoutInput{
@@ -296,6 +316,13 @@ func (req createRequest) input() (CheckoutInput, []response.FieldError) {
 		"Nomor telepon tidak valid (6 sampai 20 karakter).")
 	c.Check(validator.RuneLenBetween(in.ShippingAddress, 1, 500), "shipping_address",
 		"Alamat wajib diisi, maksimal 500 karakter.")
+	rt, rw := strings.TrimSpace(req.RT), strings.TrimSpace(req.RW)
+	c.Check(rtrw(rt), "rt", "RT berupa angka 1 sampai 3 digit.")
+	c.Check(rtrw(rw), "rw", "RW berupa angka 1 sampai 3 digit.")
+	// API wilayah tidak punya RT/RW; disimpan di alamat supaya skema tetap sesuai SDD.
+	if (rt != "" || rw != "") && rtrw(rt) && rtrw(rw) {
+		in.ShippingAddress += ", RT " + pad3(rt) + "/RW " + pad3(rw)
+	}
 	c.Check(req.ProvinceID > 0, "province_id", "Provinsi wajib dipilih.")
 	c.Check(req.CityID > 0, "city_id", "Kota/kabupaten wajib dipilih.")
 	c.Check(req.DistrictID > 0, "district_id", "Kecamatan wajib dipilih.")

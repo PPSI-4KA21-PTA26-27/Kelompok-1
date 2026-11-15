@@ -34,6 +34,11 @@ func testRouter(t *testing.T) (http.Handler, func(role string) string) {
 		payment:     payment.NewHandler(nil),
 		shipment:    shipment.NewHandler(nil),
 		siteSetting: sitesetting.NewHandler(nil),
+		// Peran dari id token ("u-<role>"); role "inactive" mewakili akun nonaktif.
+		account: func(_ context.Context, id string) (string, bool, error) {
+			role := strings.TrimPrefix(id, "u-")
+			return role, role != "inactive", nil
+		},
 		maintenance: func(context.Context) (bool, string, error) { return false, "", nil },
 	}
 	cfg := config.Config{MaxBodyBytes: 1 << 20, HTTPRequestTimeout: 5 * time.Second}
@@ -64,6 +69,9 @@ func TestRouteRoleAccess(t *testing.T) {
 		{http.MethodPost, "/api/v1/cart/items", "{}", "staff", http.StatusForbidden},
 		{http.MethodPost, "/api/v1/cart/items", "{}", "customer", http.StatusUnprocessableEntity},
 		{http.MethodPatch, "/api/v1/cart/items/" + someUUID, "{}", "owner", http.StatusForbidden},
+
+		// Akun nonaktif ditolak walau token masih berlaku (SDD 3.5).
+		{http.MethodPost, "/api/v1/orders", "{}", "inactive", http.StatusUnauthorized},
 
 		// Checkout dan unggah bukti khusus pelanggan.
 		{http.MethodPost, "/api/v1/orders", "{}", "staff", http.StatusForbidden},

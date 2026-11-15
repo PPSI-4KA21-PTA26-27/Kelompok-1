@@ -2,18 +2,14 @@ package payment
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
 	"fmt"
 	"log/slog"
-	"math/big"
 
 	"hii-stranger1/backend/internal/pkg/cloudinary"
 	"hii-stranger1/backend/internal/pkg/mailer"
 )
 
-// maxUniqueCode adalah batas atas kode unik transfer (1 sampai 999 rupiah).
-const maxUniqueCode = 999
 
 // ProofStorage menyimpan dan mengambil berkas bukti pembayaran (Cloudinary).
 type ProofStorage interface {
@@ -44,14 +40,15 @@ func (s *Service) Get(ctx context.Context, orderID, userID string, admin bool) (
 	return s.repo.GetByOrder(ctx, orderID)
 }
 
-// Create membuat tagihan pembayaran untuk order milik userID. Kode unik acak
+// Create membuat tagihan pembayaran untuk order milik userID. Kode unik
 // ditambahkan ke total agar transfer mudah dicocokkan admin.
 func (s *Service) Create(ctx context.Context, orderID, userID, method string) (Payment, error) {
-	n, err := rand.Int(rand.Reader, big.NewInt(maxUniqueCode))
-	if err != nil {
-		return Payment{}, fmt.Errorf("payment: unique code: %w", err)
+	p, err := s.repo.Create(ctx, orderID, userID, method)
+	if errors.Is(err, ErrAlreadyExists) {
+		// Tagihan sudah ada; membuka info pembayaran mengembalikannya (SDD D-06).
+		return s.repo.GetByOrder(ctx, orderID)
 	}
-	return s.repo.Create(ctx, orderID, userID, method, int(n.Int64())+1)
+	return p, err
 }
 
 // UploadProof menyimpan bukti pembayaran milik order userID, lalu memberi
@@ -87,7 +84,9 @@ func (s *Service) UploadProof(ctx context.Context, orderID, userID string, proof
 				{"Nominal harus diterima", "Rp " + p.Amount},
 				{"Kode unik", fmt.Sprintf("%03d", p.UniqueCode)},
 			},
-			Button: &mailer.Link{Label: "Buka antrean verifikasi", URL: s.mail.AppURL("/admin?tab=payments")},
+			Note:       "Bukti pembayaran terlampir di email ini.",
+			Attachment: &mailer.Attachment{Name: "bukti-" + c.OrderNumber + proofExt(proof.Type), Type: proof.Type, Data: proof.Data},
+			Button: &mailer.Link{Label: "Buka antrean verifikasi", URL: s.mail.AppURL("/admin/pembayaran")},
 		})
 	} else {
 		slog.WarnContext(ctx, "payment: load contact for email failed", "error", err)
@@ -127,7 +126,7 @@ func (s *Service) Review(ctx context.Context, paymentID, adminID, status string)
 	}
 
 	if c, err := s.repo.contactOf(ctx, p.OrderID); err == nil {
-		orderURL := s.mail.AppURL("/orders/" + p.OrderID)
+		orderURL := s.mail.AppURL("/pesanan/" + p.OrderID)
 		e := mailer.Email{
 			Heading: "Pembayaran diterima",
 			Paragraphs: []string{
@@ -167,4 +166,16 @@ func (s *Service) checkAccess(ctx context.Context, orderID, userID string, admin
 		return ErrOrderNotFound
 	}
 	return nil
+}
+
+func proofExt(mimeType string) string {
+	switch mimeType {
+	case "image/png":
+		return ".png"
+	case "image/webp":
+		return ".webp"
+	case "application/pdf":
+		return ".pdf"
+	}
+	return ".jpg"
 }

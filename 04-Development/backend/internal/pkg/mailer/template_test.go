@@ -28,13 +28,23 @@ func TestEmailRender(t *testing.T) {
 }
 
 func TestBuildMessageMultipart(t *testing.T) {
-	msg := string(buildMessage("a@x.test", "b@x.test", "Halo", "teks", "<p>html</p>"))
+	msg := string(buildMessage("a@x.test", "b@x.test", "Halo", "teks", "<p>html</p>", nil))
 	if !strings.Contains(msg, "multipart/alternative") || !strings.Contains(msg, "text/html") {
 		t.Fatalf("multipart parts missing:\n%s", msg)
 	}
-	plain := string(buildMessage("a@x.test", "b@x.test", "Halo", "teks", ""))
+	plain := string(buildMessage("a@x.test", "b@x.test", "Halo", "teks", "", nil))
 	if strings.Contains(plain, "multipart") {
 		t.Error("plain message should not be multipart")
+	}
+}
+
+func TestBuildMessageAttachment(t *testing.T) {
+	msg := string(buildMessage("a@x.test", "b@x.test", "Halo", "teks", "<p>html</p>",
+		&Attachment{Name: "bukti.png", Type: "image/png", Data: []byte("abc")}))
+	for _, want := range []string{"multipart/mixed", "multipart/alternative", `filename="bukti.png"`, "YWJj"} {
+		if !strings.Contains(msg, want) {
+			t.Errorf("missing %q", want)
+		}
 	}
 }
 

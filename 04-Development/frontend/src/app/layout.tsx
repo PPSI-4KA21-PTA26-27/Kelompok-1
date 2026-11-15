@@ -1,15 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./css/style.css";
 import { Suspense } from "react";
 import Providers from "./providers";
 import { RouteProgress } from "@/components/ui/Loader";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
-const bricolage = Bricolage_Grotesque({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-bricolage",
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -20,14 +19,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fbf9f5",
+  themeColor: "#f4f4f1",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${geist.variable} ${bricolage.variable}`} suppressHydrationWarning>
+    <html lang="id" className={`${inter.variable}`} suppressHydrationWarning>
       <body>
         <Suspense fallback={null}>
           <RouteProgress />

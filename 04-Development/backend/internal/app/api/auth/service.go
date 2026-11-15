@@ -130,7 +130,7 @@ func (s *Service) sendVerification(ctx context.Context, u user.User) error {
 	if err := s.users.SaveVerification(ctx, u.ID, hashToken(raw), time.Now().Add(verificationTTL)); err != nil {
 		return err
 	}
-	link := s.mail.AppURL("/verify-email?token=" + url.QueryEscape(raw))
+	link := s.mail.AppURL("/verifikasi-email?token=" + url.QueryEscape(raw))
 	if !s.mail.Enabled() {
 		// Tanpa SMTP (mis. pengembangan lokal) tautan ditulis ke log supaya
 		// alur verifikasi tetap bisa dicoba.
@@ -198,7 +198,7 @@ func (s *Service) RequestPasswordReset(ctx context.Context, email string) error 
 	if err := s.users.SavePasswordReset(ctx, u.ID, hashToken(raw), time.Now().Add(passwordResetTTL)); err != nil {
 		return err
 	}
-	link := s.mail.AppURL("/reset-password?token=" + url.QueryEscape(raw))
+	link := s.mail.AppURL("/atur-ulang-sandi?token=" + url.QueryEscape(raw))
 	if !s.mail.Enabled() {
 		slog.WarnContext(ctx, "SMTP mati: tautan reset password", "email", u.Email, "link", link)
 		return nil

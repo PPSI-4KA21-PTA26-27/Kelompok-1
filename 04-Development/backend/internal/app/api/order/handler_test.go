@@ -23,6 +23,17 @@ func validCheckout() createRequest {
 		ProvinceID: 1, CityID: 2, DistrictID: 3, SubdistrictID: 4}
 }
 
+func TestCheckoutInputRTRW(t *testing.T) {
+	req := validCheckout()
+	req.RT, req.RW = "1", " 23 "
+	if in, _ := req.input(); in.ShippingAddress != "Jl. Mawar 1, RT 001/RW 023" {
+		t.Errorf("ShippingAddress = %q", in.ShippingAddress)
+	}
+	if in, _ := validCheckout().input(); in.ShippingAddress != "Jl. Mawar 1" {
+		t.Errorf("tanpa RT/RW = %q", in.ShippingAddress)
+	}
+}
+
 func TestCheckoutInput(t *testing.T) {
 	ids := make([]string, maxCartItemIDs+1)
 	for i := range ids {
@@ -39,6 +50,8 @@ func TestCheckoutInput(t *testing.T) {
 		{"telepon pendek", func(r *createRequest) { r.RecipientPhone = "123" }, "recipient_phone"},
 		{"alamat kosong", func(r *createRequest) { r.ShippingAddress = "" }, "shipping_address"},
 		{"alamat terlalu panjang", func(r *createRequest) { r.ShippingAddress = strings.Repeat("a", 501) }, "shipping_address"},
+		{"rt bukan angka", func(r *createRequest) { r.RT = "1a" }, "rt"},
+		{"rw lebih dari 3 digit", func(r *createRequest) { r.RW = "1234" }, "rw"},
 		{"provinsi kosong", func(r *createRequest) { r.ProvinceID = 0 }, "province_id"},
 		{"kota kosong", func(r *createRequest) { r.CityID = 0 }, "city_id"},
 		{"kecamatan kosong", func(r *createRequest) { r.DistrictID = 0 }, "district_id"},

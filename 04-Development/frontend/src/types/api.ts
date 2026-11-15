@@ -162,7 +162,7 @@ export type ApiOrderItem = {
   image_url: string | null;
 };
 
-export type PaymentStatus = "pending" | "approved" | "rejected";
+export type PaymentStatus = "menunggu" | "valid" | "ditolak";
 
 export type ApiPayment = {
   id: string;

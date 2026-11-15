@@ -40,6 +40,34 @@ func Authenticate(tokens *token.Manager) Middleware {
 	}
 }
 
+// Account membaca peran dan status akun terkini; active false bila akun tidak ada atau nonaktif.
+type Account func(ctx context.Context, userID string) (role string, active bool, err error)
+
+// Revalidate dipasang setelah Authenticate: akun yang dinonaktifkan ditolak 401
+// dan peran dipakai dari DB, bukan dari token (SDD 3.5), tanpa menunggu token habis.
+func Revalidate(account Account) Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			p, ok := PrincipalFrom(r.Context())
+			if !ok {
+				unauthorized(w)
+				return
+			}
+			role, active, err := account(r.Context(), p.UserID)
+			if err != nil {
+				response.Error(w, http.StatusInternalServerError, "internal_error", "Terjadi kesalahan pada server.")
+				return
+			}
+			if !active {
+				unauthorized(w)
+				return
+			}
+			p.Role = role
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), principalKey{}, p)))
+		})
+	}
+}
+
 // AuthenticateOptional dipakai untuk rute publik yang isinya bisa berbeda bagi
 // admin. Request tanpa header Authorization lolos sebagai anonim (tanpa
 // Principal). Bila header dikirim, token harus valid; token rusak atau
@@ -78,7 +106,7 @@ func withPrincipal(tokens *token.Manager, r *http.Request) (*http.Request, bool)
 
 // RequireRole menolak pemanggil yang rolenya bukan role dengan 403. Wajib
 // dipasang setelah Authenticate; tanpa Principal di context dijawab 401. Role
-// dibaca dari token, jadi perubahan role baru berlaku pada token berikutnya.
+// berasal dari Revalidate (DB), jadi perubahan role langsung berlaku.
 func RequireRole(roles ...string) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

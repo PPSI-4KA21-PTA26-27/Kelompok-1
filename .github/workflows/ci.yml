@@ -1,0 +1,48 @@
+name: ci
+on:
+  push:
+    branches: [main]
+    paths: ["04-Development/**", ".github/**"]
+  pull_request:
+    paths: ["04-Development/**", ".github/**"]
+  schedule: [{ cron: "0 2 * * 1" }] # Senin: dependency baru bisa kena CVE tanpa ada commit
+permissions: { contents: read }
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: 04-Development/backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: 04-Development/backend/go.mod, cache-dependency-path: 04-Development/backend/go.sum }
+      - run: make vet test
+      - run: make sec
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: 04-Development/frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { package_json_file: 04-Development/frontend/package.json }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: 04-Development/frontend/pnpm-lock.yaml }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm exec vitest run
+      - run: pnpm audit --prod --audit-level high
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # gitleaks-action butuh lisensi untuk repo organisasi; CLI lewat Docker gratis.
+      - run: docker run --rm -v "$PWD/04-Development:/src" ghcr.io/gitleaks/gitleaks:v8.24.0 detect --no-git --source /src --redact --verbose
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build 04-Development/backend # pastikan Dockerfile Railway valid

@@ -61,9 +61,9 @@ func (r *Repository) GetByOrder(ctx context.Context, orderID string) (Payment, e
 }
 
 // Create membuat pembayaran untuk order milik userID dalam satu transaksi.
-// amount = total order + uniqueCode. Baris order dikunci agar dua request
+// amount = total order + kode unik 1-999 yang belum dipakai pesanan pending lain. Baris order dikunci agar dua request
 // bersamaan tidak membuat dua pembayaran.
-func (r *Repository) Create(ctx context.Context, orderID, userID, method string, uniqueCode int) (Payment, error) {
+func (r *Repository) Create(ctx context.Context, orderID, userID, method string) (Payment, error) {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return Payment{}, wrap("create begin", err)
@@ -95,9 +95,13 @@ func (r *Repository) Create(ctx context.Context, orderID, userID, method string,
 
 	p, err := scanPayment(tx.QueryRow(ctx,
 		`INSERT INTO payments AS p (order_id, method, amount, unique_code, status)
-		 VALUES ($1, $2, $3::numeric + $4::int, $4::int, $5)
+		 SELECT $1::uuid, $2, $3::numeric + c, c, $4
+		   FROM generate_series(1, 999) c
+		  WHERE NOT EXISTS (SELECT 1 FROM payments pp JOIN orders po ON po.id = pp.order_id
+		                     WHERE po.order_status = 'pending_payment' AND pp.amount = $3::numeric + c)
+		  ORDER BY random() LIMIT 1
 		 RETURNING `+paymentColumns,
-		orderID, method, total, uniqueCode, StatusPending))
+		orderID, method, total, StatusPending))
 	if err != nil {
 		return Payment{}, wrap("create insert", err)
 	}
@@ -226,7 +230,7 @@ func (r *Repository) List(ctx context.Context, f Filter, limit, offset int) ([]A
 		   FROM payments p
 		   JOIN orders o ON o.id = p.order_id
 		   JOIN users u ON u.id = o.user_id%s
-		 ORDER BY (p.status = 'pending' AND p.proof_url IS NOT NULL) DESC,
+		 ORDER BY (p.status = 'menunggu' AND p.proof_url IS NOT NULL) DESC,
 		          p.paid_at DESC NULLS LAST, p.created_at DESC, p.id
 		 LIMIT $%d OFFSET $%d`, paymentColumns, where, len(args)-1, len(args)),
 		args...)

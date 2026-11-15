@@ -27,7 +27,7 @@ export function useCartActions() {
     (next?: string) => {
       if (!user) {
         toast("Masuk dulu untuk menyimpan ke tas belanja.");
-        router.push("/signin" + (next ? "?next=" + encodeURIComponent(next) : ""));
+        router.push("/masuk" + (next ? "?next=" + encodeURIComponent(next) : ""));
         return false;
       }
       if (isStaff) {

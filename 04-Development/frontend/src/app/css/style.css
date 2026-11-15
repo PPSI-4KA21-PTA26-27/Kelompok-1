@@ -6,30 +6,30 @@
  * konversi. Lihat Downloads/ui-hii-stranger/editorial_streetwear/DESIGN.md.
  */
 @theme {
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --color-canvas: #fbf9f5;
+  --color-canvas: #f4f4f1;
   --color-stone: #f5f2eb;
   --color-stone-2: #efebe2;
-  --color-line: #e6e2d8;
+  --color-line: #b5b5b0;
   --color-line-strong: #d5cfc2;
-  --color-ink: #141413;
-  --color-ink-2: #1f1f1e;
+  --color-ink: #0d0d0d;
+  --color-ink-2: #242424;
   --color-ink-3: #3d3b37;
-  --color-muted: #6e6b64;
-  --color-faint: #9c978d;
+  --color-muted: #858582;
+  --color-faint: #a9a9a7;
 
-  --color-lime: #d4ff14;
+  --color-lime: #c6f432;
   --color-lime-deep: #b8e000;
-  --color-lime-ink: #2f3a00;
+  --color-lime-ink: #49620c;
 
-  --color-danger: #d92d20;
-  --color-danger-soft: #fee4e2;
-  --color-success: #1a3826;
-  --color-success-soft: #e3f0d9;
-  --color-warn: #8a4b00;
-  --color-warn-soft: #fdf0d2;
+  --color-danger: #b9352e;
+  --color-danger-soft: #fde3e0;
+  --color-success: #49620c;
+  --color-success-soft: #edfbb5;
+  --color-warn: #7a5200;
+  --color-warn-soft: #fff0c2;
   --color-info: #1d3a6b;
   --color-info-soft: #e1e9f7;
 

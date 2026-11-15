@@ -10,7 +10,7 @@ GOFLAGS_SEQ = -p 1 -parallel 1
 REDIS_TEST_ADDR ?= localhost:6379
 export REDIS_TEST_ADDR
 
-.PHONY: test test-v test-race test-cache vet fmt check
+.PHONY: test test-v test-race test-cache vet fmt check sec backup
 
 test:
 	go test $(GOFLAGS_SEQ) ./... -count=1
@@ -31,3 +31,12 @@ fmt:
 	gofmt -w cmd internal
 
 check: fmt vet test
+
+# Keamanan: govulncheck memblokir (CVE terpanggil); gosec hanya lapor (temuan lama: SHA1 Cloudinary, CLI migrasi, cast config), blokir bila sudah dibersihkan.
+sec:
+	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	go run github.com/securego/gosec/v2/cmd/gosec@latest -no-fail -quiet -severity medium -confidence medium ./...
+
+# Cadangan DB: DATABASE_URL=... make backup  (hasil: backup-<tanggal>.dump, uji restore tiap bulan)
+backup:
+	sh scripts/backup.sh

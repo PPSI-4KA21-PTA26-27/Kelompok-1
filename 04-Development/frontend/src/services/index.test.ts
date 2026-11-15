@@ -124,8 +124,8 @@ describe("adminService", () => {
   });
 
   it("reviewPayment: POST /admin/payments/:id/review", async () => {
-    await adminService.reviewPayment("p1", "approved");
-    expect(call()).toMatchObject({ path: "/admin/payments/p1/review", method: "POST", body: { status: "approved" } });
+    await adminService.reviewPayment("p1", "valid");
+    expect(call()).toMatchObject({ path: "/admin/payments/p1/review", method: "POST", body: { status: "valid" } });
   });
 
   it("updateOrderStatus: PUT /admin/orders/:id/status", async () => {

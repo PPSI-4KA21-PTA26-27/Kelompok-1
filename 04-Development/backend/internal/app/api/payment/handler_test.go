@@ -139,9 +139,9 @@ func TestAdminReviewValidation(t *testing.T) {
 		name, id, body string
 		want           int
 	}{
-		{"id salah", "x", `{"status":"approved"}`, http.StatusNotFound},
+		{"id salah", "x", `{"status":"valid"}`, http.StatusNotFound},
 		{"json rusak", paymentUUID, "{", http.StatusBadRequest},
-		{"status pending", paymentUUID, `{"status":"pending"}`, http.StatusUnprocessableEntity},
+		{"status pending", paymentUUID, `{"status":"menunggu"}`, http.StatusUnprocessableEntity},
 		{"status kosong", paymentUUID, `{}`, http.StatusUnprocessableEntity},
 	}
 	for _, tc := range tests {

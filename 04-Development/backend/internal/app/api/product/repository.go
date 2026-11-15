@@ -235,7 +235,9 @@ func (r *Repository) Update(ctx context.Context, id string, ch Changes) (Product
 	if ch.AvailabilityType != nil {
 		set("availability_type", *ch.AvailabilityType, "")
 	}
-	if ch.PoEstimateDays != nil {
+	if ch.AvailabilityType != nil && *ch.AvailabilityType != AvailabilityPreorder {
+		sets = append(sets, "po_estimate_days = NULL") // ready stock: estimasi kosong (SDD 5.3)
+	} else if ch.PoEstimateDays != nil {
 		set("po_estimate_days", *ch.PoEstimateDays, "")
 	}
 	if ch.Status != nil {

@@ -44,6 +44,20 @@ func (r *Repository) OrderOwner(ctx context.Context, orderID string) (string, er
 	return userID, nil
 }
 
+// Shippable melaporkan apakah order boleh diberi pengiriman (sudah dibayar, belum batal).
+func (r *Repository) Shippable(ctx context.Context, orderID string) (bool, error) {
+	var ok bool
+	err := r.db.QueryRow(ctx,
+		`SELECT order_status NOT IN ('pending_payment', 'cancelled') FROM orders WHERE id = $1`, orderID).Scan(&ok)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return false, ErrOrderNotFound
+	}
+	if err != nil {
+		return false, fmt.Errorf("shipment: shippable: %w", err)
+	}
+	return ok, nil
+}
+
 // GetByOrder mengambil pengiriman milik order. ErrNotFound bila belum ada.
 // Dipakai juga oleh package order untuk detail order.
 func (r *Repository) GetByOrder(ctx context.Context, orderID string) (Shipment, error) {

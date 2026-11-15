@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 
@@ -77,6 +78,15 @@ func New(cfg config.Config, db *pgxpool.Pool, rdb *redis.Client) *Server {
 		shipment:    shipment.NewHandler(shipment.NewService(shipmentRepo, mail)),
 		upload:      upload.NewHandler(cdn),
 		post:        post.NewHandler(post.NewService(post.NewRepository(db))),
+		account: func(ctx context.Context, id string) (role string, active bool, err error) {
+			err = db.QueryRow(ctx,
+				`SELECT r.code, u.status = 'active' FROM users u JOIN roles r ON r.id = u.role_id WHERE u.id = $1`,
+				id).Scan(&role, &active)
+			if errors.Is(err, pgx.ErrNoRows) {
+				return "", false, nil
+			}
+			return
+		},
 		maintenance: func(ctx context.Context) (bool, string, error) {
 			s, err := siteSvc.Get(ctx)
 			return s.MaintenanceMode, s.MaintenanceMessage, err

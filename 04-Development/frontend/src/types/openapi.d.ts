@@ -767,8 +767,8 @@ export interface paths {
         put?: never;
         /**
          * Buat pembayaran untuk order
-         * @description Hak akses: customer pemilik order. Hanya untuk order lama yang belum punya tagihan, karena checkout
-         *     sudah membuat tagihan QRIS otomatis. Server menentukan `amount` (total order ditambah `unique_code`),
+         * @description Hak akses: customer pemilik order. Dipanggil saat pelanggan membuka informasi pembayaran; checkout
+         *     tidak membuat tagihan. Server menentukan `amount` (total order ditambah `unique_code`),
          *     `unique_code`, dan `status` awal. Order yang sudah punya pembayaran dijawab 409.
          */
         post: operations["createOrderPayment"];
@@ -1544,7 +1544,7 @@ export interface components {
             /** @description Jumlah total barang (sum quantity). */
             item_count?: number;
             /** @enum {string|null} */
-            payment_status?: "pending" | "approved" | "rejected" | null;
+            payment_status?: "menunggu" | "valid" | "ditolak" | null;
             has_proof?: boolean;
             /** Format: email */
             customer_email?: string;
@@ -1622,7 +1622,7 @@ export interface components {
              * @description `pending` = menunggu bukti atau menunggu verifikasi (lihat `has_proof`).
              * @enum {string}
              */
-            status: "pending" | "approved" | "rejected";
+            status: "menunggu" | "valid" | "ditolak";
             /** Format: date-time */
             paid_at?: string | null;
             /**

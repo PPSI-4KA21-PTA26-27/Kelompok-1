@@ -148,6 +148,8 @@ type createRequest struct {
 	RecipientName   string   `json:"recipient_name"`
 	RecipientPhone  string   `json:"recipient_phone"`
 	ShippingAddress string   `json:"shipping_address"`
+	RT              string   `json:"rt"`
+	RW              string   `json:"rw"`
 	ProvinceID      int      `json:"province_id"`
 	CityID          int      `json:"city_id"`
 	DistrictID      int      `json:"district_id"`

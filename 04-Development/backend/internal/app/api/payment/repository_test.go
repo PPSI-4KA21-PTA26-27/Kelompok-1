@@ -15,9 +15,9 @@ func TestFilterWhere(t *testing.T) {
 		{name: "no filter", filter: Filter{}, wantSQL: "", wantArgs: nil},
 		{
 			name:     "status and order without search is unchanged",
-			filter:   Filter{Status: "pending", OrderID: "o-1"},
+			filter:   Filter{Status: "menunggu", OrderID: "o-1"},
 			wantSQL:  " WHERE p.status = $1 AND p.order_id = $2",
-			wantArgs: []any{"pending", "o-1"},
+			wantArgs: []any{"menunggu", "o-1"},
 		},
 		{
 			name:     "search only",

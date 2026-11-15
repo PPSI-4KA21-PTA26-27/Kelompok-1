@@ -50,9 +50,9 @@ export const ORDER_STATUS_TONE: Record<string, Tone> = {
 };
 
 export const PAYMENT_STATUS_LABEL: Record<string, string> = {
-  pending: "Menunggu",
-  approved: "Disetujui",
-  rejected: "Ditolak",
+  menunggu: "Menunggu",
+  valid: "Disetujui",
+  ditolak: "Ditolak",
 };
 
 export const SHIPPING_STATUS_LABEL: Record<string, string> = {
@@ -102,4 +102,39 @@ export function fromLocalInput(v: string): string | null {
   if (!v) return null;
   const d = new Date(v);
   return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+/** Label + nada kolom "Pembayaran" di daftar pesanan admin. */
+export function paymentLabel(o: { payment_status: string | null; has_proof: boolean }): { label: string; tone: Tone } {
+  if (o.payment_status === "valid") return { label: "Valid", tone: "lime" };
+  if (o.payment_status === "ditolak") return { label: "Ditolak", tone: "danger" };
+  if (o.payment_status === "menunggu" && o.has_proof) return { label: "Menunggu verifikasi", tone: "warn" };
+  return { label: "Belum ada bukti", tone: "neutral" };
+}
+
+/** Seri harian (urut tanggal) -> total pendapatan per 7 hari: Minggu 1, Minggu 2, ...; sisa hari (<7) digabung ke minggu terakhir. */
+export function weeklyRevenue(series: { revenue: string }[]): number[] {
+  const weeks: number[] = [];
+  const last = Math.max(0, Math.floor(series.length / 7) - 1);
+  series.forEach((d, i) => {
+    const w = Math.min(Math.floor(i / 7), last);
+    weeks[w] = (weeks[w] ?? 0) + (Number(d.revenue) || 0);
+  });
+  return weeks;
+}
+
+/** Pecah alamat tersimpan "Jl. X, RT 001/RW 002" (format backend) jadi jalan + RT + RW untuk isi ulang form. */
+export function splitRTRW(address: string): { address: string; rt: string; rw: string } {
+  const m = address.match(/^(.*), RT (\d{3}|-)\/RW (\d{3}|-)$/);
+  if (!m) return { address, rt: "", rw: "" };
+  const num = (v: string) => (v === "-" ? "" : String(Number(v)));
+  return { address: m[1], rt: num(m[2]), rw: num(m[3]) };
+}
+
+/** Sisa waktu bayar singkat: "2 j 05 mnt", "45 mnt", atau "" bila sudah lewat. */
+export function formatRemaining(ms: number): string {
+  if (!(ms > 0)) return "";
+  const m = Math.ceil(ms / 60000);
+  const h = Math.floor(m / 60);
+  return h ? `${h} j ${String(m % 60).padStart(2, "0")} mnt` : `${m} mnt`;
 }

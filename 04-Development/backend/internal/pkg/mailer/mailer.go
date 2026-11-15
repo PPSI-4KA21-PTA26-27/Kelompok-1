@@ -6,6 +6,7 @@ package mailer
 
 import (
 	"context"
+	"encoding/base64"
 	"crypto/tls"
 	"fmt"
 	"log/slog"
@@ -63,7 +64,7 @@ func (m *Mailer) Enabled() bool {
 // email bersifat tambahan.
 func (m *Mailer) NotifyEmail(to, subject string, e Email) {
 	text, html := e.Render()
-	m.notify(to, subject, text, html)
+	m.notify(to, subject, text, html, e.Attachment)
 }
 
 // NotifyOwnerEmail sama dengan NotifyEmail, dengan penerima email pemilik toko.
@@ -74,14 +75,14 @@ func (m *Mailer) NotifyOwnerEmail(subject string, e Email) {
 	m.NotifyEmail(m.owner, subject, e)
 }
 
-func (m *Mailer) notify(to, subject, text, html string) {
+func (m *Mailer) notify(to, subject, text, html string, att *Attachment) {
 	if !m.Enabled() || to == "" {
 		return
 	}
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), sendTimeout)
 		defer cancel()
-		if err := m.send(ctx, to, subject, text, html); err != nil {
+		if err := m.send(ctx, to, subject, text, html, att); err != nil {
 			slog.Error("mailer: send failed", "subject", subject, "error", err)
 		}
 	}()
@@ -89,7 +90,7 @@ func (m *Mailer) notify(to, subject, text, html string) {
 
 // send mengirim satu email dan menunggu sampai selesai. Port 465 memakai TLS
 // langsung; port lain (mis. 587) memakai STARTTLS.
-func (m *Mailer) send(ctx context.Context, to, subject, body, htmlBody string) error {
+func (m *Mailer) send(ctx context.Context, to, subject, body, htmlBody string, att *Attachment) error {
 	if !m.Enabled() {
 		return nil
 	}
@@ -141,7 +142,7 @@ func (m *Mailer) send(ctx context.Context, to, subject, body, htmlBody string) e
 	if err != nil {
 		return fmt.Errorf("mailer: data: %w", err)
 	}
-	if _, err := w.Write(buildMessage(fromAddr.String(), toAddr.String(), subject, body, htmlBody)); err != nil {
+	if _, err := w.Write(buildMessage(fromAddr.String(), toAddr.String(), subject, body, htmlBody, att)); err != nil {
 		return fmt.Errorf("mailer: write body: %w", err)
 	}
 	if err := w.Close(); err != nil {
@@ -171,7 +172,7 @@ func (m *Mailer) dial(ctx context.Context) (net.Conn, error) {
 
 // buildMessage menyusun header dan isi email. Subject di-encode supaya huruf
 // non-ASCII aman, dan baris baru dibuang agar header tidak bisa disisipi.
-func buildMessage(from, to, subject, body, htmlBody string) []byte {
+func buildMessage(from, to, subject, body, htmlBody string, att *Attachment) []byte {
 	subject = strings.NewReplacer("\r", " ", "\n", " ").Replace(subject)
 	crlf := func(v string) string {
 		return strings.ReplaceAll(strings.ReplaceAll(v, "\r\n", "\n"), "\n", "\r\n")
@@ -194,6 +195,10 @@ func buildMessage(from, to, subject, body, htmlBody string) []byte {
 
 	// multipart/alternative: klien email memilih versi HTML bila didukung.
 	boundary := "hs-" + strconv.FormatInt(time.Now().UnixNano(), 36)
+	mixed := boundary + "-m"
+	if att != nil {
+		b.WriteString("Content-Type: multipart/mixed; boundary=\"" + mixed + "\"\r\n\r\n--" + mixed + "\r\n")
+	}
 	b.WriteString("Content-Type: multipart/alternative; boundary=\"" + boundary + "\"\r\n")
 	b.WriteString("\r\n")
 	b.WriteString("--" + boundary + "\r\n")
@@ -205,5 +210,18 @@ func buildMessage(from, to, subject, body, htmlBody string) []byte {
 	b.WriteString("Content-Transfer-Encoding: 8bit\r\n\r\n")
 	b.WriteString(crlf(htmlBody) + "\r\n")
 	b.WriteString("--" + boundary + "--\r\n")
+	if att != nil {
+		name := mime.QEncoding.Encode("utf-8", strings.NewReplacer("\r", "", "\n", "", "\"", "").Replace(att.Name))
+		b.WriteString("--" + mixed + "\r\n")
+		b.WriteString("Content-Type: " + att.Type + "; name=\"" + name + "\"\r\n")
+		b.WriteString("Content-Transfer-Encoding: base64\r\n")
+		b.WriteString("Content-Disposition: attachment; filename=\"" + name + "\"\r\n\r\n")
+		enc := base64.StdEncoding.EncodeToString(att.Data)
+		for len(enc) > 76 {
+			b.WriteString(enc[:76] + "\r\n")
+			enc = enc[76:]
+		}
+		b.WriteString(enc + "\r\n--" + mixed + "--\r\n")
+	}
 	return []byte(b.String())
 }

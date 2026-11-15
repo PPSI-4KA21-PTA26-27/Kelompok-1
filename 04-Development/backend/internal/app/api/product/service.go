@@ -52,6 +52,9 @@ func (s *Service) Create(ctx context.Context, p Product) (Product, error) {
 	if p.AvailabilityType == AvailabilityPreorder && p.PoEstimateDays == nil {
 		return Product{}, ErrPreorderEstimate
 	}
+	if p.AvailabilityType != AvailabilityPreorder {
+		p.PoEstimateDays = nil // SDD 5.3: kosong untuk ready stock
+	}
 	return s.repo.Create(ctx, p)
 }
 
@@ -70,6 +73,9 @@ func (s *Service) Update(ctx context.Context, id string, ch Changes) (Product, e
 	}
 	if availability == AvailabilityPreorder && estimate == nil {
 		return Product{}, ErrPreorderEstimate
+	}
+	if availability != AvailabilityPreorder {
+		ch.PoEstimateDays = nil
 	}
 	return s.repo.Update(ctx, id, ch)
 }

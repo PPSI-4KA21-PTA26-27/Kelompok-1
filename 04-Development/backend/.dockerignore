@@ -1,0 +1,6 @@
+.env*
+*.exe
+bin/
+tmp/
+monitoring/
+docs/

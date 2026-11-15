@@ -24,6 +24,13 @@ type Email struct {
 	// Links adalah tautan tambahan di bawah tombol (mis. lacak di situs kurir).
 	Links []Link
 	Note  string
+	// Attachment dilampirkan sebagai berkas (mis. bukti pembayaran untuk owner).
+	Attachment *Attachment
+}
+
+type Attachment struct {
+	Name, Type string
+	Data       []byte
 }
 
 const brand = "HII STRANGER"

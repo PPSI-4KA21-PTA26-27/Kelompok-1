@@ -59,7 +59,7 @@ info:
       menghitung ulang ongkir dan menyimpan nama wilayah di order.
     - Verifikasi email memakai tabel `email_verifications` (hanya hash SHA-256 token yang disimpan, berlaku
       24 jam, sekali pakai). Tidak ada refresh token; masa berlaku access token diatur `ACCESS_TOKEN_TTL`.
-    - Pembayaran hanya QRIS statis toko. Tagihan dibuat otomatis saat checkout dengan nominal
+    - Pembayaran hanya QRIS statis toko. Tagihan dibuat saat pelanggan membuka informasi pembayaran, dengan nominal
       `total_amount + unique_code` (1–999). Order `pending_payment` yang melewati `payment_due_at` tanpa
       bukti yang sedang diverifikasi dibatalkan otomatis oleh server dan stoknya dikembalikan.
     - Respons GET publik (produk, kategori, banner, jurnal, pengaturan) di-cache maksimal 30 detik.
@@ -1558,8 +1558,8 @@ paths:
       operationId: createOrderPayment
       summary: Buat pembayaran untuk order
       description: |
-        Hak akses: customer pemilik order. Hanya untuk order lama yang belum punya tagihan, karena checkout
-        sudah membuat tagihan QRIS otomatis. Server menentukan `amount` (total order ditambah `unique_code`),
+        Hak akses: customer pemilik order. Dipanggil saat pelanggan membuka informasi pembayaran; checkout
+        tidak membuat tagihan. Server menentukan `amount` (total order ditambah `unique_code`),
         `unique_code`, dan `status` awal. Order yang sudah punya pembayaran dijawab 409.
       requestBody:
         required: true
@@ -3302,7 +3302,7 @@ components:
               description: Jumlah total barang (sum quantity).
             payment_status:
               type: string
-              enum: [pending, approved, rejected]
+              enum: [menunggu, valid, ditolak]
               nullable: true
             has_proof:
               type: boolean
@@ -3392,7 +3392,15 @@ components:
           type: string
           minLength: 1
           maxLength: 500
-          description: Nama jalan, nomor rumah, RT/RW.
+          description: Nama jalan dan nomor rumah.
+        rt:
+          type: string
+          pattern: "^[0-9]{0,3}$"
+          description: Opsional. Digabung ke shipping_address sebagai "RT 001/RW 002".
+        rw:
+          type: string
+          pattern: "^[0-9]{0,3}$"
+          description: Opsional. Digabung ke shipping_address.
         province_id:
           type: integer
           description: ID dari `/regions/provinces`.
@@ -3463,8 +3471,8 @@ components:
           description: Diturunkan dari keberadaan `proof_data`.
         status:
           type: string
-          enum: [pending, approved, rejected]
-          description: "`pending` = menunggu bukti atau menunggu verifikasi (lihat `has_proof`)."
+          enum: [menunggu, valid, ditolak]
+          description: "`menunggu` = menunggu bukti atau menunggu verifikasi (lihat `has_proof`)."
         paid_at:
           type: string
           format: date-time
@@ -3731,7 +3739,7 @@ components:
           type: string
           minLength: 20
           maxLength: 200
-          description: Token dari tautan `/verify-email?token=...` di email.
+          description: Token dari tautan `/verifikasi-email?token=...` di email.
 
     ForgotPasswordRequest:
       type: object

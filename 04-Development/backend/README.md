@@ -101,7 +101,7 @@ GET  /shipping/costs             -> lihat ongkir
 POST /orders (checkout)          -> pending_payment
 POST /orders/{id}/payment        -> tagihan + kode unik
 PUT  /orders/{id}/payment/proof  -> unggah bukti
-POST /admin/payments/{id}/review -> approved: order jadi paid
+POST /admin/payments/{id}/review -> valid: order jadi paid
 PUT  /admin/orders/{id}/status   -> processing
 PUT  /admin/orders/{id}/status   -> shipped + tracking_number (wajib) -> email resi ke pelanggan
 PUT  /admin/orders/{id}/status   -> completed

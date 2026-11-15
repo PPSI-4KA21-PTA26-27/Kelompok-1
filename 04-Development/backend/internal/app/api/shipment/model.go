@@ -12,6 +12,8 @@ var (
 	ErrNotFound = errors.New("shipment: not found")
 	// ErrOrderNotFound berarti order tidak ada atau bukan milik pemanggil.
 	ErrOrderNotFound = errors.New("shipment: order not found")
+	// ErrOrderNotShippable: pesanan belum dibayar atau sudah dibatal.
+	ErrOrderNotShippable = errors.New("shipment: order not shippable")
 )
 
 // Status jangkauan pengiriman ke alamat tujuan.

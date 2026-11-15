@@ -32,9 +32,9 @@ var (
 // approved atau rejected. Bukti yang ditolak boleh diunggah ulang, dan
 // statusnya kembali pending.
 const (
-	StatusPending  = "pending"
-	StatusApproved = "approved"
-	StatusRejected = "rejected"
+	StatusPending  = "menunggu"
+	StatusApproved = "valid"
+	StatusRejected = "ditolak"
 )
 
 // Metode pembayaran yang diterima aplikasi.

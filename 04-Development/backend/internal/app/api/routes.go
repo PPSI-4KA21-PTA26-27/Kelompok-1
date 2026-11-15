@@ -78,6 +78,9 @@ type handlers struct {
 	upload      *upload.Handler
 	post        *post.Handler
 
+	// account membaca peran dan status akun dari DB untuk setiap request ber-token.
+	account middleware.Account
+
 	// maintenance membaca status mode maintenance dari pengaturan situs.
 	maintenance middleware.MaintenanceStatus
 }
@@ -85,7 +88,8 @@ type handlers struct {
 // newRouter menyusun seluruh route dan middleware global. Route baru
 // didaftarkan di sini; rute yang butuh login dibungkus authenticate.
 func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.Client) http.Handler {
-	authenticate := middleware.Authenticate(tokens)
+	verify, revalidate := middleware.Authenticate(tokens), middleware.Revalidate(h.account)
+	authenticate := func(next http.Handler) http.Handler { return verify(revalidate(next)) }
 	// Semua rate limit memakai sumber IP yang sama (TRUST_PROXY_HEADERS).
 	rateLimit := func(limit int, window time.Duration) middleware.Middleware {
 		return middleware.RateLimit(limit, window, cfg.TrustProxyHeaders)

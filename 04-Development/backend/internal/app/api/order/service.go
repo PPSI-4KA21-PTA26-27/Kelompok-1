@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"math/big"
 	"slices"
 	"strings"
 	"time"
@@ -23,7 +22,6 @@ import (
 
 const (
 	numberAttempts = 3
-	maxUniqueCode  = 999
 
 	// expireInterval adalah jeda pemeriksaan order yang lewat batas bayar.
 	expireInterval = 5 * time.Minute
@@ -78,19 +76,13 @@ func (s *Service) Checkout(ctx context.Context, userID string, in CheckoutInput)
 	}
 	ship := shipping{Address: addr, Option: opt, WeightGram: weight}
 
-	n, err := rand.Int(rand.Reader, big.NewInt(maxUniqueCode))
-	if err != nil {
-		return Detail{}, fmt.Errorf("order: unique code: %w", err)
-	}
-	code := int(n.Int64()) + 1
-
 	var o Order
 	for attempt := 1; ; attempt++ {
 		number, err := newOrderNumber()
 		if err != nil {
 			return Detail{}, err
 		}
-		o, err = s.repo.Checkout(ctx, userID, number, code, ship, in)
+		o, err = s.repo.Checkout(ctx, userID, number, ship, in)
 		if errors.Is(err, errDuplicateNumber) && attempt < numberAttempts {
 			continue
 		}
@@ -119,32 +111,7 @@ func (s *Service) notifyCheckout(ctx context.Context, d Detail, addr ongkir.Addr
 			{"Kurir", courier + " (Rp " + opt.Cost + ")"},
 			{"Tujuan", addr.Subdistrict + ", " + addr.City},
 		},
-		Button: &mailer.Link{Label: "Buka pesanan di admin", URL: s.mail.AppURL("/admin?tab=orders")},
-	})
-
-	c, err := s.repo.contactOf(ctx, d.ID)
-	if err != nil {
-		slog.WarnContext(ctx, "order: load contact for email failed", "error", err)
-		return
-	}
-	amount := d.TotalAmount
-	details := [][2]string{{"No. order", d.OrderNumber}}
-	if d.Payment != nil {
-		amount = d.Payment.Amount
-		details = append(details, [2]string{"Kode unik", fmt.Sprintf("%03d", d.Payment.UniqueCode)})
-	}
-	details = append(details,
-		[2]string{"Total bayar (QRIS)", "Rp " + amount},
-		[2]string{"Bayar sebelum", paymentDeadlineLabel(d.PaymentDueAt)})
-	s.mail.NotifyEmail(c.Email, "Selesaikan pembayaran pesanan "+d.OrderNumber, mailer.Email{
-		Heading: "Pesanan kamu sudah kami terima",
-		Paragraphs: []string{
-			"Halo " + c.Name + ", terima kasih sudah berbelanja di Hii Stranger.",
-			"Scan QRIS di halaman pesanan, bayar tepat sesuai nominal (termasuk 3 digit kode unik), lalu unggah bukti pembayaran supaya pesanan segera kami proses.",
-		},
-		Details: details,
-		Button:  &mailer.Link{Label: "Bayar & unggah bukti", URL: s.mail.AppURL("/orders/" + d.ID)},
-		Note:    "Pesanan otomatis dibatalkan dan stok dikembalikan bila belum dibayar sampai batas waktu.",
+		Button: &mailer.Link{Label: "Buka pesanan di admin", URL: s.mail.AppURL("/admin/pesanan/" + d.ID)},
 	})
 }
 
@@ -314,12 +281,16 @@ func (s *Service) RunExpiry(ctx context.Context) {
 }
 
 func (s *Service) notifyStatus(ctx context.Context, o Order, sh *shipment.Shipment) {
+	// Email pelanggan hanya untuk kabar penting: dikirim dan batal (konfirmasi dikirim modul payment).
+	if o.OrderStatus != StatusShipped && o.OrderStatus != StatusCancelled {
+		return
+	}
 	c, err := s.repo.contactOf(ctx, o.ID)
 	if err != nil {
 		slog.WarnContext(ctx, "order: load contact for email failed", "error", err)
 		return
 	}
-	orderURL := s.mail.AppURL("/orders/" + o.ID)
+	orderURL := s.mail.AppURL("/pesanan/" + o.ID)
 	e := mailer.Email{
 		Heading:    "Status pesanan: " + statusLabel(o.OrderStatus),
 		Paragraphs: []string{"Halo " + c.Name + ", status pesanan " + o.OrderNumber + " sekarang " + strings.ToLower(statusLabel(o.OrderStatus)) + "."},
