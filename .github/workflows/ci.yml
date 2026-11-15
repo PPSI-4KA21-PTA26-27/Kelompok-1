@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: 04-Development/backend } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with: { go-version-file: 04-Development/backend/go.mod, cache-dependency-path: 04-Development/backend/go.sum }
       - run: make vet test
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: 04-Development/frontend } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with: { package_json_file: 04-Development/frontend/package.json }
       - uses: actions/setup-node@v4
@@ -37,12 +37,12 @@ jobs:
   secrets:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # gitleaks-action butuh lisensi untuk repo organisasi; CLI lewat Docker gratis.
       - run: docker run --rm -v "$PWD/04-Development:/src" ghcr.io/gitleaks/gitleaks:v8.24.0 detect --no-git --source /src --redact --verbose
 
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker build 04-Development/backend # pastikan Dockerfile Railway valid
