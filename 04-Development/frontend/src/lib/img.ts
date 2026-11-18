@@ -6,7 +6,11 @@
  */
 export function cdn(url: string | null | undefined, w: number): string {
   if (!url) return "";
-  if (!url.includes("res.cloudinary.com")) return url;
+  try {
+    if (new URL(url).hostname !== "res.cloudinary.com") return url;
+  } catch {
+    return url; // bukan URL absolut
+  }
   const marker = "/upload/";
   const i = url.indexOf(marker);
   if (i < 0) return url;

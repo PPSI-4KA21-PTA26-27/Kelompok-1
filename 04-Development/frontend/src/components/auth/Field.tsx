@@ -23,7 +23,7 @@ export default function Field({ label, error, icon, type, className, ...rest }: 
           type={pw && show ? "text" : type}
           aria-invalid={!!error}
           className={cn(
-            "h-[60px] w-full rounded-xl border bg-white px-6 focus:outline-2 focus:outline-ink",
+            "h-15 w-full rounded-xl border bg-white px-6 focus:outline-2 focus:outline-ink",
             Icon && "pl-12",
             pw && "pr-12",
             error ? "border-danger bg-[#fff8f7]" : "border-faint",
@@ -36,7 +36,7 @@ export default function Field({ label, error, icon, type, className, ...rest }: 
             type="button"
             onClick={() => setShow((s) => !s)}
             aria-label={show ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-faint"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-muted"
           >
             {show ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
           </button>

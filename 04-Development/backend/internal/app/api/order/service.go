@@ -148,11 +148,6 @@ func (s *Service) Get(ctx context.Context, id, userID string, admin bool) (Detai
 	return d, nil
 }
 
-// Summary mengembalikan ringkasan dashboard admin.
-func (s *Service) Summary(ctx context.Context) (Summary, error) {
-	return s.repo.Summary(ctx)
-}
-
 // UpdateStatus mengubah status order oleh admin. Status shipped mewajibkan no.
 // resi dan sekaligus menyimpan data pengiriman dalam transaksi yang sama.
 func (s *Service) UpdateStatus(ctx context.Context, id, status string, ship *ShipInfo, reason *string) (Order, error) {

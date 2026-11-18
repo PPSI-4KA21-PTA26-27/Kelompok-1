@@ -13,16 +13,13 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"hii-stranger1/backend/internal/app/api/auth"
-	"hii-stranger1/backend/internal/app/api/banner"
 	"hii-stranger1/backend/internal/app/api/cart"
 	"hii-stranger1/backend/internal/app/api/category"
 	"hii-stranger1/backend/internal/app/api/ongkir"
 	"hii-stranger1/backend/internal/app/api/order"
 	"hii-stranger1/backend/internal/app/api/payment"
-	"hii-stranger1/backend/internal/app/api/post"
 	"hii-stranger1/backend/internal/app/api/product"
 	"hii-stranger1/backend/internal/app/api/shipment"
-	"hii-stranger1/backend/internal/app/api/sitesetting"
 	"hii-stranger1/backend/internal/app/api/upload"
 	"hii-stranger1/backend/internal/app/api/user"
 	"hii-stranger1/backend/internal/pkg/cloudinary"
@@ -63,21 +60,17 @@ func New(cfg config.Config, db *pgxpool.Pool, rdb *redis.Client) *Server {
 	ongkirSvc := ongkir.NewService(raja, ongkir.NewRepository(db), cfg.RajaOngkirOriginID, cfg.RajaOngkirCouriers)
 
 	orderSvc := order.NewService(order.NewRepository(db), ongkirSvc, paymentRepo, shipmentRepo, mail)
-	siteSvc := sitesetting.NewService(sitesetting.NewRepository(db))
 	h := handlers{
-		auth:        auth.NewHandler(auth.NewService(userRepo, tokens, mail)),
-		user:        user.NewHandler(user.NewService(userRepo)),
-		category:    category.NewHandler(category.NewService(categoryRepo)),
-		product:     product.NewHandler(product.NewService(productRepo)),
-		cart:        cart.NewHandler(cart.NewService(cartRepo)),
-		banner:      banner.NewHandler(banner.NewService(banner.NewRepository(db))),
-		siteSetting: sitesetting.NewHandler(siteSvc),
-		ongkir:      ongkir.NewHandler(ongkirSvc),
-		order:       order.NewHandler(orderSvc),
-		payment:     payment.NewHandler(payment.NewService(paymentRepo, mail, cdn)),
-		shipment:    shipment.NewHandler(shipment.NewService(shipmentRepo, mail)),
-		upload:      upload.NewHandler(cdn),
-		post:        post.NewHandler(post.NewService(post.NewRepository(db))),
+		auth:     auth.NewHandler(auth.NewService(userRepo, tokens, mail)),
+		user:     user.NewHandler(user.NewService(userRepo)),
+		category: category.NewHandler(category.NewService(categoryRepo)),
+		product:  product.NewHandler(product.NewService(productRepo)),
+		cart:     cart.NewHandler(cart.NewService(cartRepo)),
+		ongkir:   ongkir.NewHandler(ongkirSvc),
+		order:    order.NewHandler(orderSvc),
+		payment:  payment.NewHandler(payment.NewService(paymentRepo, mail, cdn)),
+		shipment: shipment.NewHandler(shipment.NewService(shipmentRepo, mail)),
+		upload:   upload.NewHandler(cdn),
 		account: func(ctx context.Context, id string) (role string, active bool, err error) {
 			err = db.QueryRow(ctx,
 				`SELECT r.code, u.status = 'active' FROM users u JOIN roles r ON r.id = u.role_id WHERE u.id = $1`,
@@ -86,10 +79,6 @@ func New(cfg config.Config, db *pgxpool.Pool, rdb *redis.Client) *Server {
 				return "", false, nil
 			}
 			return
-		},
-		maintenance: func(ctx context.Context) (bool, string, error) {
-			s, err := siteSvc.Get(ctx)
-			return s.MaintenanceMode, s.MaintenanceMessage, err
 		},
 	}
 

@@ -1,8 +1,6 @@
 import { api, fetchBlob } from "@/lib/api";
 import type {
   ApiAdminPayment,
-  ApiAnalytics,
-  ApiBanner,
   ApiCart,
   ApiCategory,
   ApiImage,
@@ -10,21 +8,14 @@ import type {
   ApiOrderDetail,
   ApiOrderListItem,
   ApiPayment,
-  ApiPost,
-  ApiPostDetail,
   ApiProduct,
   ApiProductDetail,
   ApiRegion,
   ApiShipment,
   ApiShippingQuote,
-  ApiSiteSettings,
-  ApiSummary,
   ApiUser,
   ApiVariant,
   AuthResult,
-  BannerInput,
-  BannerPlacement,
-  PostInput,
 } from "@/types/api";
 
 export type ProductQuery = {
@@ -45,11 +36,6 @@ export const authService = {
     api.post<AuthResult>("/auth/login", { email, password }, { auth: false }),
   register: (input: { name: string; email: string; password: string; phone?: string | null }) =>
     api.post<AuthResult>("/auth/register", input, { auth: false }),
-  verifyEmail: (token: string) => api.post<ApiUser>("/auth/verify-email", { token }, { auth: false }),
-  resendVerification: () => api.post<void>("/auth/verification/resend"),
-  forgotPassword: (email: string) => api.post<void>("/auth/password/forgot", { email }, { auth: false }),
-  resetPassword: (token: string, password: string) =>
-    api.post<void>("/auth/password/reset", { token, password }, { auth: false }),
   me: () => api.get<ApiUser>("/users/me"),
   updateMe: (input: { name?: string; phone?: string | null }) => api.patch<ApiUser>("/users/me", input),
   changePassword: (input: { current_password: string; new_password: string }) =>
@@ -65,20 +51,8 @@ export const categoryService = {
   list: () => api.list<ApiCategory>("/categories", { limit: 100 }, { auth: false }),
 };
 
-export const bannerService = {
-  /** Banner yang sedang tayang untuk satu penempatan. */
-  live: (placement: BannerPlacement) => api.get<ApiBanner[]>("/banners", { placement }, { auth: false }),
-};
 
-export const settingService = {
-  get: () => api.get<ApiSiteSettings>("/site-settings", undefined, { auth: false }),
-};
 
-export const postService = {
-  list: (query?: { tag?: string; page?: number; limit?: number }) =>
-    api.list<ApiPost>("/posts", query, { auth: false }),
-  get: (slug: string) => api.get<ApiPostDetail>("/posts/" + encodeURIComponent(slug), undefined, { auth: false }),
-};
 
 export const cartService = {
   get: () => api.get<ApiCart>("/cart"),
@@ -104,8 +78,8 @@ export type CheckoutInput = {
   recipient_name: string;
   recipient_phone: string;
   shipping_address: string;
-  rt?: string;
-  rw?: string;
+  rt: string;
+  rw: string;
   province_id: number;
   city_id: number;
   district_id: number;
@@ -151,9 +125,6 @@ export type ProductInput = {
 export type VariantInput = { sku: string; size: string; color: string | null; stock: number };
 
 export const adminService = {
-  summary: () => api.get<ApiSummary>("/admin/summary"),
-  analytics: (days: 7 | 30 | 90) => api.get<ApiAnalytics>("/admin/analytics", { days }),
-
   orders: (query?: { page?: number; limit?: number; order_status?: string; q?: string }) =>
     api.list<ApiOrderListItem>("/admin/orders", query),
   updateOrderStatus: (
@@ -191,25 +162,6 @@ export const adminService = {
   updateCategory: (id: string, input: Partial<{ name: string; is_active: boolean }>) =>
     api.patch<ApiCategory>("/categories/" + id, input),
   deleteCategory: (id: string) => api.del("/categories/" + id),
-
-  banners: () => api.get<ApiBanner[]>("/banners", { include_inactive: true }),
-  createBanner: (input: BannerInput) => api.post<ApiBanner>("/banners", input),
-  updateBanner: (id: string, input: Partial<BannerInput>) => api.patch<ApiBanner>("/banners/" + id, input),
-  deleteBanner: (id: string) => api.del("/banners/" + id),
-
-  posts: (query?: { status?: string; q?: string; page?: number; limit?: number }) =>
-    api.list<ApiPost>("/admin/posts", query),
-  post: (id: string) => api.get<ApiPostDetail>("/admin/posts/" + id),
-  createPost: (input: PostInput) => api.post<ApiPostDetail>("/admin/posts", input),
-  updatePost: (id: string, input: Partial<PostInput>) => api.patch<ApiPostDetail>("/admin/posts/" + id, input),
-  deletePost: (id: string) => api.del("/admin/posts/" + id),
-
-  users: (query?: { q?: string; role?: string; status?: string; page?: number; limit?: number }) =>
-    api.list<ApiUser>("/admin/users", query),
-  updateUser: (id: string, input: Partial<{ role: string; status: string }>) =>
-    api.patch<ApiUser>("/admin/users/" + id, input),
-
-  updateSettings: (input: Partial<ApiSiteSettings>) => api.put<ApiSiteSettings>("/site-settings", input),
 
   /** Unggah gambar ke Cloudinary -> URL (JPG/PNG/WebP, maks 5 MB). */
   uploadImage: (file: File) => {

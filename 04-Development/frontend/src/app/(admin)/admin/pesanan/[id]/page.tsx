@@ -9,7 +9,7 @@ import { ADMIN_NEXT, CUST_STATUS } from "@/components/order/status";
 import { Badge, ErrorState } from "@/components/ui/misc";
 import { errorMessage } from "@/lib/api";
 import { cn } from "@/lib/cn";
-import { formatDate, formatRupiah, joinAddress, paymentLabel } from "@/lib/format";
+import { formatDate, formatRupiah, hasRTRW, joinAddress, paymentLabel } from "@/lib/format";
 import { adminService, orderService } from "@/services";
 import type { ApiOrderDetail, OrderStatus } from "@/types/api";
 
@@ -118,6 +118,11 @@ export default function AdminPesananDetail() {
               <div>
                 <p className="text-xs text-muted">Alamat tujuan</p>
                 <p>{joinAddress(o)}</p>
+                {!hasRTRW(o.shipping_address) && (
+                  <p role="alert" className="mt-2 rounded-lg bg-warn-soft px-3 py-2 text-xs text-warn">
+                    RT/RW belum tercatat (pesanan lama). Minta pelanggan melengkapi sebelum pengiriman.
+                  </p>
+                )}
               </div>
             </div>
           </Card>
@@ -191,6 +196,14 @@ export default function AdminPesananDetail() {
 
           <Card title="Pembayaran">
             <dl className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-muted">Subtotal</dt>
+                <dd>{formatRupiah(o.subtotal)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted">Ongkos kirim</dt>
+                <dd>{formatRupiah(o.shipping_cost)}</dd>
+              </div>
               <div className="flex justify-between">
                 <dt className="text-muted">Total</dt>
                 <dd className="font-bold">{formatRupiah(pay?.amount ?? o.total_amount)}</dd>

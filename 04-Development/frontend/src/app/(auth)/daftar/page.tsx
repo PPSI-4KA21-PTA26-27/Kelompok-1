@@ -29,9 +29,12 @@ export default function DaftarPage() {
         password: String(f.get("password")),
         phone: String(f.get("phone")),
       });
-      router.replace("/verifikasi-email");
+      router.replace("/");
     } catch (x) {
-      if (x instanceof ApiError) setFields(Object.fromEntries(x.details.map((d) => [d.field, d.message])));
+      if (x instanceof ApiError)
+        setFields(
+          Object.fromEntries(x.details.map((d) => [d.field, d.message])),
+        );
       setErr(x instanceof Error ? x.message : "Terjadi kesalahan");
     } finally {
       setBusy(false);
@@ -39,20 +42,61 @@ export default function DaftarPage() {
   }
 
   return (
-    <AuthShell headline={<>Buat akun,<br />lanjut pesan.</>}>
+    <AuthShell
+      headline={
+        <>
+          Buat akun,
+          <br />
+          lanjut pesan.
+        </>
+      }
+    >
       <h1 className="text-5xl font-extrabold">Daftar</h1>
       <p className="mt-1 text-muted">Isi data berikut untuk membuat akun.</p>
       {err && (
-        <p role="alert" className="mt-4 flex gap-3 rounded-xl bg-danger-soft p-4 text-danger">
+        <p
+          role="alert"
+          className="mt-4 flex gap-3 rounded-xl bg-danger-soft p-4 text-danger"
+        >
           <TriangleAlert className="mt-1 size-4 shrink-0" /> {err}
         </p>
       )}
       <form onSubmit={submit} className="mt-6 space-y-4">
-        <Field label="Nama Lengkap" name="name" autoComplete="name" required error={fields.name} />
-        <Field label="Email" name="email" type="email" autoComplete="email" required error={fields.email} />
-        <Field label="Kata Sandi" name="password" type="password" autoComplete="new-password" required error={fields.password} />
-        <Field label="No. Telepon" name="phone" type="tel" autoComplete="tel" required error={fields.phone} />
-        <button disabled={busy} className="mt-2 h-[60px] w-full rounded-xl bg-lime font-bold text-ink disabled:opacity-60">
+        <Field
+          label="Nama Lengkap"
+          name="name"
+          autoComplete="name"
+          required
+          error={fields.name}
+        />
+        <Field
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          error={fields.email}
+        />
+        <Field
+          label="Kata Sandi"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required
+          error={fields.password}
+        />
+        <Field
+          label="No. Telepon"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          required
+          error={fields.phone}
+        />
+        <button
+          disabled={busy}
+          className="mt-2 h-15 w-full rounded-xl bg-lime font-bold text-ink disabled:opacity-60"
+        >
           {busy ? "Memproses..." : "Daftar"}
         </button>
       </form>

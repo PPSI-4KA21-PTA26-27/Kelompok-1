@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { CheckCircle2, ChevronLeft, Clock3 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { cdn } from "@/lib/img";
 
 /** Kelas bersama back-office (desain admin). */
 export const inputCls =
-  "h-[34px] w-full rounded-lg border border-line-strong bg-white px-3 text-sm focus:outline-2 focus:outline-ink disabled:bg-stone";
+  "h-8.5 w-full rounded-lg border border-line-strong bg-white px-3 text-sm focus:outline-2 focus:outline-ink disabled:bg-stone";
 export const labelCls = "mb-2 block text-sm font-semibold";
 export const btnLime = "rounded-lg bg-lime px-4 py-2 text-sm font-bold text-ink disabled:opacity-50";
 export const btnLine = "rounded-lg border border-ink bg-white px-4 py-2 text-xs font-bold disabled:opacity-50";
@@ -28,13 +29,13 @@ export function PageHead({
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
+        {/* Header layout sudah memuat nama halaman; crumb cukup jadi tautan kembali agar judul tidak terulang. */}
         {crumb && (
-          <p className="mb-2 text-sm text-muted sm:text-lg">
-            <Link href={crumb.href}>{crumb.label}</Link> <span className="mx-1 text-sm">&gt;</span>{" "}
-            <span className="text-ink">{title}</span>
-          </p>
+          <Link href={crumb.href} className="mb-1 inline-flex items-center gap-1 py-1 text-sm text-muted hover:text-ink sm:text-lg">
+            <ChevronLeft className="size-4" aria-hidden /> {crumb.label}
+          </Link>
         )}
-        <h1 className="text-3xl font-extrabold sm:text-4xl md:text-5xl">{title}</h1>
+        <h1 className="break-words text-3xl font-extrabold sm:text-4xl md:text-5xl">{title}</h1>
         {sub && <p className="mt-1 text-sm font-semibold text-muted sm:text-lg">{sub}</p>}
       </div>
       {action}
@@ -79,5 +80,23 @@ export function Thumb({ src, alt, className }: { src?: string | null; alt: strin
     <img src={cdn(src, 120)} alt={alt} loading="lazy" className={cn("size-12 shrink-0 rounded-lg object-cover", className)} />
   ) : (
     <div className={cn("size-12 shrink-0 rounded-lg bg-[#d9d9d9]", className)} aria-hidden />
+  );
+}
+
+/** Badge jenis produk. Estimasi hanya ikut tampil untuk pre-order. */
+export function AvailBadge({ type, days, className }: { type: string; days?: number | null; className?: string }) {
+  const po = type === "preorder";
+  const Icon = po ? Clock3 : CheckCircle2;
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold",
+        po ? "bg-warn-soft text-warn" : "bg-success-soft text-success",
+        className,
+      )}
+    >
+      <Icon className="size-3.5" aria-hidden />
+      {po ? "Pre-Order" + (days ? ` · ${days} hari` : "") : "Ready Stock"}
+    </span>
   );
 }

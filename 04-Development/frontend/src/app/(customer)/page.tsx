@@ -5,40 +5,27 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { useCategories } from "@/hooks/useCategories";
-import { cdn } from "@/lib/img";
-import { bannerService, productService } from "@/services";
-import type { ApiBanner, ApiProduct } from "@/types/api";
+import { productService } from "@/services";
+import type { ApiProduct } from "@/types/api";
 
 export default function Home() {
   const cats = useCategories();
-  // undefined = memuat, null = tidak ada banner aktif
-  const [banner, setBanner] = useState<ApiBanner | null>();
   const [items, setItems] = useState<ApiProduct[]>([]);
 
   useEffect(() => {
-    bannerService.live("hero").then((b) => setBanner(b[0] ?? null)).catch(() => setBanner(null));
     productService.list({ sort: "newest", limit: 6 }).then((r) => setItems(r.data)).catch(() => {});
   }, []);
 
   return (
     <div className="space-y-6 lg:space-y-10">
-      {banner === null ? (
-        <div className="flex h-[354px] flex-col items-start justify-end gap-4 rounded-2xl bg-ink p-8 text-white sm:h-[290px] lg:p-12">
-          <Image src="/Logo.png" alt="" width={68} height={60} className="h-14 w-auto" />
-          <h1 className="max-w-xl text-3xl font-extrabold lg:text-5xl">Streetwear lokal, siap dipakai.</h1>
-          <p className="font-bold text-lime">cz we are not really strangers</p>
-          <Link href="/katalog" className="rounded-full bg-lime px-6 py-3 text-sm font-bold text-ink">
-            Lihat katalog
-          </Link>
-        </div>
-      ) : (
-        <div className="h-[354px] overflow-hidden rounded-2xl bg-[#d9d9d9] sm:h-[290px]">
-          {banner && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={cdn(banner.image_url, 1400)} alt={banner.title ?? "Banner"} className="size-full object-cover" />
-          )}
-        </div>
-      )}
+      <div className="flex min-h-88.5 flex-col items-start justify-end gap-4 rounded-2xl bg-ink p-8 text-white sm:min-h-72.5 lg:p-12">
+        <Image src="/Logo.png" alt="" width={60} height={60} className="size-14" />
+        <h1 className="max-w-xl text-3xl font-extrabold lg:text-5xl">Streetwear lokal, siap dipakai.</h1>
+        <p className="font-bold text-lime">cz we are not really strangers</p>
+        <Link href="/katalog" className="rounded-full bg-lime px-6 py-3 text-sm font-bold text-ink">
+          Lihat katalog
+        </Link>
+      </div>
 
       <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-8">
         {cats.map((c) => (

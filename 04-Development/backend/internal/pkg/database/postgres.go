@@ -23,6 +23,9 @@ func NewPool(ctx context.Context, cfg config.Config) (*pgxpool.Pool, error) {
 	}
 	poolCfg.MaxConns = cfg.DBMaxConns
 	poolCfg.MinConns = cfg.DBMinConns
+	// Koneksi idle yang dimatikan sisi DB/proxy (Railway) diganti sebelum dipakai request.
+	poolCfg.MaxConnLifetime = 30 * time.Minute
+	poolCfg.HealthCheckPeriod = time.Minute
 	poolCfg.ConnConfig.RuntimeParams["statement_timeout"] = strconv.FormatInt(cfg.DBStatementTimeout.Milliseconds(), 10)
 
 	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)

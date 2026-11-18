@@ -110,53 +110,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Daftar semua user
-         * @description Hak akses: admin.
-         */
-        get: operations["adminListUsers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/users/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: components["parameters"]["UserId"];
-            };
-            cookie?: never;
-        };
-        /**
-         * Detail user
-         * @description Hak akses: admin.
-         */
-        get: operations["adminGetUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Ubah role atau status user
-         * @description Hak akses: admin. Admin tidak boleh menurunkan role atau menonaktifkan akunnya sendiri
-         *     (ditolak dengan 409).
-         */
-        patch: operations["adminUpdateUser"];
-        trace?: never;
-    };
     "/categories": {
         parameters: {
             query?: never;
@@ -383,89 +336,10 @@ export interface paths {
          * Unggah gambar ke Cloudinary
          * @description Hak akses: admin, staff. Menyimpan gambar (JPEG, PNG, atau WebP, maksimal 5 MB) ke Cloudinary dan
          *     mengembalikan URL https-nya. URL tersebut lalu dikirim sebagai `image_url` ke
-         *     `POST /products/{productId}/images` atau `POST /banners`. Tipe diperiksa dari isi berkas.
+         *     `POST /products/{productId}/images`. Tipe diperiksa dari isi berkas.
          *     Bila kredensial Cloudinary belum diisi di server, hasilnya 503.
          */
         post: operations["adminUploadImage"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/banners": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Daftar banner
-         * @description Hak akses: public. Default hanya banner yang sedang tayang: `is_active = true` dan waktu sekarang
-         *     berada di antara `starts_at` dan `ends_at` (bila diisi), diurutkan menurut `sort_order` naik.
-         *     `include_inactive=true` (admin saja, selain admin 403) mengembalikan semua banner termasuk yang
-         *     terjadwal, berakhir, dan nonaktif; field `status` menunjukkan kondisinya.
-         */
-        get: operations["listBanners"];
-        put?: never;
-        /**
-         * Buat banner
-         * @description Hak akses: admin.
-         */
-        post: operations["createBanner"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/banners/{bannerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                bannerId: components["parameters"]["BannerId"];
-            };
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Hapus banner
-         * @description Hak akses: admin.
-         */
-        delete: operations["deleteBanner"];
-        options?: never;
-        head?: never;
-        /**
-         * Ubah banner
-         * @description Hak akses: admin.
-         */
-        patch: operations["updateBanner"];
-        trace?: never;
-    };
-    "/site-settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Pengaturan situs (mode maintenance)
-         * @description Hak akses: public. Dibaca client untuk menampilkan halaman maintenance.
-         */
-        get: operations["getSiteSettings"];
-        /**
-         * Ubah pengaturan situs
-         * @description Hak akses: admin. Tabel hanya memiliki satu baris pengaturan (singleton), jadi endpoint ini
-         *     mengganti seluruh isinya. Saat maintenance aktif, server menjawab request pelanggan dan pengunjung
-         *     dengan 503 `maintenance` (lihat Konvensi), sedangkan staff dan owner tetap dilayani.
-         */
-        put: operations["updateSiteSettings"];
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -666,9 +540,8 @@ export interface paths {
         put?: never;
         /**
          * Checkout dari keranjang
-         * @description Hak akses: customer dengan email terverifikasi. Admin/staff → 403 `forbidden`; email belum
-         *     terverifikasi → 403 `email_not_verified`. Server menghitung `subtotal`, `shipping_cost`, dan
-         *     `total_amount`; nilai tersebut tidak diterima dari client. Seluruh proses (cek role & verifikasi,
+         * @description Hak akses: customer. Admin/staff → 403 `forbidden`. Server menghitung `subtotal`, `shipping_cost`, dan
+         *     `total_amount`; nilai tersebut tidak diterima dari client. Seluruh proses (cek role,
          *     cek stok, buat order dan item, buat tagihan QRIS, kurangi stok, kosongkan item keranjang yang
          *     dipakai) berjalan dalam satu transaksi. Response sudah berisi `payment` (QRIS) dan `payment_due_at`.
          *     `product_name`, `size`, dan `unit_price` pada item order disalin saat checkout sebagai snapshot.
@@ -879,94 +752,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/password/forgot": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Minta tautan reset kata sandi
-         * @description Hak akses: public. Bila email terdaftar, server mengirim email berisi tautan
-         *     `<APP_URL>/reset-password?token=...` (token sekali pakai, berlaku 1 jam; permintaan baru
-         *     menggantikan token lama). Selalu 204 untuk email berformat valid, terdaftar atau tidak,
-         *     supaya keberadaan akun tidak bocor. Rate limit per IP lebih ketat daripada endpoint auth lain.
-         *     Tetap dapat dipakai saat mode maintenance.
-         */
-        post: operations["forgotPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/password/reset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Setel kata sandi baru dari tautan reset
-         * @description Hak akses: public. Token diambil dari query `token` pada halaman `/reset-password`.
-         *     Token tidak dikenal, sudah dipakai, atau kedaluwarsa dijawab 410 `reset_invalid`.
-         *     Setelah berhasil, pengguna login ulang dengan kata sandi baru. Dibatasi rate limit per IP.
-         *     Tetap dapat dipakai saat mode maintenance.
-         */
-        post: operations["resetPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/verify-email": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Verifikasi email dari tautan
-         * @description Hak akses: public. Token sekali pakai, berlaku 24 jam. Token tidak dikenal/kedaluwarsa dijawab
-         *     410 `verification_invalid`. Dibatasi rate limit per IP.
-         */
-        post: operations["verifyEmail"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/verification/resend": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Kirim ulang tautan verifikasi
-         * @description Hak akses: user yang login dan belum terverifikasi. Tautan lama otomatis tidak berlaku.
-         */
-        post: operations["resendVerification"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/orders/{orderId}/cancel": {
         parameters: {
             query?: never;
@@ -1010,143 +795,6 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/admin/summary": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Ringkasan operasional
-         * @description Hak akses: admin. Antrean verifikasi, order per status, omzet bulan berjalan, stok menipis (≤ 3), dan 6 order terbaru.
-         */
-        get: operations["adminSummary"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/analytics": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Laporan pendapatan (UC-19)
-         * @description Hak akses: owner saja (staff ditolak 403). Laporan N hari terakhir (zona WIB, termasuk hari ini)
-         *     dibandingkan dengan N hari sebelumnya. Pendapatan dihitung dari order berstatus
-         *     paid, processing, shipped, atau completed.
-         */
-        get: operations["adminAnalytics"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/posts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Daftar artikel terbit
-         * @description Hak akses: public. Hanya `published` dengan `published_at` sudah lewat, terbaru dulu. Tanpa field `content`.
-         */
-        get: operations["listPosts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/posts/{slug}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Detail artikel terbit
-         * @description Hak akses: public. Draf, arsip, dan artikel terjadwal dijawab 404.
-         */
-        get: operations["getPost"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/posts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Semua artikel (semua status)
-         * @description Hak akses: admin, staff. Diurutkan dari yang terakhir diubah.
-         */
-        get: operations["adminListPosts"];
-        put?: never;
-        /**
-         * Buat artikel
-         * @description Hak akses: admin, staff. Penulis diambil dari token. Default status `draft`. Status `published`
-         *     tanpa `published_at` memakai waktu server. Slug harus unik (409).
-         */
-        post: operations["createPost"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/posts/{postId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: string;
-            };
-            cookie?: never;
-        };
-        /**
-         * Detail artikel (semua status)
-         * @description Hak akses: admin, staff.
-         */
-        get: operations["adminGetPost"];
-        put?: never;
-        post?: never;
-        /**
-         * Hapus artikel
-         * @description Hak akses: admin, staff. Permanen; gunakan status `archived` untuk menyembunyikan.
-         */
-        delete: operations["deletePost"];
-        options?: never;
-        head?: never;
-        /**
-         * Ubah artikel
-         * @description Hak akses: admin, staff. Field yang tidak dikirim tidak berubah; `product_ids` mengganti seluruh daftar.
-         */
-        patch: operations["updatePost"];
         trace?: never;
     };
 }
@@ -1230,11 +878,6 @@ export interface components {
             current_password: string;
             /** Format: password */
             new_password: string;
-        };
-        AdminUpdateUserRequest: {
-            role?: components["schemas"]["Role"];
-            /** @enum {string} */
-            status?: "active" | "inactive";
         };
         Category: {
             /** Format: uuid */
@@ -1409,49 +1052,6 @@ export interface components {
              */
             readonly status: "live" | "scheduled" | "ended" | "inactive";
         };
-        BannerCreate: {
-            placement?: components["schemas"]["BannerPlacement"];
-            title?: string | null;
-            subtitle?: string | null;
-            cta_label?: string | null;
-            /** Format: uri */
-            image_url: string;
-            /** Format: uri */
-            mobile_image_url?: string | null;
-            link_url?: string | null;
-            /** @default 0 */
-            sort_order: number;
-            /** @default true */
-            is_active: boolean;
-            /** Format: date-time */
-            starts_at?: string | null;
-            /** Format: date-time */
-            ends_at?: string | null;
-        };
-        /** @description Field yang tidak dikirim tidak berubah; `null` atau string kosong menghapus field opsional. */
-        BannerUpdate: components["schemas"]["BannerCreate"] & Record<string, never>;
-        SiteSettings: {
-            maintenance_mode: boolean;
-            maintenance_message: string;
-            /**
-             * Format: uri
-             * @description Gambar QRIS statis toko yang ditampilkan di halaman pembayaran.
-             */
-            qris_image_url?: string | null;
-            qris_merchant_name?: string | null;
-            qris_nmid?: string | null;
-            /** @description Batas waktu bayar order baru (jam). */
-            payment_window_hours: number;
-        };
-        /** @description Semua field opsional; yang tidak dikirim tidak berubah. String kosong pada field QRIS menghapus nilainya. */
-        SiteSettingsUpdate: {
-            maintenance_mode?: boolean;
-            maintenance_message?: string;
-            qris_image_url?: string;
-            qris_merchant_name?: string;
-            qris_nmid?: string;
-            payment_window_hours?: number;
-        };
         Region: {
             id: number;
             name: string;
@@ -1577,8 +1177,12 @@ export interface components {
         OrderCreate: {
             recipient_name: string;
             recipient_phone: string;
-            /** @description Nama jalan, nomor rumah, RT/RW. */
+            /** @description Nama jalan dan nomor rumah. */
             shipping_address: string;
+            /** @description Wajib. Digabung ke shipping_address sebagai "RT 001/RW 002". */
+            rt: string;
+            /** @description Wajib. Digabung ke shipping_address. */
+            rw: string;
             /** @description ID dari `/regions/provinces`. */
             province_id: number;
             /** @description ID dari `/regions/provinces/{provinceId}/cities`. */
@@ -1619,7 +1223,7 @@ export interface components {
             /** @description Diturunkan dari keberadaan `proof_data`. */
             readonly has_proof: boolean;
             /**
-             * @description `pending` = menunggu bukti atau menunggu verifikasi (lihat `has_proof`).
+             * @description `menunggu` = menunggu bukti atau menunggu verifikasi (lihat `has_proof`).
              * @enum {string}
              */
             status: "menunggu" | "valid" | "ditolak";
@@ -1682,10 +1286,6 @@ export interface components {
         UserEnvelope: {
             data: components["schemas"]["User"];
         };
-        UserListEnvelope: {
-            data: components["schemas"]["User"][];
-            meta: components["schemas"]["PageMeta"];
-        };
         CategoryEnvelope: {
             data: components["schemas"]["Category"];
         };
@@ -1708,15 +1308,6 @@ export interface components {
         };
         ImageEnvelope: {
             data: components["schemas"]["Image"];
-        };
-        BannerEnvelope: {
-            data: components["schemas"]["Banner"];
-        };
-        BannerListEnvelope: {
-            data: components["schemas"]["Banner"][];
-        };
-        SiteSettingsEnvelope: {
-            data: components["schemas"]["SiteSettings"];
         };
         RegionListEnvelope: {
             data: components["schemas"]["Region"][];
@@ -1748,50 +1339,8 @@ export interface components {
         };
         /** @enum {string} */
         Role: "customer" | "staff" | "owner";
-        VerifyEmailRequest: {
-            /** @description Token dari tautan `/verify-email?token=...` di email. */
-            token: string;
-        };
-        ForgotPasswordRequest: {
-            /**
-             * Format: email
-             * @description Dinormalisasi (trim, huruf kecil) oleh server.
-             */
-            email: string;
-        };
-        ResetPasswordRequest: {
-            /** @description Token dari tautan `/reset-password?token=...` di email. */
-            token: string;
-            /**
-             * Format: password
-             * @description Kata sandi baru (8 sampai 72 byte, batas bcrypt).
-             */
-            password: string;
-        };
         OrderCancelRequest: {
             reason?: string;
-        };
-        Summary: {
-            /** @description Jumlah order per `order_status`. */
-            status_counts?: {
-                [key: string]: number;
-            };
-            proofs_to_review?: number;
-            orders_today?: number;
-            revenue_month?: components["schemas"]["Money"];
-            paid_orders_month?: number;
-            low_stock?: {
-                /** Format: uuid */
-                product_id?: string;
-                product_name?: string;
-                /** Format: uuid */
-                variant_id?: string;
-                sku?: string;
-                size?: string;
-                color?: string | null;
-                stock?: number;
-            }[];
-            recent?: components["schemas"]["OrderListItem"][];
         };
         /** @enum {string} */
         PostStatus: "draft" | "published" | "archived";
@@ -1819,43 +1368,9 @@ export interface components {
             updated_at: string;
             read_minutes: number;
         };
-        PostProduct: {
-            /** Format: uuid */
-            id?: string;
-            name?: string;
-            price?: components["schemas"]["Money"];
-            discount_percent?: number;
-            primary_image_url?: string | null;
-            total_stock?: number;
-            status?: string;
-        };
-        PostDetail: components["schemas"]["Post"] & {
-            /** @description Markdown sederhana (judul, daftar, kutipan, tebal/miring, tautan, gambar). */
-            content?: string;
-            product_ids?: string[];
-            /** @description Produk terkait. Untuk publik hanya produk aktif. */
-            products?: components["schemas"]["PostProduct"][];
-        };
-        /** @description Untuk PATCH semua field opsional; `slug` kosong dibuat otomatis dari judul. */
-        PostInput: {
-            title?: string;
-            slug?: string;
-            excerpt?: string | null;
-            /** @description Minimal 50 karakter untuk status published. */
-            content?: string;
-            cover_image_url?: string | null;
-            tag?: string | null;
-            status?: components["schemas"]["PostStatus"];
-            /** Format: date-time */
-            published_at?: string | null;
-            product_ids?: string[];
-        };
         OrderListItemEnvelope: {
             data: components["schemas"]["OrderListItem"][];
             meta: components["schemas"]["PageMeta"];
-        };
-        SummaryEnvelope: {
-            data: components["schemas"]["Summary"];
         };
         AnalyticsTotals: {
             /**
@@ -1892,16 +1407,6 @@ export interface components {
             statuses: {
                 [key: string]: number;
             };
-        };
-        AnalyticsEnvelope: {
-            data: components["schemas"]["Analytics"];
-        };
-        PostEnvelope: {
-            data: components["schemas"]["PostDetail"];
-        };
-        PostListEnvelope: {
-            data: components["schemas"]["Post"][];
-            meta: components["schemas"]["PageMeta"];
         };
     };
     responses: {
@@ -2289,96 +1794,6 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             422: components["responses"]["ValidationFailed"];
             429: components["responses"]["TooManyRequests"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    adminListUsers: {
-        parameters: {
-            query?: {
-                page?: components["parameters"]["Page"];
-                limit?: components["parameters"]["Limit"];
-                /** @description Cari berdasarkan nama atau email (mengandung teks, tidak peka huruf besar/kecil). */
-                q?: string;
-                role?: string;
-                status?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Daftar user. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserListEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    adminGetUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: components["parameters"]["UserId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Detail user. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserEnvelope"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    adminUpdateUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: components["parameters"]["UserId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AdminUpdateUserRequest"];
-            };
-        };
-        responses: {
-            /** @description User diperbarui. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-            422: components["responses"]["ValidationFailed"];
             500: components["responses"]["InternalError"];
         };
     };
@@ -2905,169 +2320,6 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-        };
-    };
-    listBanners: {
-        parameters: {
-            query?: {
-                placement?: components["schemas"]["BannerPlacement"];
-                include_inactive?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Daftar banner. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannerListEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    createBanner: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BannerCreate"];
-            };
-        };
-        responses: {
-            /** @description Banner dibuat. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannerEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            422: components["responses"]["ValidationFailed"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    deleteBanner: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                bannerId: components["parameters"]["BannerId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Banner dihapus. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    updateBanner: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                bannerId: components["parameters"]["BannerId"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BannerUpdate"];
-            };
-        };
-        responses: {
-            /** @description Banner diperbarui. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannerEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            422: components["responses"]["ValidationFailed"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    getSiteSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Pengaturan situs. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SiteSettingsEnvelope"];
-                };
-            };
-            429: components["responses"]["TooManyRequests"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    updateSiteSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SiteSettingsUpdate"];
-            };
-        };
-        responses: {
-            /** @description Pengaturan diperbarui. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SiteSettingsEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            422: components["responses"]["ValidationFailed"];
-            500: components["responses"]["InternalError"];
         };
     };
     listProvinces: {
@@ -3713,127 +2965,6 @@ export interface operations {
             500: components["responses"]["InternalError"];
         };
     };
-    forgotPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ForgotPasswordRequest"];
-            };
-        };
-        responses: {
-            /** @description Permintaan diterima (email dikirim bila akun ada). */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: components["responses"]["BadRequest"];
-            422: components["responses"]["ValidationFailed"];
-            429: components["responses"]["TooManyRequests"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    resetPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ResetPasswordRequest"];
-            };
-        };
-        responses: {
-            /** @description Kata sandi diperbarui. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: components["responses"]["BadRequest"];
-            /** @description Tautan reset tidak valid atau kedaluwarsa (`reset_invalid`). */
-            410: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            422: components["responses"]["ValidationFailed"];
-            429: components["responses"]["TooManyRequests"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    verifyEmail: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyEmailRequest"];
-            };
-        };
-        responses: {
-            /** @description Email terverifikasi. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            /** @description Tautan tidak valid atau kedaluwarsa. */
-            410: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            422: components["responses"]["ValidationFailed"];
-            429: components["responses"]["TooManyRequests"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    resendVerification: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tautan dikirim. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-            429: components["responses"]["TooManyRequests"];
-            500: components["responses"]["InternalError"];
-        };
-    };
     cancelMyOrder: {
         parameters: {
             query?: never;
@@ -3890,248 +3021,6 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    adminSummary: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Ringkasan. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SummaryEnvelope"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    adminAnalytics: {
-        parameters: {
-            query?: {
-                days?: 7 | 30 | 90;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Laporan pendapatan. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnalyticsEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    listPosts: {
-        parameters: {
-            query?: {
-                page?: components["parameters"]["Page"];
-                limit?: components["parameters"]["Limit"];
-                tag?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Daftar artikel. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PostListEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    getPost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Artikel. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PostEnvelope"];
-                };
-            };
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    adminListPosts: {
-        parameters: {
-            query?: {
-                page?: components["parameters"]["Page"];
-                limit?: components["parameters"]["Limit"];
-                status?: components["schemas"]["PostStatus"];
-                /** @description Cari judul. */
-                q?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Daftar artikel. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PostListEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    createPost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PostInput"];
-            };
-        };
-        responses: {
-            /** @description Artikel dibuat. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PostEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            409: components["responses"]["Conflict"];
-            422: components["responses"]["ValidationFailed"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    adminGetPost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Artikel. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PostEnvelope"];
-                };
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    deletePost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Dihapus. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            500: components["responses"]["InternalError"];
-        };
-    };
-    updatePost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PostInput"];
-            };
-        };
-        responses: {
-            /** @description Artikel diperbarui. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PostEnvelope"];
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            401: components["responses"]["Unauthorized"];
-            403: components["responses"]["Forbidden"];
-            404: components["responses"]["NotFound"];
-            409: components["responses"]["Conflict"];
-            422: components["responses"]["ValidationFailed"];
             500: components["responses"]["InternalError"];
         };
     };

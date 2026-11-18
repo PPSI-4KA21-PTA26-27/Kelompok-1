@@ -29,26 +29,6 @@ func (s *Service) UpdateProfile(ctx context.Context, id string, c ProfileChanges
 	return s.repo.UpdateProfile(ctx, id, c)
 }
 
-// List mengambil satu halaman user beserta total data yang cocok dengan filter.
-func (s *Service) List(ctx context.Context, f ListFilter) ([]User, int, error) {
-	return s.repo.List(ctx, f)
-}
-
-// AdminUpdate mengubah role/status user target oleh admin. Admin tidak boleh
-// menurunkan role atau menonaktifkan akunnya sendiri (ErrSelfLockout), supaya
-// tidak ada skenario semua admin terkunci. Mengembalikan ErrNotFound bila user
-// target tidak ada.
-func (s *Service) AdminUpdate(ctx context.Context, actorID, targetID string, c AdminChanges) (User, error) {
-	if actorID == targetID {
-		demotes := c.Role != nil && *c.Role != RoleOwner
-		deactivates := c.Status != nil && *c.Status != StatusActive
-		if demotes || deactivates {
-			return User{}, ErrSelfLockout
-		}
-	}
-	return s.repo.AdminUpdate(ctx, targetID, c)
-}
-
 // ChangePassword mengganti password setelah memverifikasi password saat ini.
 // Mengembalikan ErrNotFound bila akun tidak ada atau tidak aktif, dan
 // ErrWrongPassword bila password saat ini salah.

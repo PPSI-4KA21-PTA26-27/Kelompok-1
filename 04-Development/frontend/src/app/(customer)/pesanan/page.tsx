@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/AuthContext";
 import Countdown from "@/components/order/Countdown";
+import { Breadcrumb } from "@/components/ui/misc";
 import { CUST_STATUS, TABS } from "@/components/order/status";
 import { cn } from "@/lib/cn";
 import { formatDate, formatRupiah } from "@/lib/format";
@@ -30,9 +31,7 @@ export default function PesananPage() {
 
   return (
     <div>
-      <p className="text-sm text-muted lg:text-lg">
-        <Link href="/">Beranda</Link> <span className="mx-1 text-sm">&gt;</span> <span className="text-ink">Pesanan Saya</span>
-      </p>
+      <Breadcrumb items={[{ href: "/", label: "Beranda" }, { label: "Pesanan Saya" }]} />
       <h1 className="mt-2 text-4xl font-extrabold lg:text-5xl">Pesanan Saya</h1>
       <div className="mt-4 flex flex-wrap gap-2 lg:mt-6 lg:gap-3">
         {TABS.map((t, i) => (
@@ -53,8 +52,8 @@ export default function PesananPage() {
           return (
             <article key={o.id} className="rounded-3xl border border-line bg-white p-6">
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-bold">Pesanan #{o.order_number}</h2>
+                <div className="min-w-0">
+                  <h2 className="break-words text-xl font-bold">Pesanan #{o.order_number}</h2>
                   <p className="mt-1 text-muted">
                     {formatDate(o.created_at)} · {o.item_count} item
                   </p>

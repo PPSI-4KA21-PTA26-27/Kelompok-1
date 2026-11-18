@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       isAdmin,
       isStaff: isAdmin || user?.role === "staff",
-      canOrder: user?.role === "customer" && !!user.email_verified_at,
+      canOrder: user?.role === "customer",
       login,
       register,
       logout,

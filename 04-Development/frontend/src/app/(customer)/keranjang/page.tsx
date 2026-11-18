@@ -42,8 +42,8 @@ export default function KeranjangPage() {
         <div className="mt-6 grid items-start gap-4 sm:grid-cols-[1fr_245px] lg:mt-8 lg:grid-cols-[1fr_424px] lg:gap-8">
           <ul className="divide-y divide-line rounded-3xl border border-line bg-white px-3 py-2 sm:px-6 sm:py-4 lg:px-7">
             {items.map((i) => (
-              <li key={i.id} className="grid items-center grid-cols-[auto_1fr_auto_auto_auto] gap-x-2 gap-y-3 py-4 sm:gap-x-3 lg:gap-x-6 lg:py-6">
-                <div className="size-[50px] shrink-0 sm:size-[58px] lg:size-[122px] overflow-hidden rounded-2xl bg-[#d9d9d9]">
+              <li key={i.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-3 sm:grid-cols-[auto_1fr_auto_auto_auto] py-4 sm:gap-x-3 lg:gap-x-6 lg:py-6">
+                <div className="row-span-2 size-12.5 shrink-0 sm:row-span-1 sm:size-14.5 lg:size-30.5 overflow-hidden rounded-2xl bg-[#d9d9d9]">
                   {i.primary_image_url && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={cdn(i.primary_image_url, 250)} alt={i.product_name} className="size-full object-cover" />
@@ -59,7 +59,7 @@ export default function KeranjangPage() {
                     </p>
                   )}
                 </div>
-                <div className="flex items-center rounded-lg border border-line">
+                <div className="col-start-2 row-start-2 flex w-fit items-center rounded-lg border border-line sm:col-start-auto sm:row-start-auto">
                   <button aria-label="Kurangi" className={btn} disabled={i.quantity <= 1} onClick={() => updateQuantity(i.id, i.quantity - 1)}>
                     <Minus className="size-3" />
                   </button>
@@ -68,8 +68,8 @@ export default function KeranjangPage() {
                     <Plus className="size-3" />
                   </button>
                 </div>
-                <p className="w-16 text-right text-sm font-bold sm:w-20 lg:w-28 lg:text-lg">{formatRupiah(i.subtotal)}</p>
-                <button aria-label={`Hapus ${i.product_name}`} className="text-danger" onClick={() => removeItem(i.id)}>
+                <p className="col-start-3 row-start-2 whitespace-nowrap text-right text-sm font-bold sm:col-start-auto sm:row-start-auto sm:w-20 lg:w-28 lg:text-lg">{formatRupiah(i.subtotal)}</p>
+                <button aria-label={`Hapus ${i.product_name}`} className="col-start-3 row-start-1 -m-2 self-start justify-self-end p-2 text-danger sm:col-start-auto sm:row-start-auto sm:self-center" onClick={() => removeItem(i.id)}>
                   <Trash2 className="size-5" />
                 </button>
               </li>
@@ -95,9 +95,9 @@ export default function KeranjangPage() {
             <button
               disabled={over || items.length === 0}
               onClick={() => router.push("/checkout")}
-              className="mt-4 flex h-[34px] w-full items-center justify-center gap-1 rounded-lg bg-lime text-xs font-bold disabled:opacity-50"
+              className="mt-4 flex h-12 w-full items-center justify-center gap-1.5 rounded-xl bg-lime text-sm font-bold disabled:opacity-50"
             >
-              <ChevronRight className="size-3" /> Lanjut ke Pemesanan
+              <ChevronRight className="size-4" /> Lanjut ke Pemesanan
             </button>
           </aside>
         </div>

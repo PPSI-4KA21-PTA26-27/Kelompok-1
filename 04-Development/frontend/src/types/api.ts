@@ -63,40 +63,6 @@ export type ApiProductDetail = ApiProduct & {
 
 export type ApiCategory = { id: string; name: string; is_active: boolean };
 
-export type BannerPlacement = "hero" | "main" | "catalog";
-export type BannerStatus = "live" | "scheduled" | "ended" | "inactive";
-
-export type ApiBanner = {
-  id: string;
-  placement: BannerPlacement;
-  title: string | null;
-  subtitle: string | null;
-  cta_label: string | null;
-  image_url: string;
-  mobile_image_url: string | null;
-  link_url: string | null;
-  sort_order: number;
-  is_active: boolean;
-  starts_at: string | null;
-  ends_at: string | null;
-  created_at: string;
-  status: BannerStatus;
-};
-
-export type BannerInput = {
-  placement: BannerPlacement;
-  title: string | null;
-  subtitle: string | null;
-  cta_label: string | null;
-  image_url: string;
-  mobile_image_url: string | null;
-  link_url: string | null;
-  sort_order: number;
-  is_active: boolean;
-  starts_at: string | null;
-  ends_at: string | null;
-};
-
 export type ApiCartItem = {
   id: string;
   variant_id: string;
@@ -205,42 +171,6 @@ export type ApiOrderDetail = ApiOrder & {
   shipment: ApiShipment | null;
 };
 
-export type ApiSummary = {
-  status_counts: Partial<Record<OrderStatus, number>>;
-  proofs_to_review: number;
-  orders_today: number;
-  revenue_month: string;
-  paid_orders_month: number;
-  low_stock: {
-    product_id: string;
-    product_name: string;
-    variant_id: string;
-    sku: string;
-    size: string;
-    color: string | null;
-    stock: number;
-  }[];
-  recent: ApiOrderListItem[];
-};
-
-export type ApiAnalyticsTotals = {
-  revenue: string;
-  paid_orders: number;
-  all_orders: number;
-  cancelled: number;
-  buyers: number;
-  items_sold: number;
-};
-
-export type ApiAnalytics = {
-  days: 7 | 30 | 90;
-  current: ApiAnalyticsTotals;
-  previous: ApiAnalyticsTotals;
-  series: { date: string; revenue: string; orders: number }[];
-  top_products: { product_id: string; name: string; quantity: number; revenue: string }[];
-  statuses: Partial<Record<OrderStatus, number>>;
-};
-
 /** Item wilayah dari RajaOngkir (provinsi/kota/kecamatan/kelurahan). */
 export type ApiRegion = { id: number; name: string; zip_code?: string; [key: string]: unknown };
 
@@ -254,58 +184,3 @@ export type ApiShippingQuote = {
   weight_gram: number;
 };
 
-export type ApiSiteSettings = {
-  maintenance_mode: boolean;
-  maintenance_message: string;
-  qris_image_url: string | null;
-  qris_merchant_name: string | null;
-  qris_nmid: string | null;
-  payment_window_hours: number;
-};
-
-export type PostStatus = "draft" | "published" | "archived";
-
-export type ApiPost = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string | null;
-  content?: string;
-  cover_image_url: string | null;
-  tag: string | null;
-  status: PostStatus;
-  author_id: string | null;
-  author_name: string | null;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-  read_minutes: number;
-};
-
-export type ApiPostProduct = {
-  id: string;
-  name: string;
-  price: string;
-  discount_percent: number;
-  primary_image_url: string | null;
-  total_stock: number;
-  status: string;
-};
-
-export type ApiPostDetail = ApiPost & {
-  content: string;
-  product_ids: string[];
-  products: ApiPostProduct[];
-};
-
-export type PostInput = {
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  content: string;
-  cover_image_url: string | null;
-  tag: string | null;
-  status: PostStatus;
-  published_at: string | null;
-  product_ids: string[];
-};

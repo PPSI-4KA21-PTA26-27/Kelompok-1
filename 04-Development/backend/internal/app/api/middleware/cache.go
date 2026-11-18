@@ -24,7 +24,7 @@ const (
 )
 
 // ResponseCache menyimpan response GET publik di Redis (microcache) supaya
-// endpoint yang paling sering dibuka (produk, kategori, banner) tidak selalu
+// endpoint yang paling sering dibuka (produk dan kategori) tidak selalu
 // menunggu database.
 //
 // Aturan supaya data tidak basi:
@@ -80,7 +80,7 @@ func (c *ResponseCache) Cached() Middleware {
 					h.Set("Content-Type", contentType)
 					h.Set("X-Cache", "HIT")
 					w.WriteHeader(http.StatusOK)
-					_, _ = w.Write(body)
+					_, _ = w.Write(body) // #nosec G705 -- replay respons handler sendiri dari Redis internal; nosniff dari SecurityHeaders
 					return
 				}
 			case !errors.Is(err, redis.Nil):
@@ -92,10 +92,12 @@ func (c *ResponseCache) Cached() Middleware {
 			w.Header().Set("X-Cache", "MISS")
 			rec := &bodyRecorder{ResponseWriter: w, status: http.StatusOK}
 			next.ServeHTTP(rec, r)
-			if rec.status != http.StatusOK || rec.tooBig {
+			ct := w.Header().Get("Content-Type")
+			// hanya JSON yang di-cache, supaya body non-JSON (mis. HTML) tidak diputar ulang dari Redis
+			if rec.status != http.StatusOK || rec.tooBig || !strings.HasPrefix(ct, "application/json") {
 				return
 			}
-			entry := encodeEntry(w.Header().Get("Content-Type"), rec.buf.Bytes())
+			entry := encodeEntry(ct, rec.buf.Bytes())
 			if err := c.rdb.Set(ctx, key, entry, c.ttl).Err(); err != nil {
 				logCacheErr(ctx, "store entry", err)
 			}
@@ -199,6 +201,10 @@ func (b *bodyRecorder) WriteHeader(code int) {
 }
 
 func (b *bodyRecorder) Write(p []byte) (int, error) {
+	// middleware ini hanya dipasang pada endpoint JSON: default ke JSON, bukan sniffing
+	if b.ResponseWriter.Header().Get("Content-Type") == "" {
+		b.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
+	}
 	if !b.tooBig {
 		if b.buf.Len()+len(p) > maxCachedBody {
 			b.tooBig = true

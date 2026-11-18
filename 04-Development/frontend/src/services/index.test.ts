@@ -79,6 +79,8 @@ describe("orderService", () => {
       shipping_address: "Jl. X",
       province_id: 1,
       city_id: 2,
+      rt: "1",
+      rw: "2",
       district_id: 3,
       subdistrict_id: 4,
       cart_item_ids: ["c1"],

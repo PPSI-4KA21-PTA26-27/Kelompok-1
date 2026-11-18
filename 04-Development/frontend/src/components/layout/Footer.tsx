@@ -1,11 +1,17 @@
+"use client";
+
 import Image from "next/image";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function Footer() {
+  const { isStaff } = useAuth();
+  // Owner dan staff memakai area admin; footer toko hanya untuk pelanggan.
+  if (isStaff) return null;
   return (
-    <footer className="bg-ink text-muted">
-      <div className="mx-auto flex max-w-[1440px] items-center gap-6 px-6 py-6 lg:px-14 lg:py-10">
-        <Image src="/Logo.png" alt="" width={68} height={60} className="h-[60px] w-auto" />
-        <p className="text-lg lg:text-xl">© 2026 Hii Stranger</p>
+    <footer className="bg-ink text-faint">
+      <div className="mx-auto flex max-w-360 items-center gap-3 px-6 py-5 sm:px-9 lg:px-14">
+        <Image src="/Logo.png" alt="" width={40} height={40} className="size-10" />
+        <p className="text-sm">© 2026 Hii Stranger</p>
       </div>
     </footer>
   );

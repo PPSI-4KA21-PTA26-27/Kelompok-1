@@ -227,17 +227,6 @@ func (h *Handler) Complete(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, o)
 }
 
-// AdminSummary melayani GET /admin/summary (dashboard admin).
-func (h *Handler) AdminSummary(w http.ResponseWriter, r *http.Request) {
-	s, err := h.svc.Summary(r.Context())
-	if err != nil {
-		slog.ErrorContext(r.Context(), "order summary failed", "error", err)
-		response.Internal(w)
-		return
-	}
-	response.JSON(w, http.StatusOK, s)
-}
-
 func (h *Handler) writeError(w http.ResponseWriter, r *http.Request, op string, err error) bool {
 	switch {
 	case err == nil:
@@ -261,9 +250,6 @@ func (h *Handler) writeError(w http.ResponseWriter, r *http.Request, op string, 
 		response.ValidationFailed(w, response.FieldError{Field: "tracking_number", Message: "No. resi wajib diisi."})
 	case errors.Is(err, ErrInvalidTransition):
 		response.Conflict(w, "Perubahan status order tidak diizinkan.")
-	case errors.Is(err, ErrEmailNotVerified):
-		response.Error(w, http.StatusForbidden, "email_not_verified",
-			"Verifikasi email kamu terlebih dahulu sebelum membuat pesanan.")
 	case errors.Is(err, ErrNotCustomer):
 		response.Error(w, http.StatusForbidden, "forbidden", "Hanya akun pelanggan yang dapat membuat pesanan.")
 	case errors.Is(err, ErrProofUnderReview):
@@ -275,9 +261,9 @@ func (h *Handler) writeError(w http.ResponseWriter, r *http.Request, op string, 
 	return true
 }
 
-// rtrw: kosong (opsional) atau 1-3 digit angka.
+// rtrw: wajib, 1-3 digit angka.
 func rtrw(v string) bool {
-	if len(v) > 3 {
+	if len(v) < 1 || len(v) > 3 {
 		return false
 	}
 	for _, r := range v {
@@ -289,9 +275,6 @@ func rtrw(v string) bool {
 }
 
 func pad3(v string) string {
-	if v == "" {
-		return "-"
-	}
 	return strings.Repeat("0", 3-len(v)) + v
 }
 
@@ -317,10 +300,10 @@ func (req createRequest) input() (CheckoutInput, []response.FieldError) {
 	c.Check(validator.RuneLenBetween(in.ShippingAddress, 1, 500), "shipping_address",
 		"Alamat wajib diisi, maksimal 500 karakter.")
 	rt, rw := strings.TrimSpace(req.RT), strings.TrimSpace(req.RW)
-	c.Check(rtrw(rt), "rt", "RT berupa angka 1 sampai 3 digit.")
-	c.Check(rtrw(rw), "rw", "RW berupa angka 1 sampai 3 digit.")
+	c.Check(rtrw(rt), "rt", "RT wajib diisi, berupa angka 1 sampai 3 digit.")
+	c.Check(rtrw(rw), "rw", "RW wajib diisi, berupa angka 1 sampai 3 digit.")
 	// API wilayah tidak punya RT/RW; disimpan di alamat supaya skema tetap sesuai SDD.
-	if (rt != "" || rw != "") && rtrw(rt) && rtrw(rw) {
+	if rtrw(rt) && rtrw(rw) {
 		in.ShippingAddress += ", RT " + pad3(rt) + "/RW " + pad3(rw)
 	}
 	c.Check(req.ProvinceID > 0, "province_id", "Provinsi wajib dipilih.")

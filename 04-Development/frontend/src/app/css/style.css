@@ -17,7 +17,7 @@
   --color-ink: #0d0d0d;
   --color-ink-2: #242424;
   --color-ink-3: #3d3b37;
-  --color-muted: #858582;
+  --color-muted: #6b6b67; /* >= 4.5:1 di canvas/putih */
   --color-faint: #a9a9a7;
 
   --color-lime: #c6f432;
@@ -259,4 +259,13 @@
     scroll-behavior: auto !important;
   }
   .skeleton { animation: none; }
+}
+
+/* iOS Safari auto-zoom saat fokus field < 16px (mis. input admin text-sm); di luar layer agar menang atas utility. */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
 }

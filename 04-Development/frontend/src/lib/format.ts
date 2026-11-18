@@ -80,7 +80,8 @@ export function joinAddress(o: {
     .map((p) => (p ?? "").trim())
     .filter((p) => p && p !== "-");
   const zip = (o.shipping_zip_code ?? "").trim();
-  return parts.join(", ") + (zip && zip !== "0" ? " " + zip : "");
+  // NBSP agar "RT 001/RW 002" tidak terpotong antar-baris.
+  return parts.join(", ").replace(/RT (\d{3})\/RW (\d{3})/, "RT\u00a0$1/RW\u00a0$2") + (zip && zip !== "0" ? " " + zip : "");
 }
 
 /** Harga setelah diskon (dibulatkan seperti backend). */
@@ -129,6 +130,12 @@ export function splitRTRW(address: string): { address: string; rt: string; rw: s
   if (!m) return { address, rt: "", rw: "" };
   const num = (v: string) => (v === "-" ? "" : String(Number(v)));
   return { address: m[1], rt: num(m[2]), rw: num(m[3]) };
+}
+
+/** RT dan RW sama-sama tercatat di alamat (pesanan lama bisa belum punya). */
+export function hasRTRW(address: string): boolean {
+  const { rt, rw } = splitRTRW(address);
+  return !!rt && !!rw;
 }
 
 /** Sisa waktu bayar singkat: "2 j 05 mnt", "45 mnt", atau "" bila sudah lewat. */

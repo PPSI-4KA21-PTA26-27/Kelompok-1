@@ -1,4 +1,0 @@
-ALTER TABLE users DROP CONSTRAINT IF EXISTS ck_users_role;
-UPDATE users SET role = 'admin' WHERE role = 'owner';
-ALTER TABLE users
-    ADD CONSTRAINT ck_users_role CHECK (role IN ('customer', 'admin', 'staff'));

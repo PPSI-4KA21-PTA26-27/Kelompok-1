@@ -51,7 +51,7 @@ type Config struct {
 	SMTPFrom   string
 	OwnerEmail string
 
-	// Cloudinary untuk unggah gambar produk dan banner. Kosong berarti
+	// Cloudinary untuk unggah gambar produk. Kosong berarti
 	// endpoint unggah menjawab 503.
 	CloudinaryCloudName string
 	CloudinaryAPIKey    string
@@ -93,15 +93,15 @@ func Load() (Config, error) {
 
 	cfg := Config{
 		AppEnv:            l.str("APP_ENV", "dev"),
-		AppVersion:        l.str("APP_VERSION", "1.2.8"),
+		AppVersion:        l.str("APP_VERSION", "1.2.9"),
 		LegacyAPIVersions: splitList(l.str("API_LEGACY_VERSIONS", "")),
 		Port:              l.str("PORT", "8080"),
 		DBURL:             l.required("DB_URL"),
 		// Default 10 koneksi: hasil benchmark (4 core) paling stabil di kisaran
 		// 2-3x jumlah core. Lebih banyak tidak menambah kecepatan karena
 		// PostgreSQL sendiri dibatasi CPU.
-		DBMaxConns:         int32(l.integer("DB_MAX_CONNS", 10, 32)),
-		DBMinConns:         int32(l.integer("DB_MIN_CONNS", 2, 32)),
+		DBMaxConns:         int32(l.integer("DB_MAX_CONNS", 10, 32)), // #nosec G115 -- ParseInt bitSize 32 menjamin muat int32
+		DBMinConns:         int32(l.integer("DB_MIN_CONNS", 2, 32)),  // #nosec G115 -- ParseInt bitSize 32 menjamin muat int32
 		DBStatementTimeout: l.duration("DB_STATEMENT_TIMEOUT", 5*time.Second),
 		JWTSecret:          l.required("JWT_SECRET"),
 		JWTIssuer:          l.required("JWT_ISSUER"),

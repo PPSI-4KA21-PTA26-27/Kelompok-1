@@ -7,9 +7,11 @@ import { CircleAlert, X } from "lucide-react";
 import Steps from "@/components/checkout/Steps";
 import Countdown from "@/components/order/Countdown";
 import { formatDate, formatRupiah } from "@/lib/format";
-import { orderService, paymentService, settingService } from "@/services";
-import type { ApiOrderDetail, ApiPayment, ApiSiteSettings } from "@/types/api";
+import { orderService, paymentService } from "@/services";
+import type { ApiOrderDetail, ApiPayment } from "@/types/api";
 
+// shortcut: gambar QRIS statis dari env, pindah ke site_settings saat Sprint 3 (D-17).
+const QRIS_IMAGE_URL = process.env.NEXT_PUBLIC_QRIS_IMAGE_URL ?? "";
 const card = "rounded-3xl border border-line bg-white p-7";
 const HOW = [
   "Buka aplikasi pembayaran yang mendukung QRIS.",
@@ -23,7 +25,6 @@ export default function PembayaranPage() {
   const router = useRouter();
   const [order, setOrder] = useState<ApiOrderDetail | null>(null);
   const [pay, setPay] = useState<ApiPayment | null>(null);
-  const [st, setSt] = useState<ApiSiteSettings | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -32,7 +33,6 @@ export default function PembayaranPage() {
   useEffect(() => () => URL.revokeObjectURL(preview), [preview]);
 
   useEffect(() => {
-    settingService.get().then(setSt).catch(() => {});
     orderService
       .get(id)
       .then(async (o) => {
@@ -82,9 +82,9 @@ export default function PembayaranPage() {
               </span>
             </div>
             <div className="mt-6 rounded-2xl border-2 border-ink px-3 py-6 text-center lg:px-6 lg:py-10">
-              {st?.qris_image_url && (
+              {QRIS_IMAGE_URL && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={st.qris_image_url} alt="Kode QRIS" className="mx-auto size-40 sm:size-[200px] lg:size-[220px] object-contain" />
+                <img src={QRIS_IMAGE_URL} alt="Kode QRIS" className="mx-auto size-40 sm:size-50 lg:size-55 object-contain" />
               )}
               <p className="mt-8 text-muted">Pindai dengan aplikasi pembayaran yang mendukung QRIS</p>
               <p className="mt-8 text-muted">Nominal yang harus dibayar</p>
@@ -126,7 +126,7 @@ export default function PembayaranPage() {
               onClick={() => pick.current?.click()}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => (e.preventDefault(), choose(e.dataTransfer.files[0]))}
-              className="mt-5 grid h-[185px] w-full place-items-center rounded-2xl border-2 border-dashed border-muted text-muted"
+              className="mt-5 grid h-46.25 w-full place-items-center rounded-2xl border-2 border-dashed border-muted text-muted"
             >
               <span>
                 <b className="text-ink">Pilih berkas</b> atau tarik ke sini
@@ -138,7 +138,7 @@ export default function PembayaranPage() {
             {file && (
               <div className="mt-4 flex items-center gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={preview} alt="" className="size-[50px] rounded-lg bg-[#d9d9d9] object-cover" />
+                <img src={encodeURI(preview)} alt="" className="size-12.5 rounded-lg bg-[#d9d9d9] object-cover" />
                 <span className="flex-1 truncate text-xs font-semibold">{file.name}</span>
                 <button aria-label="Hapus berkas" onClick={() => setFile(null)}>
                   <X className="size-4" />
@@ -146,7 +146,7 @@ export default function PembayaranPage() {
               </div>
             )}
             {err && pay && <p role="alert" className="mt-3 text-xs text-danger">{err}</p>}
-            <button onClick={send} disabled={!file || busy} className="mt-4 h-[34px] w-full rounded-lg bg-lime text-xs font-bold disabled:opacity-50">
+            <button onClick={send} disabled={!file || busy} className="mt-4 h-12 w-full rounded-xl bg-lime text-sm font-bold disabled:opacity-50">
               {busy ? "Mengirim..." : "Kirim Bukti Pembayaran"}
             </button>
           </section>

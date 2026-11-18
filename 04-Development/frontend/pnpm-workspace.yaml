@@ -2,3 +2,6 @@ allowBuilds:
   core-js: false
   sharp: false
   unrs-resolver: false
+overrides:
+  # GHSA-g3hv-75wg-m249; hapus saat typescript-estree memakai minimatch >=11.0.1
+  "minimatch@>=7 <11.0.1": ^11.0.1

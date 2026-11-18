@@ -26,8 +26,6 @@ var (
 	ErrTrackingRequired = errors.New("order: tracking number required")
 	// ErrInvalidTransition: perubahan status tidak diizinkan.
 	ErrInvalidTransition = errors.New("order: invalid status transition")
-	// ErrEmailNotVerified: pelanggan belum memverifikasi email.
-	ErrEmailNotVerified = errors.New("order: email not verified")
 	// ErrNotCustomer: hanya akun pelanggan yang boleh memesan.
 	ErrNotCustomer = errors.New("order: only customers can place orders")
 	// ErrProofUnderReview: order tidak bisa dibatalkan pelanggan karena
@@ -56,7 +54,7 @@ var transitions = map[string][]string{
 	StatusShipped:        {StatusCompleted},
 }
 
-// defaultPaymentWindow dipakai bila site_settings belum diisi.
+// defaultPaymentWindow adalah batas waktu bayar pesanan baru.
 const defaultPaymentWindow = 24
 
 // Order adalah satu pesanan.
@@ -176,17 +174,6 @@ type ShipInfo struct {
 type contact struct {
 	Email string
 	Name  string
-}
-
-// Summary adalah ringkasan operasional untuk dashboard admin.
-type Summary struct {
-	StatusCounts    map[string]int `json:"status_counts"`
-	ProofsToReview  int            `json:"proofs_to_review"`
-	OrdersToday     int            `json:"orders_today"`
-	RevenueMonth    string         `json:"revenue_month"`
-	PaidOrdersMonth int            `json:"paid_orders_month"`
-	LowStock        []LowStock     `json:"low_stock"`
-	Recent          []ListItem     `json:"recent"`
 }
 
 // LowStock adalah varian aktif yang stoknya menipis.

@@ -12,8 +12,7 @@ import (
 const (
 	RoleCustomer = "customer"
 	RoleOwner    = "owner"
-	// RoleStaff mengelola operasional toko (katalog, pesanan, pembayaran,
-	// jurnal) tetapi tidak bisa mengubah pengaturan toko atau pengguna.
+	// RoleStaff mengelola operasional toko (katalog, pesanan, pembayaran).
 	// Seperti admin, staff tidak bisa belanja.
 	RoleStaff      = "staff"
 	StatusActive   = "active"
@@ -64,23 +63,6 @@ func (o *OptionalString) UnmarshalJSON(b []byte) error {
 type ProfileChanges struct {
 	Name  *string
 	Phone OptionalString
-}
-
-// AdminChanges adalah perubahan role/status oleh admin yang sudah divalidasi.
-// Field nil berarti tidak diubah.
-type AdminChanges struct {
-	Role   *string
-	Status *string
-}
-
-// ListFilter adalah filter dan pagination untuk daftar user. Q dicari pada nama
-// atau email; Role dan Status kosong berarti tidak difilter.
-type ListFilter struct {
-	Q      string
-	Role   string
-	Status string
-	Limit  int
-	Offset int
 }
 
 // User mencerminkan satu baris tabel users. Jangan kirim langsung ke client:
