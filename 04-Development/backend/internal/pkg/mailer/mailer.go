@@ -6,8 +6,8 @@ package mailer
 
 import (
 	"context"
-	"encoding/base64"
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"log/slog"
 	"mime"

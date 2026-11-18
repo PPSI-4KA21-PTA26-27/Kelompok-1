@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hii-stranger1/backend/internal/pkg/database"
 	"strings"
+
+	"hii-stranger1/backend/internal/pkg/database"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -112,7 +113,7 @@ func (r *Repository) Create(ctx context.Context, orderID, userID, method string)
 	return p, nil
 }
 
-// SaveProof menyimpan (atau mengganti) bukti pembayaran milik order. Status
+// CheckProofUpload SaveProof menyimpan (atau mengganti) bukti pembayaran milik order. Status
 // kembali pending dan hasil verifikasi sebelumnya dihapus. Ditolak bila
 // pembayaran sudah approved atau order sudah tidak menunggu pembayaran.
 // CheckProofUpload memeriksa lebih dulu apakah bukti boleh diunggah (tanpa
@@ -351,8 +352,10 @@ func (r *Repository) contactOf(ctx context.Context, orderID string) (contact, er
 
 // paymentDest adalah tujuan Scan dengan urutan yang sama dengan paymentColumns.
 func paymentDest(p *Payment) []any {
-	return []any{&p.ID, &p.OrderID, &p.Method, &p.Amount, &p.UniqueCode, &p.ProofType,
-		&p.HasProof, &p.Status, &p.PaidAt, &p.ReviewedBy, &p.ReviewedAt, &p.CreatedAt}
+	return []any{
+		&p.ID, &p.OrderID, &p.Method, &p.Amount, &p.UniqueCode, &p.ProofType,
+		&p.HasProof, &p.Status, &p.PaidAt, &p.ReviewedBy, &p.ReviewedAt, &p.CreatedAt,
+	}
 }
 
 func scanPayment(row pgx.Row) (Payment, error) {

@@ -29,6 +29,9 @@ func setup(t *testing.T, stock int) fixture {
 	t.Helper()
 	dsn := os.Getenv("TEST_DATABASE_URL")
 	if dsn == "" {
+		if os.Getenv("CI") != "" {
+			t.Fatal("TEST_DATABASE_URL wajib di CI")
+		}
 		t.Skip("TEST_DATABASE_URL tidak diset; tes integrasi dilewati")
 	}
 	ctx := context.Background()

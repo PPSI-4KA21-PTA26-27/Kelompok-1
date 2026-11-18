@@ -13,7 +13,6 @@ import (
 	"hii-stranger1/backend/internal/app/api/order"
 	"hii-stranger1/backend/internal/app/api/payment"
 	"hii-stranger1/backend/internal/app/api/shipment"
-	"hii-stranger1/backend/internal/app/api/sitesetting"
 	"hii-stranger1/backend/internal/pkg/config"
 	"hii-stranger1/backend/internal/pkg/token"
 )
@@ -28,18 +27,16 @@ func testRouter(t *testing.T) (http.Handler, func(role string) string) {
 	t.Helper()
 	tokens := token.NewManager("0123456789abcdef0123456789abcdef", "test-issuer", time.Minute)
 	h := handlers{
-		auth:        auth.NewHandler(nil),
-		cart:        cart.NewHandler(nil),
-		order:       order.NewHandler(nil),
-		payment:     payment.NewHandler(nil),
-		shipment:    shipment.NewHandler(nil),
-		siteSetting: sitesetting.NewHandler(nil),
+		auth:     auth.NewHandler(nil),
+		cart:     cart.NewHandler(nil),
+		order:    order.NewHandler(nil),
+		payment:  payment.NewHandler(nil),
+		shipment: shipment.NewHandler(nil),
 		// Peran dari id token ("u-<role>"); role "inactive" mewakili akun nonaktif.
 		account: func(_ context.Context, id string) (string, bool, error) {
 			role := strings.TrimPrefix(id, "u-")
 			return role, role != "inactive", nil
 		},
-		maintenance: func(context.Context) (bool, string, error) { return false, "", nil },
 	}
 	cfg := config.Config{MaxBodyBytes: 1 << 20, HTTPRequestTimeout: 5 * time.Second}
 	bearer := func(role string) string {
@@ -87,17 +84,6 @@ func TestRouteRoleAccess(t *testing.T) {
 		{http.MethodPut, "/api/v1/orders/" + someUUID + "/shipment", "{}", "customer", http.StatusForbidden},
 		{http.MethodPut, "/api/v1/orders/" + someUUID + "/shipment", "{}", "staff", http.StatusUnprocessableEntity},
 		{http.MethodPut, "/api/v1/orders/" + someUUID + "/shipment", "{}", "owner", http.StatusUnprocessableEntity},
-
-		// Pengaturan situs: owner saja.
-		{http.MethodPut, "/api/v1/site-settings", "{}", "staff", http.StatusForbidden},
-		{http.MethodPut, "/api/v1/site-settings", "{}", "customer", http.StatusForbidden},
-		{http.MethodPut, "/api/v1/site-settings", "{}", "owner", http.StatusUnprocessableEntity},
-
-		// Analitik: owner saja; days selain 7/30/90 ditolak 400.
-		{http.MethodGet, "/api/v1/admin/analytics?days=7", "", "", http.StatusUnauthorized},
-		{http.MethodGet, "/api/v1/admin/analytics?days=7", "", "customer", http.StatusForbidden},
-		{http.MethodGet, "/api/v1/admin/analytics?days=7", "", "staff", http.StatusForbidden},
-		{http.MethodGet, "/api/v1/admin/analytics?days=5", "", "owner", http.StatusBadRequest},
 	}
 	for _, tc := range tests {
 		name := tc.method + " " + tc.path + " as " + tc.role
@@ -115,30 +101,5 @@ func TestRouteRoleAccess(t *testing.T) {
 				t.Errorf("status = %d, want %d (%s)", rec.Code, tc.want, rec.Body.String())
 			}
 		})
-	}
-}
-
-// Lupa sandi dibatasi 3 request per menit per IP (passwordResetRateLimit).
-func TestForgotPasswordRateLimit(t *testing.T) {
-	router, _ := testRouter(t)
-	send := func() *httptest.ResponseRecorder {
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/password/forgot", strings.NewReader(`{"email":"x"}`))
-		req.Header.Set("Content-Type", "application/json")
-		req.RemoteAddr = "203.0.113.9:5555"
-		rec := httptest.NewRecorder()
-		router.ServeHTTP(rec, req)
-		return rec
-	}
-	for i := 0; i < passwordResetRateLimit; i++ {
-		if rec := send(); rec.Code != http.StatusUnprocessableEntity {
-			t.Fatalf("request ke-%d status = %d, want 422", i+1, rec.Code)
-		}
-	}
-	rec := send()
-	if rec.Code != http.StatusTooManyRequests {
-		t.Fatalf("request melebihi batas status = %d, want 429", rec.Code)
-	}
-	if rec.Header().Get("Retry-After") == "" {
-		t.Error("Retry-After kosong")
 	}
 }

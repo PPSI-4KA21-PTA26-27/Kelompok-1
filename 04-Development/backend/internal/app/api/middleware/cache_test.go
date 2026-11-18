@@ -45,6 +45,9 @@ func newTestCache(t *testing.T) *ResponseCache {
 	defer cancel()
 	if err := rdb.Ping(ctx).Err(); err != nil {
 		_ = rdb.Close()
+		if os.Getenv("CI") != "" {
+			t.Fatalf("redis wajib di CI (%s): %v", addr, err)
+		}
 		t.Skipf("redis tidak tersedia di %s: %v", addr, err)
 	}
 
@@ -159,5 +162,36 @@ func TestResponseCacheRedisDown(t *testing.T) {
 	write.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/products", nil))
 	if rec.Code != http.StatusCreated {
 		t.Fatalf("redis mati: request tulis tidak boleh gagal, dapat %d", rec.Code)
+	}
+}
+
+func TestResponseCacheSkipsNonJSON(t *testing.T) {
+	var calls int
+	c := newTestCache(t)
+	h := Chain(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls++
+		w.Header().Set("Content-Type", "text/html")
+		_, _ = w.Write([]byte("<b>x</b>"))
+	}), c.Cached())
+	get(h, "/page", "")
+	if r := get(h, "/page", ""); r.Header().Get("X-Cache") == "HIT" || calls != 2 {
+		t.Fatalf("respons non-JSON tidak boleh di-cache, calls=%d", calls)
+	}
+}
+
+func TestBodyRecorderDefaultsToJSON(t *testing.T) {
+	for _, tc := range []struct{ set, want string }{
+		{"", "application/json; charset=utf-8"},
+		{"text/plain", "text/plain"},
+	} {
+		rec := httptest.NewRecorder()
+		if tc.set != "" {
+			rec.Header().Set("Content-Type", tc.set)
+		}
+		b := &bodyRecorder{ResponseWriter: rec}
+		_, _ = b.Write([]byte("{}"))
+		if got := rec.Header().Get("Content-Type"); got != tc.want {
+			t.Fatalf("Content-Type = %q, want %q", got, tc.want)
+		}
 	}
 }

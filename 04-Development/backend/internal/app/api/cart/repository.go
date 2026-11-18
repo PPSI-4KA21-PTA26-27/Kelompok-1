@@ -296,9 +296,7 @@ func wrap(op string, err error) error {
 		return err
 	}
 
-	var pgErr *pgconn.PgError
-
-	if errors.As(err, &pgErr) {
+	if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
 		switch pgErr.Code {
 		case foreignKeyViolation:
 			switch pgErr.ConstraintName {

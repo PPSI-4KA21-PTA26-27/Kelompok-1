@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatRemaining, paymentLabel, splitRTRW, weeklyRevenue } from "./format";
+import { formatRemaining, hasRTRW, paymentLabel, splitRTRW, weeklyRevenue } from "./format";
 
 describe("paymentLabel", () => {
   it("membedakan belum ada bukti, menunggu, valid, ditolak", () => {
@@ -25,6 +25,14 @@ describe("splitRTRW", () => {
     expect(splitRTRW("Jl. Mawar 1, RT 001/RW 023")).toEqual({ address: "Jl. Mawar 1", rt: "1", rw: "23" });
     expect(splitRTRW("Jl. Mawar 1, RT 005/RW -")).toEqual({ address: "Jl. Mawar 1", rt: "5", rw: "" });
     expect(splitRTRW("Jl. Mawar 1")).toEqual({ address: "Jl. Mawar 1", rt: "", rw: "" });
+  });
+});
+
+describe("hasRTRW", () => {
+  it("true hanya bila RT dan RW sama-sama terisi", () => {
+    expect(hasRTRW("Jl. Mawar 1, RT 001/RW 023")).toBe(true);
+    expect(hasRTRW("Jl. Mawar 1, RT 005/RW -")).toBe(false);
+    expect(hasRTRW("Jl. Mawar 1")).toBe(false);
   });
 });
 

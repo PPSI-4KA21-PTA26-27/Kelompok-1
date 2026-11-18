@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Clock, Minus, Plus, ShoppingCart, SquareArrowRight } from "lucide-react";
 import { useCartActions } from "@/hooks/useCartActions";
 import { useCategories } from "@/hooks/useCategories";
+import { Breadcrumb, Skeleton } from "@/components/ui/misc";
 import { cn } from "@/lib/cn";
 import { finalPrice, formatRupiah } from "@/lib/format";
 import { cdn } from "@/lib/img";
@@ -39,7 +39,19 @@ export default function ProdukPage() {
   const variant = p?.variants.find((v) => v.size === activeSize && (v.color ?? "") === activeColor);
 
   if (missing) return <p className="py-20 text-center text-lg text-muted">Produk tidak ditemukan.</p>;
-  if (!p) return <div className="h-[650px] animate-pulse rounded-2xl bg-[#d9d9d9]" />;
+  if (!p)
+    return (
+      <div role="status" className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:gap-15">
+        <span className="sr-only">Memuat produk...</span>
+        <Skeleton className="aspect-square rounded-2xl" />
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-3/4" />
+          <Skeleton className="h-6 w-1/3" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-12" />
+        </div>
+      </div>
+    );
 
   const catName = cats.find((c) => c.id === p.category_id)?.name;
   const images = [...p.images].sort((a, b) => a.sort_order - b.sort_order);
@@ -59,13 +71,16 @@ export default function ProdukPage() {
 
   return (
     <div>
-      <p className="text-lg text-muted">
-        <Link href="/">Beranda</Link> &gt; <Link href="/katalog">Katalog</Link> &gt;{" "}
-        {catName && <>{catName} &gt; </>}
-        <span className="text-ink">{p.name}</span>
-      </p>
+      <Breadcrumb
+        items={[
+          { href: "/", label: "Beranda" },
+          { href: "/katalog", label: "Katalog" },
+          ...(catName ? [{ href: "/katalog?category=" + p.category_id, label: catName }] : []),
+          { label: "Detail Produk" },
+        ]}
+      />
 
-      <div className="mt-4 grid gap-6 sm:grid-cols-2 sm:gap-7 lg:gap-[60px]">
+      <div className="mt-4 grid gap-6 sm:grid-cols-2 sm:gap-7 lg:gap-15">
         <div>
           <div className="aspect-square overflow-hidden rounded-2xl bg-[#d9d9d9]">
             {images[img] && (
@@ -133,25 +148,25 @@ export default function ProdukPage() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <div className="flex h-14 items-center rounded-xl border border-line bg-white">
-              <button aria-label="Kurangi" className="px-5" disabled={qty <= 1} onClick={() => setQty(qty - 1)}>
+              <button aria-label="Kurangi" className="h-full px-5 disabled:opacity-40" disabled={qty <= 1} onClick={() => setQty(qty - 1)}>
                 <Minus className="size-3" />
               </button>
               <span className="w-8 text-center text-lg font-bold">{qty}</span>
-              <button aria-label="Tambah" className="px-5" disabled={qty >= max} onClick={() => setQty(qty + 1)}>
+              <button aria-label="Tambah" className="h-full px-5 disabled:opacity-40" disabled={qty >= max} onClick={() => setQty(qty + 1)}>
                 <Plus className="size-3" />
               </button>
             </div>
             <button
               disabled={!variant || max < 1}
               onClick={() => addToCart("/keranjang")}
-              className="flex h-14 flex-1 items-center justify-center gap-2 rounded-xl bg-ink px-3 text-sm sm:px-6 sm:text-lg font-bold text-lime disabled:opacity-50"
+              className="flex h-14 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-ink px-3 text-sm sm:px-6 sm:text-lg font-bold text-lime disabled:opacity-50"
             >
               <ShoppingCart className="size-5" /> Tambah ke keranjang
             </button>
             <button
               disabled={!variant || max < 1}
               onClick={() => addToCart("/checkout")}
-              className="flex h-14 items-center justify-center gap-2 rounded-xl bg-lime px-3 text-sm sm:px-6 sm:text-lg font-bold disabled:opacity-50"
+              className="flex h-14 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-lime px-3 text-sm sm:px-6 sm:text-lg font-bold disabled:opacity-50"
             >
               <SquareArrowRight className="size-5" /> Beli sekarang
             </button>

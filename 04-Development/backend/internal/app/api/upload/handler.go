@@ -1,6 +1,6 @@
 // Package upload menerima unggahan gambar dari admin dan menyimpannya di
-// Cloudinary. URL hasilnya dipakai sebagai image_url pada gambar produk dan
-// banner (endpoint tersebut tetap menerima URL sesuai openapi.yaml).
+// Cloudinary. URL hasilnya dipakai sebagai image_url pada gambar produk
+// (endpoint tersebut tetap menerima URL sesuai openapi.yaml).
 package upload
 
 import (

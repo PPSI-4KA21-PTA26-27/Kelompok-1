@@ -5,10 +5,12 @@ import { ReduxProvider } from "@/redux/provider";
 import { AuthProvider } from "@/app/context/AuthContext";
 import { CartModalProvider } from "@/app/context/CartSidebarModalContext";
 import CartSync from "@/app/CartSync";
+import ServerGate from "@/components/layout/ServerGate";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ReduxProvider>
+      <ServerGate>
       <AuthProvider>
         <CartModalProvider>
           <CartSync />
@@ -30,6 +32,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           />
         </CartModalProvider>
       </AuthProvider>
+    </ServerGate>
     </ReduxProvider>
   );
 }

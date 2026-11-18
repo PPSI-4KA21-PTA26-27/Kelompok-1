@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { AlertTriangle, Check, ChevronLeft, ChevronRight, Copy, PackageOpen, RotateCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/cn";
@@ -30,7 +31,7 @@ export function Badge({
   dot?: boolean;
 }) {
   return (
-    <span className={cn("caps inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1", tones[tone], className)}>
+    <span className={cn("caps inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1", tones[tone], className)}>
       {dot && <span className="size-1.5 rounded-full bg-current" aria-hidden />}
       {children}
     </span>
@@ -102,7 +103,7 @@ export function Price({
   return (
     <span className={cn("inline-flex flex-wrap items-baseline gap-x-2", className)}>
       <span className={cn("font-display font-bold tabular tracking-tight", text)}>{formatRupiah(final)}</span>
-      {discountPercent > 0 && <span className="text-[13px] text-faint line-through tabular">{formatRupiah(base)}</span>}
+      {discountPercent > 0 && <span className="text-[13px] text-muted line-through tabular">{formatRupiah(base)}</span>}
     </span>
   );
 }
@@ -264,6 +265,26 @@ export function useCountdown(target?: string | null) {
     expired: ms <= 0,
     text: [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map((n) => String(n).padStart(2, "0")).join(":"),
   };
+}
+
+/** Breadcrumb: konteks navigasi saja; identitas halaman (nomor pesanan, nama produk) cukup di h1. */
+export function Breadcrumb({ items }: { items: { href?: string; label: string }[] }) {
+  return (
+    <nav aria-label="Breadcrumb" className="text-sm text-muted lg:text-lg">
+      <ol className="flex flex-wrap items-center gap-x-2">
+        {items.map((it, i) => (
+          <li key={it.label} className="flex items-center gap-x-2">
+            {i > 0 && <span aria-hidden className="text-sm">&gt;</span>}
+            {it.href ? (
+              <Link href={it.href} className="py-1 hover:text-ink">{it.label}</Link>
+            ) : (
+              <span aria-current="page" className="text-ink">{it.label}</span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
 }
 
 /** Judul seksi editorial: label caps + judul display. */

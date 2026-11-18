@@ -32,10 +32,10 @@ fmt:
 
 check: fmt vet test
 
-# Keamanan: govulncheck memblokir (CVE terpanggil); gosec hanya lapor (temuan lama: SHA1 Cloudinary, CLI migrasi, cast config), blokir bila sudah dibersihkan.
+# Keamanan: govulncheck dan gosec sama-sama memblokir.
 sec:
 	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
-	go run github.com/securego/gosec/v2/cmd/gosec@latest -no-fail -quiet -severity medium -confidence medium ./...
+	go run github.com/securego/gosec/v2/cmd/gosec@latest -quiet -severity medium -confidence medium ./...
 
 # Cadangan DB: DATABASE_URL=... make backup  (hasil: backup-<tanggal>.dump, uji restore tiap bulan)
 backup:

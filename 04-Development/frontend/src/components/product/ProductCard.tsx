@@ -17,9 +17,9 @@ export default function ProductCard({ p, category }: { p: ApiProduct; category?:
           </span>
         )}
       </div>
-      <div className="space-y-2 p-3 sm:space-y-3 sm:p-[18px]">
+      <div className="space-y-2 p-3 sm:space-y-3 sm:p-4.5">
         {category && <p className="text-sm text-muted">{category}</p>}
-        <h3 className="line-clamp-2 min-h-[2.75rem] text-sm font-bold leading-snug text-ink">{p.name}</h3>
+        <h3 className="line-clamp-2 min-h-11 text-sm font-bold leading-snug text-ink">{p.name}</h3>
         <p className="text-sm font-bold text-ink">{formatRupiah(finalPrice(p.price, p.discount_percent))}</p>
       </div>
     </Link>

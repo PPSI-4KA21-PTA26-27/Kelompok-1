@@ -1,22 +1,38 @@
 name: ci
+# CI Sprint 1: tes, lint, keamanan, migrasi skema 11 tabel, dan build image backend.
 on:
   push:
     branches: [main]
     paths: ["04-Development/**", ".github/**"]
   pull_request:
     paths: ["04-Development/**", ".github/**"]
-  schedule: [{ cron: "0 2 * * 1" }] # Senin: dependency baru bisa kena CVE tanpa ada commit
+  workflow_call:
 permissions: { contents: read }
 
 jobs:
   backend:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: 04-Development/backend } }
+    services:
+      postgres:
+        image: postgres:17
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: hii_stranger }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      REDIS_ADDR: localhost:6379
+      DB_URL: postgres://postgres:postgres@localhost:5432/hii_stranger?sslmode=disable
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with: { go-version-file: 04-Development/backend/go.mod, cache-dependency-path: 04-Development/backend/go.sum }
       - run: make vet test
+      - name: migrasi Sprint 1 naik-turun-naik
+        run: go run ./cmd/migration up && go run ./cmd/migration down && go run ./cmd/migration up
       - run: make sec
 
   frontend:
@@ -45,4 +61,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker build 04-Development/backend # pastikan Dockerfile Railway valid
+      - run: docker build 04-Development/backend

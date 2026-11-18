@@ -20,7 +20,7 @@ const (
 
 func validCheckout() createRequest {
 	return createRequest{RecipientName: "Lana", RecipientPhone: "081234567890", ShippingAddress: "Jl. Mawar 1",
-		ProvinceID: 1, CityID: 2, DistrictID: 3, SubdistrictID: 4}
+		ProvinceID: 1, CityID: 2, DistrictID: 3, SubdistrictID: 4, RT: "1", RW: "2"}
 }
 
 func TestCheckoutInputRTRW(t *testing.T) {
@@ -29,8 +29,8 @@ func TestCheckoutInputRTRW(t *testing.T) {
 	if in, _ := req.input(); in.ShippingAddress != "Jl. Mawar 1, RT 001/RW 023" {
 		t.Errorf("ShippingAddress = %q", in.ShippingAddress)
 	}
-	if in, _ := validCheckout().input(); in.ShippingAddress != "Jl. Mawar 1" {
-		t.Errorf("tanpa RT/RW = %q", in.ShippingAddress)
+	if in, _ := validCheckout().input(); in.ShippingAddress != "Jl. Mawar 1, RT 001/RW 002" {
+		t.Errorf("RT/RW default = %q", in.ShippingAddress)
 	}
 }
 
@@ -50,6 +50,8 @@ func TestCheckoutInput(t *testing.T) {
 		{"telepon pendek", func(r *createRequest) { r.RecipientPhone = "123" }, "recipient_phone"},
 		{"alamat kosong", func(r *createRequest) { r.ShippingAddress = "" }, "shipping_address"},
 		{"alamat terlalu panjang", func(r *createRequest) { r.ShippingAddress = strings.Repeat("a", 501) }, "shipping_address"},
+		{"rt kosong", func(r *createRequest) { r.RT = "  " }, "rt"},
+		{"rw kosong", func(r *createRequest) { r.RW = "" }, "rw"},
 		{"rt bukan angka", func(r *createRequest) { r.RT = "1a" }, "rt"},
 		{"rw lebih dari 3 digit", func(r *createRequest) { r.RW = "1234" }, "rw"},
 		{"provinsi kosong", func(r *createRequest) { r.ProvinceID = 0 }, "province_id"},
@@ -126,19 +128,6 @@ func TestCancelGuards(t *testing.T) {
 	}
 }
 
-// Parameter days divalidasi sebelum service dipanggil; nilai valid (7/30/90)
-// butuh database sehingga hanya nilai salah yang diuji di sini. Hak akses
-// (owner saja) diuji di router (paket api).
-func TestAdminAnalyticsDays(t *testing.T) {
-	for _, days := range []string{"1", "14", "60", "365", "abc", "-7", "7.0"} {
-		rec := httptest.NewRecorder()
-		NewHandler(nil).AdminAnalytics(rec, httptest.NewRequest(http.MethodGet, "/admin/analytics?days="+days, nil))
-		if rec.Code != http.StatusBadRequest {
-			t.Errorf("days=%s: status = %d, want 400", days, rec.Code)
-		}
-	}
-}
-
 func TestWriteError(t *testing.T) {
 	tests := []struct {
 		err  error
@@ -153,7 +142,6 @@ func TestWriteError(t *testing.T) {
 		{ErrProductUnavailable, http.StatusConflict, "conflict"},
 		{ErrTrackingRequired, http.StatusUnprocessableEntity, "tracking_number"},
 		{ErrInvalidTransition, http.StatusConflict, "conflict"},
-		{ErrEmailNotVerified, http.StatusForbidden, "email_not_verified"},
 		{ErrNotCustomer, http.StatusForbidden, "forbidden"},
 		{ErrProofUnderReview, http.StatusConflict, "conflict"},
 		{errors.New("db mati"), http.StatusInternalServerError, ""},

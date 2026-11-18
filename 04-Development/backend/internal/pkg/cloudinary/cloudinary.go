@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -182,7 +182,7 @@ func (c *Client) upload(ctx context.Context, resourceType, subfolder string, ext
 
 // sign membuat signature sesuai aturan Cloudinary: parameter (selain file,
 // api_key, dan signature) diurutkan menurut nama, digabung "a=1&b=2", lalu
-// ditambah api secret dan di-hash SHA-1.
+// ditambah api secret dan di-hash SHA-256 (Cloudinary menerima SHA-1 maupun SHA-256).
 func (c *Client) sign(params map[string]string) string {
 	keys := make([]string, 0, len(params))
 	for k := range params {
@@ -193,7 +193,7 @@ func (c *Client) sign(params map[string]string) string {
 	for i, k := range keys {
 		pairs[i] = k + "=" + params[k]
 	}
-	sum := sha1.Sum([]byte(strings.Join(pairs, "&") + c.apiSecret))
+	sum := sha256.Sum256([]byte(strings.Join(pairs, "&") + c.apiSecret))
 	return hex.EncodeToString(sum[:])
 }
 

@@ -6,6 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/context/AuthContext";
 import Field from "@/components/auth/Field";
+import { Breadcrumb } from "@/components/ui/misc";
 import { errorMessage } from "@/lib/api";
 import { authService } from "@/services";
 
@@ -65,9 +66,7 @@ export default function AkunPage() {
 
   return (
     <div>
-      <p className="text-sm text-muted lg:text-lg">
-        <Link href="/">Beranda</Link> <span className="mx-1 text-sm">&gt;</span> <span className="text-ink">Akun Saya</span>
-      </p>
+      <Breadcrumb items={[{ href: "/", label: "Beranda" }, { label: "Akun Saya" }]} />
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
         <h1 className="text-4xl font-extrabold lg:text-5xl">Akun Saya</h1>
         <Link href="/pesanan" className="font-bold underline">
@@ -85,7 +84,6 @@ export default function AkunPage() {
               <p className="mb-2 font-semibold">Email</p>
               <p className="rounded-xl bg-stone px-6 py-4 text-muted">
                 {user.email}
-                {!user.email_verified_at && <span className="ml-2 font-bold text-danger">Belum terverifikasi</span>}
               </p>
             </div>
           </div>

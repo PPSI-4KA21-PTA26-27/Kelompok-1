@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Check, MapPin, Truck } from "lucide-react";
 import { CUST_STATUS } from "@/components/order/status";
-import { CopyButton } from "@/components/ui/misc";
+import { Breadcrumb, CopyButton, Skeleton } from "@/components/ui/misc";
 import { cn } from "@/lib/cn";
 import { formatDate, formatRupiah, joinAddress } from "@/lib/format";
 import { cdn } from "@/lib/img";
@@ -29,7 +29,14 @@ export default function PesananDetailPage() {
   }, [id]);
 
   if (err) return <p className="py-20 text-center text-lg text-danger">{err}</p>;
-  if (!o) return <div className="h-96 animate-pulse rounded-3xl bg-[#d9d9d9]" />;
+  if (!o)
+    return (
+      <div role="status" className="space-y-4">
+        <span className="sr-only">Memuat pesanan...</span>
+        <Skeleton className="h-12 w-2/3" />
+        <Skeleton className="h-80 rounded-3xl" />
+      </div>
+    );
 
   const cancelled = o.order_status === "cancelled";
   const at = { paid: ["completed", "shipped", "processing", "paid"], ship: ["completed", "shipped"] };
@@ -44,12 +51,9 @@ export default function PesananDetailPage() {
 
   return (
     <div>
-      <p className="text-sm text-muted lg:text-lg">
-        <Link href="/">Beranda</Link> <span className="mx-1 text-sm">&gt;</span> <Link href="/pesanan">Pesanan Saya</Link> &gt;{" "}
-        <span className="text-ink">Pesanan #{o.order_number}</span>
-      </p>
+      <Breadcrumb items={[{ href: "/", label: "Beranda" }, { href: "/pesanan", label: "Pesanan Saya" }, { label: "Detail Pesanan" }]} />
       <div className="mt-2 flex flex-wrap items-center gap-4">
-        <h1 className="text-4xl font-extrabold lg:text-5xl">Pesanan #{o.order_number}</h1>
+        <h1 className="min-w-0 break-words text-3xl font-extrabold sm:text-4xl lg:text-5xl">Pesanan #{o.order_number}</h1>
         {cancelled && <span className={cn("rounded-full px-2.5 py-1 text-xs font-bold", CUST_STATUS.cancelled.cls)}>Dibatalkan</span>}
       </div>
       <p className="mt-2 text-muted">Dibuat {formatDate(o.created_at)}</p>
@@ -103,7 +107,7 @@ export default function PesananDetailPage() {
             <ul className="mt-4 space-y-4">
               {o.items.map((i) => (
                 <li key={i.id} className="flex items-center gap-4">
-                  <div className="size-[50px] shrink-0 overflow-hidden rounded-lg bg-[#d9d9d9]">
+                  <div className="size-12.5 shrink-0 overflow-hidden rounded-lg bg-[#d9d9d9]">
                     {i.image_url && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={cdn(i.image_url, 100)} alt="" className="size-full object-cover" />
@@ -137,7 +141,7 @@ export default function PesananDetailPage() {
               </div>
             )}
             {o.order_status === "pending_payment" && (
-              <Link href={`/pembayaran/${o.id}`} className="mt-4 block rounded-lg bg-lime py-2 text-center text-xs font-bold">
+              <Link href={`/pembayaran/${o.id}`} className="mt-4 grid h-12 place-items-center rounded-lg bg-lime text-sm font-bold">
                 Bayar sekarang
               </Link>
             )}

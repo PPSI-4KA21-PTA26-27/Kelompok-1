@@ -27,11 +27,9 @@ export default function MasukPage() {
       router.replace(
         u.role !== "customer"
           ? "/admin"
-          : !u.email_verified_at
-            ? "/verifikasi-email"
-            : next?.startsWith("/") && !next.startsWith("//")
-              ? next
-              : "/",
+          : next?.startsWith("/") && !next.startsWith("//")
+            ? next
+            : "/",
       );
     } catch (x) {
       setErr({ bad: x instanceof ApiError && x.status === 401, msg: x instanceof Error ? x.message : "Terjadi kesalahan" });
@@ -61,12 +59,7 @@ export default function MasukPage() {
       <form onSubmit={submit} className="mt-6 space-y-4">
         <Field label="Email" name="email" type="email" icon="user" autoComplete="email" required error={err?.bad ? "Login gagal! Data tidak sesuai." : undefined} />
         <Field label="Kata Sandi" name="password" type="password" icon="lock" autoComplete="current-password" required />
-        <p className="text-right">
-          <Link href="/lupa-sandi" className="font-semibold underline underline-offset-4">
-            Lupa kata sandi?
-          </Link>
-        </p>
-        <button disabled={busy} className="mt-2 h-[60px] w-full rounded-xl bg-lime font-bold text-ink disabled:opacity-60">
+        <button disabled={busy} className="mt-2 h-15 w-full rounded-xl bg-lime font-bold text-ink disabled:opacity-60">
           {busy ? "Memproses..." : "Masuk"}
         </button>
       </form>

@@ -43,12 +43,12 @@ export default function Navbar() {
 
   return (
     <header className="relative z-30 bg-ink text-white">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-2 px-4 sm:px-6 lg:gap-4 lg:px-14">
+      <div className="mx-auto flex h-16 max-w-360 items-center gap-2 px-4 sm:px-6 lg:gap-4 lg:px-14">
         <button type="button" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className={cn(icon, "-ml-2 lg:hidden")}>
           {menu ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
         <Link href="/" aria-label="Hii Stranger" className="shrink-0">
-          <Image src="/Logo.png" alt="Hii Stranger" width={68} height={60} className="h-9 w-auto" priority />
+          <Image src="/Logo.png" alt="Hii Stranger" width={60} height={60} className="size-9" priority />
         </Link>
         <nav aria-label="Utama" className="hidden gap-1 lg:flex">
           {LINKS.map((l) => (
@@ -78,7 +78,7 @@ export default function Navbar() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="Cari t-shirt..."
             aria-label="Cari produk"
-            className="h-10 w-full rounded-full bg-ink-2 pl-10 pr-4 text-sm text-white placeholder:text-muted focus:outline-2 focus:outline-lime"
+            className="h-10 w-full rounded-full bg-ink-2 pl-10 pr-4 text-sm text-white placeholder:text-faint focus:outline-2 focus:outline-lime"
           />
         </form>
         <Link href="/katalog" aria-label="Cari produk" className={cn(icon, "ml-auto lg:hidden")}>
@@ -116,7 +116,7 @@ export default function Navbar() {
                   </div>
                   <div className="py-1">
                     <Link role="menuitem" href={isStaff ? "/admin" : "/akun"} onClick={() => setAcct(false)} className={item}>
-                      <User className="size-4" aria-hidden /> {isStaff ? "Dasbor Admin" : "Akun Saya"}
+                      <User className="size-4" aria-hidden /> {isStaff ? "Dasbor" : "Akun Saya"}
                     </Link>
                   </div>
                   <div className="border-t border-line-strong pt-1">

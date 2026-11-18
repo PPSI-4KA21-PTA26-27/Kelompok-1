@@ -71,7 +71,6 @@ type Payment struct {
 	CreatedAt  time.Time  `json:"created_at"`
 }
 
-// Proof adalah isi berkas bukti pembayaran beserta tipe MIME-nya.
 // AdminItem adalah pembayaran di antrean admin beserta ringkasan ordernya.
 type AdminItem struct {
 	Payment
@@ -83,6 +82,7 @@ type AdminItem struct {
 	CustomerEmail string     `json:"customer_email"`
 }
 
+// Proof adalah isi berkas bukti pembayaran beserta tipe MIME-nya.
 type Proof struct {
 	Data []byte
 	Type string

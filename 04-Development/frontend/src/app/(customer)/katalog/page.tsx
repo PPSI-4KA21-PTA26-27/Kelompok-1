@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
+import { Breadcrumb } from "@/components/ui/misc";
 import { useCategories } from "@/hooks/useCategories";
 import { cn } from "@/lib/cn";
 import { productService } from "@/services";
@@ -40,13 +41,11 @@ function Katalog() {
   const total = cats.reduce((n, c) => n + c.count, 0);
   const chip = (on: boolean) =>
     cn("rounded-full border px-6 py-4 text-lg font-bold", on ? "border-ink bg-ink text-white" : "border-line bg-white");
-  const box = "grid size-[60px] place-items-center rounded-xl border text-2xl font-bold disabled:opacity-40";
+  const box = "grid size-15 place-items-center rounded-xl border text-2xl font-bold disabled:opacity-40";
 
   return (
     <div>
-      <p className="text-lg text-muted">
-        Beranda <span className="mx-1 text-sm">&gt;</span> <span className="text-ink">Katalog</span>
-      </p>
+      <Breadcrumb items={[{ href: "/", label: "Beranda" }, { label: "Katalog" }]} />
       <h1 className="mt-2 text-4xl font-extrabold lg:text-5xl">Katalog Produk</h1>
       <p className="mt-3 text-lg text-muted">
         Menampilkan {items.length} dari {meta.total} produk
@@ -81,7 +80,7 @@ function Katalog() {
         ))}
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-[22px]">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-5.5">
         {items.map((p) => (
           <ProductCard key={p.id} p={p} category={cats.find((c) => c.id === p.category_id)?.name} />
         ))}

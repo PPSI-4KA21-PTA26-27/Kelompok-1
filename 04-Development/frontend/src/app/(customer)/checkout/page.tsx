@@ -128,8 +128,10 @@ export default function CheckoutPage() {
     if (!dist) er.dist = `Kecamatan ${need}`;
     if (!sub) er.sub = `Kelurahan ${need}`;
     if (!f.address.trim()) er.address = `Alamat lengkap ${need}`;
-    if (!/^\d{0,3}$/.test(f.rt.trim())) er.rt = "RT berupa angka, maksimal 3 digit";
-    if (!/^\d{0,3}$/.test(f.rw.trim())) er.rw = "RW berupa angka, maksimal 3 digit";
+    if (!f.rt.trim()) er.rt = `RT ${need}`;
+    else if (!/^\d{1,3}$/.test(f.rt.trim())) er.rt = "RT berupa angka, maksimal 3 digit";
+    if (!f.rw.trim()) er.rw = `RW ${need}`;
+    else if (!/^\d{1,3}$/.test(f.rw.trim())) er.rw = "RW berupa angka, maksimal 3 digit";
     setErrs(er);
     if (Object.keys(er).length) return;
     setBusy(true);
@@ -174,7 +176,7 @@ export default function CheckoutPage() {
         <div className="space-y-7">
           <section className={card}>
             <h2 className="text-xl font-semibold">Data Penerima</h2>
-            <div className="mt-6 grid grid-cols-2 gap-4">
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {text("name", "Nama penerima")}
               {text("phone", "Nomor telepon", "tel")}
             </div>
@@ -182,7 +184,7 @@ export default function CheckoutPage() {
 
           <section className={card}>
             <h2 className="text-xl font-semibold">Alamat Pengiriman</h2>
-            <div className="mt-6 grid grid-cols-2 gap-4">
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <Sel label="Provinsi" value={prov} onChange={(v) => (setProv(v), setCity(0), setDist(0), setSub(0))} items={provs} error={errs.prov} />
               <Sel label="Kota / Kabupaten" value={city} onChange={(v) => (setCity(v), setDist(0), setSub(0))} items={cities} error={errs.city} />
               <Sel label="Kecamatan" value={dist} onChange={(v) => (setDist(v), setSub(0))} items={dists} error={errs.dist} />
@@ -190,15 +192,20 @@ export default function CheckoutPage() {
               <div>
                 <span className="mb-2 block font-semibold">Kode pos</span>
                 <input readOnly value={subs.find((s) => s.id === sub)?.zip_code ?? ""} className={cn(input, "border-line-strong")} />
-                <span className="mt-1 block text-xs text-faint">Terisi otomatis dari kelurahan</span>
+                <span className="mt-1 block text-xs text-muted">Terisi otomatis dari kelurahan</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {(["rt", "rw"] as const).map((k) => (
                   <label key={k} className="block">
-                    <span className="mb-2 block font-semibold">{k.toUpperCase()}</span>
+                    <span className="mb-2 block font-semibold">
+                      {k.toUpperCase()} <span className="text-danger">*</span>
+                    </span>
                     <input
                       inputMode="numeric"
                       maxLength={3}
+                      required
+                      aria-required="true"
+                      aria-invalid={!!errs[k]}
                       placeholder="001"
                       value={f[k]}
                       onChange={(e) => setF({ ...f, [k]: e.target.value.replace(/\D/g, "") })}
@@ -207,7 +214,7 @@ export default function CheckoutPage() {
                     {errs[k] ? (
                       <span className="mt-1 block text-xs text-danger">{errs[k]}</span>
                     ) : (
-                      <span className="mt-1 block text-xs text-faint">Opsional</span>
+                      <span className="mt-1 block text-xs text-muted">Angka, maks. 3 digit</span>
                     )}
                   </label>
                 ))}
@@ -248,7 +255,7 @@ export default function CheckoutPage() {
           <ul className="mt-5 space-y-4">
             {items.map((i) => (
               <li key={i.id} className="flex items-center gap-4">
-                <div className="size-[50px] shrink-0 overflow-hidden rounded-lg bg-[#d9d9d9]">
+                <div className="size-12.5 shrink-0 overflow-hidden rounded-lg bg-[#d9d9d9]">
                   {i.primary_image_url && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={cdn(i.primary_image_url, 100)} alt="" className="size-full object-cover" />
@@ -281,7 +288,7 @@ export default function CheckoutPage() {
               {apiErr}
             </p>
           )}
-          <button disabled={busy || !quote} className="mt-4 h-[34px] w-full rounded-lg bg-lime text-xs font-bold disabled:opacity-50">
+          <button disabled={busy || !quote} className="mt-4 h-12 w-full rounded-xl bg-lime text-sm font-bold disabled:opacity-50">
             {busy ? "Memproses..." : "Buat Pesanan"}
           </button>
           <p className="mt-3 text-[10px] text-muted">Pembayaran melalui QRIS dan diverifikasi manual oleh Admin.</p>

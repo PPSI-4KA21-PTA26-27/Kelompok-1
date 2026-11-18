@@ -30,6 +30,7 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
+	"math"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -288,6 +289,9 @@ func current(m *migrate.Migrate) (int64, bool, error) {
 	if err != nil {
 		return 0, false, fmt.Errorf("baca versi database: %w", err)
 	}
+	if v > math.MaxInt64 {
+		return 0, false, fmt.Errorf("versi database %d di luar batas", v)
+	}
 	return int64(v), dirty, nil
 }
 
@@ -500,7 +504,7 @@ func create(dir string, args []string) error {
 		return errors.New("nama migrasi hanya boleh huruf dan angka")
 	}
 
-	if err := os.MkdirAll(dir, 0o755); err != nil {
+	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return err
 	}
 
@@ -509,7 +513,7 @@ func create(dir string, args []string) error {
 		path := filepath.Join(dir, base+"."+direction+".sql")
 
 		// O_EXCL: gagal bila file sudah ada, jadi file lama tidak tertimpa.
-		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
+		f, err := os.OpenFile(filepath.Clean(path), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
 		if err != nil {
 			return err
 		}

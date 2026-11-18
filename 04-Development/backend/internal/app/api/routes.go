@@ -7,17 +7,14 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"hii-stranger1/backend/internal/app/api/auth"
-	"hii-stranger1/backend/internal/app/api/banner"
 	"hii-stranger1/backend/internal/app/api/cart"
 	"hii-stranger1/backend/internal/app/api/category"
 	"hii-stranger1/backend/internal/app/api/middleware"
 	"hii-stranger1/backend/internal/app/api/ongkir"
 	"hii-stranger1/backend/internal/app/api/order"
 	"hii-stranger1/backend/internal/app/api/payment"
-	"hii-stranger1/backend/internal/app/api/post"
 	"hii-stranger1/backend/internal/app/api/product"
 	"hii-stranger1/backend/internal/app/api/shipment"
-	"hii-stranger1/backend/internal/app/api/sitesetting"
 	"hii-stranger1/backend/internal/app/api/upload"
 	"hii-stranger1/backend/internal/app/api/user"
 	"hii-stranger1/backend/internal/pkg/config"
@@ -33,9 +30,8 @@ const (
 	apiPrefix = "/api/v1"
 
 	// Batas percobaan login, register, dan ganti password per IP, untuk mempersulit tebak password.
-	authRateLimit          = 10
-	passwordResetRateLimit = 3
-	authRateWindow         = time.Minute
+	authRateLimit  = 10
+	authRateWindow = time.Minute
 
 	// Batas per IP untuk endpoint publik yang sering dipanggil (pengaturan
 	// situs, data wilayah, cek ongkir).
@@ -55,7 +51,7 @@ const (
 	adminRateLimit     = 120
 	userRateWindow     = time.Minute
 
-	// Microcache di Redis untuk GET publik (produk, kategori, banner,
+	// Microcache di Redis untuk GET publik (produk, kategori,
 	// pengaturan situs). Dikosongkan otomatis untuk semua instance setiap ada
 	// perubahan data lewat API, jadi ttl hanya batas aman bila data diubah di
 	// luar API.
@@ -69,20 +65,14 @@ type handlers struct {
 	product  *product.Handler
 	user     *user.Handler
 
-	banner      *banner.Handler
-	siteSetting *sitesetting.Handler
-	ongkir      *ongkir.Handler
-	order       *order.Handler
-	payment     *payment.Handler
-	shipment    *shipment.Handler
-	upload      *upload.Handler
-	post        *post.Handler
+	ongkir   *ongkir.Handler
+	order    *order.Handler
+	payment  *payment.Handler
+	shipment *shipment.Handler
+	upload   *upload.Handler
 
 	// account membaca peran dan status akun dari DB untuk setiap request ber-token.
 	account middleware.Account
-
-	// maintenance membaca status mode maintenance dari pengaturan situs.
-	maintenance middleware.MaintenanceStatus
 }
 
 // newRouter menyusun seluruh route dan middleware global. Route baru
@@ -100,11 +90,10 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 	userReadLimit := middleware.RateLimitByUser(userReadRateLimit, userRateWindow, cfg.TrustProxyHeaders)
 	uploadLimit := middleware.RateLimitByUser(uploadRateLimit, userRateWindow, cfg.TrustProxyHeaders)
 	adminLimit := middleware.RateLimitByUser(adminRateLimit, userRateWindow, cfg.TrustProxyHeaders)
-	requireOwner := middleware.RequireRole(user.RoleOwner)
 	// Belanja (keranjang, checkout, pembayaran) hanya untuk akun pelanggan;
 	// admin dan staff ditolak di server, bukan hanya disembunyikan di UI.
 	requireCustomer := middleware.RequireRole(user.RoleCustomer)
-	// Pengelola konten jurnal.
+	// Pengelola katalog, pesanan, dan pembayaran.
 	requireBackoffice := middleware.RequireRole(user.RoleOwner, user.RoleStaff)
 	optionalAuthenticate := middleware.AuthenticateOptional(tokens)
 	cache := middleware.NewResponseCache(rdb, publicCacheTTL)
@@ -129,17 +118,6 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 		middleware.Chain(http.HandlerFunc(h.auth.Register), rateLimit(authRateLimit, authRateWindow)))
 	mux.Handle("POST "+apiPrefix+"/auth/login",
 		middleware.Chain(http.HandlerFunc(h.auth.Login), rateLimit(authRateLimit, authRateWindow)))
-
-	// Lupa password: limiter terpisah supaya pengiriman email tidak bisa dibanjiri.
-	mux.Handle("POST "+apiPrefix+"/auth/password/forgot",
-		middleware.Chain(http.HandlerFunc(h.auth.ForgotPassword), rateLimit(passwordResetRateLimit, authRateWindow)))
-	mux.Handle("POST "+apiPrefix+"/auth/password/reset",
-		middleware.Chain(http.HandlerFunc(h.auth.ResetPassword), rateLimit(authRateLimit, authRateWindow)))
-	mux.Handle("POST "+apiPrefix+"/auth/verify-email",
-		middleware.Chain(http.HandlerFunc(h.auth.VerifyEmail), rateLimit(authRateLimit, authRateWindow)))
-	mux.Handle("POST "+apiPrefix+"/auth/verification/resend",
-		middleware.Chain(http.HandlerFunc(h.auth.ResendVerification), authenticate,
-			rateLimit(authRateLimit, authRateWindow)))
 
 	mux.Handle("GET "+apiPrefix+"/users/me",
 		middleware.Chain(http.HandlerFunc(h.user.Me), authenticate, userReadLimit))
@@ -185,13 +163,6 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 	mux.Handle("DELETE "+apiPrefix+"/cart/items/{cartItemId}",
 		middleware.Chain(http.HandlerFunc(h.cart.Delete), authenticate, requireCustomer, userWriteLimit))
 
-	mux.Handle("GET "+apiPrefix+"/admin/users",
-		middleware.Chain(http.HandlerFunc(h.user.AdminList), authenticate, requireOwner, adminLimit))
-	mux.Handle("GET "+apiPrefix+"/admin/users/{userId}",
-		middleware.Chain(http.HandlerFunc(h.user.AdminGet), authenticate, requireOwner, adminLimit))
-	mux.Handle("PATCH "+apiPrefix+"/admin/users/{userId}",
-		middleware.Chain(http.HandlerFunc(h.user.AdminUpdate), authenticate, requireOwner, adminLimit))
-
 	// Varian dan gambar produk (admin).
 	mux.Handle("POST "+apiPrefix+"/products/{productId}/variants",
 		middleware.Chain(http.HandlerFunc(h.product.CreateVariant), authenticate, requireBackoffice, adminLimit))
@@ -209,22 +180,6 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 	// Unggah gambar ke Cloudinary; URL hasilnya dipakai untuk image_url (admin).
 	mux.Handle("POST "+apiPrefix+"/admin/uploads/images",
 		middleware.Chain(http.HandlerFunc(h.upload.Image), authenticate, requireBackoffice, uploadLimit))
-
-	// Banner: publik, admin dikenali lewat token opsional (include_inactive).
-	mux.Handle("GET "+apiPrefix+"/banners",
-		middleware.Chain(http.HandlerFunc(h.banner.List), cached, optionalAuthenticate))
-	mux.Handle("POST "+apiPrefix+"/banners",
-		middleware.Chain(http.HandlerFunc(h.banner.Create), authenticate, requireBackoffice, adminLimit))
-	mux.Handle("PATCH "+apiPrefix+"/banners/{bannerId}",
-		middleware.Chain(http.HandlerFunc(h.banner.Update), authenticate, requireBackoffice, adminLimit))
-	mux.Handle("DELETE "+apiPrefix+"/banners/{bannerId}",
-		middleware.Chain(http.HandlerFunc(h.banner.Delete), authenticate, requireBackoffice, adminLimit))
-
-	// Pengaturan situs (mode maintenance).
-	mux.Handle("GET "+apiPrefix+"/site-settings",
-		middleware.Chain(http.HandlerFunc(h.siteSetting.Get), rateLimit(publicRateLimit, publicRateWindow), cached))
-	mux.Handle("PUT "+apiPrefix+"/site-settings",
-		middleware.Chain(http.HandlerFunc(h.siteSetting.Update), authenticate, requireOwner, adminLimit))
 
 	// Wilayah berjenjang untuk dropdown alamat (publik, di-cache) dan cek
 	// ongkir sampai kelurahan berdasarkan berat keranjang (login).
@@ -254,10 +209,6 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 		middleware.Chain(http.HandlerFunc(h.order.Complete), authenticate, requireCustomer, userWriteLimit))
 	mux.Handle("GET "+apiPrefix+"/orders/{orderId}",
 		middleware.Chain(http.HandlerFunc(h.order.Get), authenticate, userReadLimit))
-	mux.Handle("GET "+apiPrefix+"/admin/summary",
-		middleware.Chain(http.HandlerFunc(h.order.AdminSummary), authenticate, requireBackoffice, adminLimit))
-	mux.Handle("GET "+apiPrefix+"/admin/analytics",
-		middleware.Chain(http.HandlerFunc(h.order.AdminAnalytics), authenticate, requireOwner, adminLimit))
 	mux.Handle("GET "+apiPrefix+"/admin/orders",
 		middleware.Chain(http.HandlerFunc(h.order.AdminList), authenticate, requireBackoffice, adminLimit))
 	mux.Handle("PUT "+apiPrefix+"/admin/orders/{orderId}/status",
@@ -283,39 +234,20 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 	mux.Handle("PUT "+apiPrefix+"/orders/{orderId}/shipment",
 		middleware.Chain(http.HandlerFunc(h.shipment.Upsert), authenticate, requireBackoffice, adminLimit))
 
-	// Jurnal: publik membaca artikel terbit (di-cache); admin & staff
-	// mengelola semua artikel.
-	mux.Handle("GET "+apiPrefix+"/posts",
-		middleware.Chain(http.HandlerFunc(h.post.PublicList), cached))
-	mux.Handle("GET "+apiPrefix+"/posts/{slug}",
-		middleware.Chain(http.HandlerFunc(h.post.PublicGet), cached))
-	mux.Handle("GET "+apiPrefix+"/admin/posts",
-		middleware.Chain(http.HandlerFunc(h.post.AdminList), authenticate, requireBackoffice, adminLimit))
-	mux.Handle("POST "+apiPrefix+"/admin/posts",
-		middleware.Chain(http.HandlerFunc(h.post.Create), authenticate, requireBackoffice, adminLimit))
-	mux.Handle("GET "+apiPrefix+"/admin/posts/{postId}",
-		middleware.Chain(http.HandlerFunc(h.post.AdminGet), authenticate, requireBackoffice, adminLimit))
-	mux.Handle("PATCH "+apiPrefix+"/admin/posts/{postId}",
-		middleware.Chain(http.HandlerFunc(h.post.Update), authenticate, requireBackoffice, adminLimit))
-	mux.Handle("DELETE "+apiPrefix+"/admin/posts/{postId}",
-		middleware.Chain(http.HandlerFunc(h.post.Delete), authenticate, requireBackoffice, adminLimit))
-
 	// Semua yang tidak cocok dijawab dengan format error yang sama.
 	mux.HandleFunc("/", notFound)
 
 	api := middleware.Chain(mux,
 		middleware.Recover(),
 		// Header keamanan dipasang paling awal supaya ikut di respons error,
-		// preflight CORS, dan 503 maintenance.
+		// dan preflight CORS.
 		middleware.SecurityHeaders(cfg.TrustProxyHeaders),
+		middleware.Gzip(),
 		// Batas request bersamaan (MAX_CONCURRENT_REQUESTS); penuh = 503.
 		middleware.MaxConcurrent(cfg.MaxConcurrentRequests, healthPaths...),
 		middleware.Logger(),
 		middleware.CORS(cfg.FrontendURL),
-		// Mode maintenance ditegakkan di server: pelanggan dan pengunjung
-		// mendapat 503, staff dan owner tetap dilayani (SDD 3.5).
-		middleware.Maintenance(tokens, h.maintenance, apiPrefix, user.RoleOwner, user.RoleStaff),
-		// Login, profil, dan keranjang tidak mengubah produk/kategori/banner.
+		// Login, profil, dan keranjang tidak mengubah produk/kategori.
 		// Checkout & pembatalan (/orders) mengubah stok, jadi tetap mengosongkan cache.
 		cache.InvalidateOnWrite(apiPrefix+"/auth/", apiPrefix+"/users/me", apiPrefix+"/cart"),
 		middleware.MaxBody(cfg.MaxBodyBytes),

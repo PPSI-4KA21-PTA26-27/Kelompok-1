@@ -126,10 +126,6 @@ func (r *Repository) Checkout(ctx context.Context, userID, orderNumber string, s
 	total := new(big.Rat).Add(subtotal, shippingCost)
 
 	window := defaultPaymentWindow
-	err = tx.QueryRow(ctx, `SELECT payment_window_hours FROM site_settings LIMIT 1`).Scan(&window)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		return Order{}, wrap("checkout payment window", err)
-	}
 
 	a := ship.Address
 	o, err := scanOrder(tx.QueryRow(ctx,
@@ -189,10 +185,9 @@ type queryRower interface {
 
 func checkCustomer(ctx context.Context, q queryRower, userID string) error {
 	var role, status string
-	var verified bool
 	err := q.QueryRow(ctx,
-		`SELECT (SELECT r.code FROM roles r WHERE r.id = users.role_id), status, email_verified_at IS NOT NULL FROM users WHERE id = $1`, userID).
-		Scan(&role, &status, &verified)
+		`SELECT (SELECT r.code FROM roles r WHERE r.id = users.role_id), status FROM users WHERE id = $1`, userID).
+		Scan(&role, &status)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return ErrNotCustomer
 	}
@@ -201,9 +196,6 @@ func checkCustomer(ctx context.Context, q queryRower, userID string) error {
 	}
 	if role != "customer" || status != "active" {
 		return ErrNotCustomer
-	}
-	if !verified {
-		return ErrEmailNotVerified
 	}
 	return nil
 }
@@ -488,76 +480,6 @@ func stillExpired(ctx context.Context, tx pgx.Tx, id string) error {
 		return ErrInvalidTransition
 	}
 	return noProofUnderReview(ctx, tx, id)
-}
-
-// Summary menghitung ringkasan operasional untuk dashboard admin.
-func (r *Repository) Summary(ctx context.Context) (Summary, error) {
-	s := Summary{StatusCounts: map[string]int{}}
-	b := &pgx.Batch{}
-	b.Queue(`SELECT order_status, COUNT(*) FROM orders GROUP BY order_status`)
-	b.Queue(`SELECT COUNT(*) FROM payments p JOIN orders o ON o.id = p.order_id
-	          WHERE p.status = 'menunggu' AND p.proof_url IS NOT NULL AND o.order_status = 'pending_payment'`)
-	b.Queue(`SELECT COUNT(*) FROM orders WHERE created_at >= date_trunc('day', now())`)
-	b.Queue(`SELECT COALESCE(SUM(total_amount), 0)::text, COUNT(*) FROM orders
-	          WHERE order_status IN ('paid', 'processing', 'shipped', 'completed')
-	            AND created_at >= date_trunc('month', now())`)
-	b.Queue(`SELECT p.id, p.name, v.id, v.sku, v.size, v.color, v.stock
-	           FROM product_variants v JOIN products p ON p.id = v.product_id
-	          WHERE p.status = 'active' AND v.stock <= $1
-	          ORDER BY v.stock, p.name, v.size LIMIT 12`, lowStockThreshold)
-	b.Queue(fmt.Sprintf(listSelect, orderColumns) + " ORDER BY o.created_at DESC, o.id LIMIT 6")
-	br := r.db.SendBatch(ctx, b)
-	defer func() { _ = br.Close() }()
-
-	rows, err := br.Query()
-	if err != nil {
-		return Summary{}, wrap("summary status", err)
-	}
-	for rows.Next() {
-		var st string
-		var n int
-		if err := rows.Scan(&st, &n); err != nil {
-			rows.Close()
-			return Summary{}, wrap("summary status scan", err)
-		}
-		s.StatusCounts[st] = n
-	}
-	rows.Close()
-	if err := rows.Err(); err != nil {
-		return Summary{}, wrap("summary status rows", err)
-	}
-	if err := br.QueryRow().Scan(&s.ProofsToReview); err != nil {
-		return Summary{}, wrap("summary proofs", err)
-	}
-	if err := br.QueryRow().Scan(&s.OrdersToday); err != nil {
-		return Summary{}, wrap("summary today", err)
-	}
-	if err := br.QueryRow().Scan(&s.RevenueMonth, &s.PaidOrdersMonth); err != nil {
-		return Summary{}, wrap("summary revenue", err)
-	}
-	lowRows, err := br.Query()
-	if err != nil {
-		return Summary{}, wrap("summary low stock", err)
-	}
-	s.LowStock, err = pgx.CollectRows(lowRows, func(row pgx.CollectableRow) (LowStock, error) {
-		var l LowStock
-		err := row.Scan(&l.ProductID, &l.ProductName, &l.VariantID, &l.SKU, &l.Size, &l.Color, &l.Stock)
-		return l, err
-	})
-	if err != nil {
-		return Summary{}, wrap("summary low stock scan", err)
-	}
-	if s.LowStock == nil {
-		s.LowStock = []LowStock{}
-	}
-	recent, err := br.Query()
-	if err != nil {
-		return Summary{}, wrap("summary recent", err)
-	}
-	if s.Recent, err = collectListItems(recent); err != nil {
-		return Summary{}, err
-	}
-	return s, nil
 }
 
 func (r *Repository) contactOf(ctx context.Context, orderID string) (contact, error) {

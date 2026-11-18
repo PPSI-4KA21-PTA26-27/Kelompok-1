@@ -10,7 +10,6 @@ import (
 	"hii-stranger1/backend/internal/pkg/mailer"
 )
 
-
 // ProofStorage menyimpan dan mengambil berkas bukti pembayaran (Cloudinary).
 type ProofStorage interface {
 	Enabled() bool
@@ -86,7 +85,7 @@ func (s *Service) UploadProof(ctx context.Context, orderID, userID string, proof
 			},
 			Note:       "Bukti pembayaran terlampir di email ini.",
 			Attachment: &mailer.Attachment{Name: "bukti-" + c.OrderNumber + proofExt(proof.Type), Type: proof.Type, Data: proof.Data},
-			Button: &mailer.Link{Label: "Buka antrean verifikasi", URL: s.mail.AppURL("/admin/pembayaran")},
+			Button:     &mailer.Link{Label: "Buka antrean verifikasi", URL: s.mail.AppURL("/admin/pembayaran")},
 		})
 	} else {
 		slog.WarnContext(ctx, "payment: load contact for email failed", "error", err)
