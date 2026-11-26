@@ -7,16 +7,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "http", hostname: "localhost" },
+      ...(process.env.NODE_ENV !== "production" ? [{ protocol: "http" as const, hostname: "localhost" }] : []),
     ],
-  },
-  // Rute lama tetap bisa dibuka dari tautan yang sudah tersebar.
-  async redirects() {
-    return [
-      { source: "/shop-with-sidebar", destination: "/shop", permanent: true },
-      { source: "/shop-details", has: [{ type: "query", key: "id", value: "(?<id>.*)" }], destination: "/product/:id", permanent: true },
-      { source: "/blog", destination: "/journal", permanent: true },
-    ];
   },
   turbopack: {
     rules: {

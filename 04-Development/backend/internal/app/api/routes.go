@@ -7,6 +7,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"hii-stranger1/backend/internal/app/api/auth"
+	"hii-stranger1/backend/internal/app/api/banner"
 	"hii-stranger1/backend/internal/app/api/cart"
 	"hii-stranger1/backend/internal/app/api/category"
 	"hii-stranger1/backend/internal/app/api/middleware"
@@ -52,7 +53,7 @@ const (
 	userRateWindow     = time.Minute
 
 	// Microcache di Redis untuk GET publik (produk, kategori,
-	// pengaturan situs). Dikosongkan otomatis untuk semua instance setiap ada
+	// banner). Dikosongkan otomatis untuk semua instance setiap ada
 	// perubahan data lewat API, jadi ttl hanya batas aman bila data diubah di
 	// luar API.
 	publicCacheTTL = 30 * time.Second
@@ -60,6 +61,7 @@ const (
 
 type handlers struct {
 	auth     *auth.Handler
+	banner   *banner.Handler
 	cart     *cart.Handler
 	category *category.Handler
 	product  *product.Handler
@@ -95,6 +97,8 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 	requireCustomer := middleware.RequireRole(user.RoleCustomer)
 	// Pengelola katalog, pesanan, dan pembayaran.
 	requireBackoffice := middleware.RequireRole(user.RoleOwner, user.RoleStaff)
+	// Laporan pendapatan hanya untuk pemilik (UC-19, KNF-07).
+	requireOwner := middleware.RequireRole(user.RoleOwner)
 	optionalAuthenticate := middleware.AuthenticateOptional(tokens)
 	cache := middleware.NewResponseCache(rdb, publicCacheTTL)
 	cached := cache.Cached()
@@ -233,6 +237,24 @@ func newRouter(cfg config.Config, tokens *token.Manager, h handlers, rdb *redis.
 		middleware.Chain(http.HandlerFunc(h.shipment.Get), authenticate, userReadLimit))
 	mux.Handle("PUT "+apiPrefix+"/orders/{orderId}/shipment",
 		middleware.Chain(http.HandlerFunc(h.shipment.Upsert), authenticate, requireBackoffice, adminLimit))
+
+	// Banner (UC-18): publik hanya melihat banner aktif; staff/owner dikenali
+	// lewat token opsional untuk include_inactive. Tidak di-cache: tayang
+	// bergantung starts_at/ends_at, dan query-nya murni indeks kecil.
+	mux.Handle("GET "+apiPrefix+"/banners",
+		middleware.Chain(http.HandlerFunc(h.banner.List), optionalAuthenticate))
+	mux.Handle("POST "+apiPrefix+"/banners",
+		middleware.Chain(http.HandlerFunc(h.banner.Create), authenticate, requireBackoffice, adminLimit))
+	mux.Handle("PATCH "+apiPrefix+"/banners/{bannerId}",
+		middleware.Chain(http.HandlerFunc(h.banner.Update), authenticate, requireBackoffice, adminLimit))
+	mux.Handle("DELETE "+apiPrefix+"/banners/{bannerId}",
+		middleware.Chain(http.HandlerFunc(h.banner.Delete), authenticate, requireBackoffice, adminLimit))
+
+	// Laporan: ringkasan dashboard L-18 (staff, owner) dan pendapatan UC-19 (owner).
+	mux.Handle("GET "+apiPrefix+"/admin/summary",
+		middleware.Chain(http.HandlerFunc(h.order.AdminSummary), authenticate, requireBackoffice, adminLimit))
+	mux.Handle("GET "+apiPrefix+"/admin/analytics",
+		middleware.Chain(http.HandlerFunc(h.order.AdminAnalytics), authenticate, requireOwner, adminLimit))
 
 	// Semua yang tidak cocok dijawab dengan format error yang sama.
 	mux.HandleFunc("/", notFound)

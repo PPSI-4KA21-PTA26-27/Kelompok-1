@@ -323,6 +323,59 @@ export interface paths {
         patch: operations["updateProductImage"];
         trace?: never;
     };
+    "/banners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Daftar banner
+         * @description Hak akses: public. Default hanya banner yang sedang tayang: `is_active = true` dan waktu sekarang
+         *     berada di antara `starts_at` dan `ends_at` (bila diisi), diurutkan menurut `sort_order` naik.
+         *     `include_inactive=true` (admin saja, selain admin 403) mengembalikan semua banner termasuk yang
+         *     terjadwal, berakhir, dan nonaktif; field `status` menunjukkan kondisinya.
+         */
+        get: operations["listBanners"];
+        put?: never;
+        /**
+         * Buat banner
+         * @description Hak akses: admin.
+         */
+        post: operations["createBanner"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/banners/{bannerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bannerId: components["parameters"]["BannerId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Hapus banner
+         * @description Hak akses: admin.
+         */
+        delete: operations["deleteBanner"];
+        options?: never;
+        head?: never;
+        /**
+         * Ubah banner
+         * @description Hak akses: admin.
+         */
+        patch: operations["updateBanner"];
+        trace?: never;
+    };
     "/admin/uploads/images": {
         parameters: {
             query?: never;
@@ -797,6 +850,49 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ringkasan operasional
+         * @description Hak akses: admin. Antrean verifikasi, order per status, omzet bulan berjalan, stok menipis (≤ 3), dan 6 order terbaru.
+         */
+        get: operations["adminSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Laporan pendapatan (UC-19)
+         * @description Hak akses: owner saja (staff ditolak 403). Tanpa `month`: laporan N hari terakhir (zona WIB,
+         *     termasuk hari ini) dibandingkan dengan N hari sebelumnya. Dengan `month` (layar L-29): laporan
+         *     satu bulan kalender WIB dibandingkan dengan bulan sebelumnya; `month` mengalahkan `days`.
+         *     Pendapatan dihitung dari order berstatus paid, processing, shipped, atau completed.
+         */
+        get: operations["adminAnalytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1052,6 +1148,27 @@ export interface components {
              */
             readonly status: "live" | "scheduled" | "ended" | "inactive";
         };
+        BannerCreate: {
+            placement?: components["schemas"]["BannerPlacement"];
+            title?: string | null;
+            subtitle?: string | null;
+            cta_label?: string | null;
+            /** Format: uri */
+            image_url: string;
+            /** Format: uri */
+            mobile_image_url?: string | null;
+            link_url?: string | null;
+            /** @default 0 */
+            sort_order: number;
+            /** @default true */
+            is_active: boolean;
+            /** Format: date-time */
+            starts_at?: string | null;
+            /** Format: date-time */
+            ends_at?: string | null;
+        };
+        /** @description Field yang tidak dikirim tidak berubah; `null` atau string kosong menghapus field opsional. */
+        BannerUpdate: components["schemas"]["BannerCreate"] & Record<string, never>;
         Region: {
             id: number;
             name: string;
@@ -1268,8 +1385,11 @@ export interface components {
             /** @description Kurir pesanan (kode kurir huruf besar + layanan, mis. "JNE REG"), diturunkan dari order; tidak disimpan di tabel shipments. */
             readonly courier_name: string;
             tracking_number?: string | null;
-            /** @description Status jangkauan pengiriman ke tujuan. Nilai ditetapkan aplikasi. */
-            coverage_status: string;
+            /**
+             * @description Status jangkauan pengiriman ke tujuan (UC-15) - terjangkau, tidak terjangkau, atau perlu pemeriksaan lebih lanjut.
+             * @enum {string}
+             */
+            coverage_status: "covered" | "not_covered" | "needs_check";
             /** @enum {string} */
             shipping_status: "pending" | "shipped" | "delivered" | "returned";
             /** Format: date-time */
@@ -1277,7 +1397,8 @@ export interface components {
         };
         ShipmentUpsert: {
             tracking_number?: string | null;
-            coverage_status: string;
+            /** @enum {string} */
+            coverage_status: "covered" | "not_covered" | "needs_check";
             shipping_status: string;
         };
         AuthEnvelope: {
@@ -1337,6 +1458,18 @@ export interface components {
         ShipmentEnvelope: {
             data: components["schemas"]["Shipment"];
         };
+        BannerEnvelope: {
+            data: components["schemas"]["Banner"];
+        };
+        BannerListEnvelope: {
+            data: components["schemas"]["Banner"][];
+        };
+        SummaryEnvelope: {
+            data: components["schemas"]["Summary"];
+        };
+        AnalyticsEnvelope: {
+            data: components["schemas"]["Analytics"];
+        };
         /** @enum {string} */
         Role: "customer" | "staff" | "owner";
         OrderCancelRequest: {
@@ -1372,6 +1505,30 @@ export interface components {
             data: components["schemas"]["OrderListItem"][];
             meta: components["schemas"]["PageMeta"];
         };
+        Summary: {
+            /** @description Jumlah order per `order_status`. */
+            status_counts?: {
+                [key: string]: number;
+            };
+            proofs_to_review?: number;
+            orders_today?: number;
+            revenue_month?: components["schemas"]["Money"];
+            paid_orders_month?: number;
+            /** @description Jumlah varian produk aktif dengan stok 0 (kartu "Stok habis" L-18). */
+            out_of_stock?: number;
+            low_stock?: {
+                /** Format: uuid */
+                product_id?: string;
+                product_name?: string;
+                /** Format: uuid */
+                variant_id?: string;
+                sku?: string;
+                size?: string;
+                color?: string | null;
+                stock?: number;
+            }[];
+            recent?: components["schemas"]["OrderListItem"][];
+        };
         AnalyticsTotals: {
             /**
              * @description Rupiah dalam bentuk string desimal.
@@ -1385,8 +1542,13 @@ export interface components {
             items_sold: number;
         };
         Analytics: {
-            /** @enum {integer} */
-            days: 7 | 30 | 90;
+            /** @description Panjang periode dalam hari (7/30/90, atau jumlah hari pada bulan terpilih). */
+            days: number;
+            /**
+             * @description Bulan laporan (YYYY-MM); hanya terisi bila request memakai parameter `month`.
+             * @example 2026-11
+             */
+            month?: string;
             current: components["schemas"]["AnalyticsTotals"];
             previous: components["schemas"]["AnalyticsTotals"];
             /** @description Satu titik per hari (WIB). */
@@ -2266,6 +2428,118 @@ export interface operations {
             500: components["responses"]["InternalError"];
         };
     };
+    listBanners: {
+        parameters: {
+            query?: {
+                placement?: components["schemas"]["BannerPlacement"];
+                include_inactive?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Daftar banner. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BannerListEnvelope"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    createBanner: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BannerCreate"];
+            };
+        };
+        responses: {
+            /** @description Banner dibuat. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BannerEnvelope"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["ValidationFailed"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    deleteBanner: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bannerId: components["parameters"]["BannerId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Banner dihapus. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    updateBanner: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bannerId: components["parameters"]["BannerId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BannerUpdate"];
+            };
+        };
+        responses: {
+            /** @description Banner diperbarui. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BannerEnvelope"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["ValidationFailed"];
+            500: components["responses"]["InternalError"];
+        };
+    };
     adminUploadImage: {
         parameters: {
             query?: never;
@@ -3021,6 +3295,57 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    adminSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ringkasan. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SummaryEnvelope"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            500: components["responses"]["InternalError"];
+        };
+    };
+    adminAnalytics: {
+        parameters: {
+            query?: {
+                days?: 7 | 30 | 90;
+                /** @description Bulan laporan berformat YYYY-MM; bulan mendatang ditolak 400. */
+                month?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Laporan pendapatan. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsEnvelope"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             500: components["responses"]["InternalError"];
         };
     };

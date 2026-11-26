@@ -93,7 +93,7 @@ func Load() (Config, error) {
 
 	cfg := Config{
 		AppEnv:            l.str("APP_ENV", "dev"),
-		AppVersion:        l.str("APP_VERSION", "1.2.9"),
+		AppVersion:        l.str("APP_VERSION", "1.3.0"),
 		LegacyAPIVersions: splitList(l.str("API_LEGACY_VERSIONS", "")),
 		Port:              l.str("PORT", "8080"),
 		DBURL:             l.required("DB_URL"),

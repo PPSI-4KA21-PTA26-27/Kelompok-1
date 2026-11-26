@@ -12,60 +12,12 @@ export function formatDate(iso?: string | null, withTime = false): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
   return d.toLocaleString("id-ID", {
+    timeZone: "Asia/Jakarta",
     day: "numeric",
     month: "short",
     year: "numeric",
     ...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
   });
-}
-
-/** Waktu relatif singkat: "5 mnt lalu", "2 jam lalu", "3 hari lalu". */
-export function timeAgo(iso?: string | null): string {
-  if (!iso) return "-";
-  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (Number.isNaN(diff)) return "-";
-  if (diff < 60) return "baru saja";
-  if (diff < 3600) return Math.floor(diff / 60) + " mnt lalu";
-  if (diff < 86400) return Math.floor(diff / 3600) + " jam lalu";
-  if (diff < 86400 * 7) return Math.floor(diff / 86400) + " hari lalu";
-  return formatDate(iso);
-}
-
-export const ORDER_STATUS_LABEL: Record<string, string> = {
-  pending_payment: "Menunggu pembayaran",
-  paid: "Dibayar",
-  processing: "Dikemas",
-  shipped: "Dikirim",
-  completed: "Selesai",
-  cancelled: "Dibatalkan",
-};
-
-export const ORDER_STATUS_TONE: Record<string, Tone> = {
-  pending_payment: "warn",
-  paid: "info",
-  processing: "info",
-  shipped: "dark",
-  completed: "success",
-  cancelled: "danger",
-};
-
-export const PAYMENT_STATUS_LABEL: Record<string, string> = {
-  menunggu: "Menunggu",
-  valid: "Disetujui",
-  ditolak: "Ditolak",
-};
-
-export const SHIPPING_STATUS_LABEL: Record<string, string> = {
-  pending: "Menunggu pickup",
-  shipped: "Dalam perjalanan",
-  delivered: "Diterima",
-  returned: "Dikembalikan",
-};
-
-/** Estimasi kirim RajaOngkir ("2 day", "1-2 days") -> "2 hari". */
-export function etdLabel(etd?: string | null): string {
-  const v = (etd ?? "").replace(/\s*(days?|hari)\s*$/i, "").trim();
-  return v ? v + " hari" : "-";
 }
 
 /** Alamat kirim lengkap, melewati bagian yang kosong/"-". */
@@ -87,22 +39,6 @@ export function joinAddress(o: {
 /** Harga setelah diskon (dibulatkan seperti backend). */
 export function finalPrice(price: number | string, discount = 0): number {
   return Math.round((Number(price) || 0) * (1 - (discount || 0) / 100));
-}
-
-/** ISO -> nilai <input type="datetime-local"> dalam zona waktu lokal. */
-export function toLocalInput(iso?: string | null): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const off = d.getTimezoneOffset() * 60000;
-  return new Date(d.getTime() - off).toISOString().slice(0, 16);
-}
-
-/** Nilai datetime-local -> ISO (RFC 3339) atau null bila kosong. */
-export function fromLocalInput(v: string): string | null {
-  if (!v) return null;
-  const d = new Date(v);
-  return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
 /** Label + nada kolom "Pembayaran" di daftar pesanan admin. */
@@ -144,4 +80,19 @@ export function formatRemaining(ms: number): string {
   const m = Math.ceil(ms / 60000);
   const h = Math.floor(m / 60);
   return h ? `${h} j ${String(m % 60).padStart(2, "0")} mnt` : `${m} mnt`;
+}
+
+/** 12 bulan terakhir (terbaru dulu) sebagai pilihan "YYYY-MM" untuk L-29, bulan menurut WIB. */
+export function lastMonths(now: Date, n = 12): { value: string; label: string }[] {
+  const [y, m] = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit" })
+    .format(now)
+    .split("-")
+    .map(Number);
+  return Array.from({ length: n }, (_, i) => {
+    const d = new Date(Date.UTC(y, m - 1 - i, 1));
+    return {
+      value: d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, "0"),
+      label: d.toLocaleDateString("id-ID", { month: "long", year: "numeric", timeZone: "UTC" }),
+    };
+  });
 }

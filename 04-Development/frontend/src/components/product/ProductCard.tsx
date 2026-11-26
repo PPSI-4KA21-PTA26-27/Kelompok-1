@@ -13,7 +13,7 @@ export default function ProductCard({ p, category }: { p: ApiProduct; category?:
         )}
         {p.availability_type === "preorder" && (
           <span className="absolute left-2.5 top-2.5 sm:left-5 sm:top-5 rounded-full bg-ink px-2.5 py-1 text-xs font-bold text-white">
-            Pre-Order
+            Pre-Order{p.po_estimate_days ? ` · ${p.po_estimate_days} hari` : ""}
           </span>
         )}
       </div>

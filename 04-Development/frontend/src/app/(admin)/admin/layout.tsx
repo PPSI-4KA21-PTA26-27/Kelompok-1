@@ -5,8 +5,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
+  ChartColumnIncreasing,
+  Clock3,
   CreditCard,
   Files,
+  Image as ImageIcon,
+  LayoutDashboard,
   Layers,
   LogOut,
   Menu,
@@ -18,6 +22,12 @@ import { cn } from "@/lib/cn";
 import { adminService } from "@/services";
 
 const NAV = [
+  {
+    href: "/admin",
+    label: "Dashboard",
+    title: "Dashboard Ringkasan",
+    icon: LayoutDashboard,
+  },
   {
     href: "/admin/produk",
     label: "Produk & Kategori",
@@ -31,6 +41,12 @@ const NAV = [
     icon: Layers,
   },
   {
+    href: "/admin/ketersediaan",
+    label: "Ready Stock / PO",
+    title: "Pengaturan Ready Stock / Pre-Order",
+    icon: Clock3,
+  },
+  {
     href: "/admin/pesanan",
     label: "Pesanan Masuk",
     title: "Daftar Pesanan Masuk",
@@ -41,6 +57,22 @@ const NAV = [
     label: "Validasi Pembayaran",
     title: "Validasi Pembayaran",
     icon: CreditCard,
+  },
+  {
+    href: "/admin/banner",
+    label: "Kelola Banner",
+    title: "Kelola Banner",
+    icon: ImageIcon,
+  },
+];
+
+// Menu khusus owner (SDD L-18: hanya tampil bagi role owner).
+const OWNER_NAV = [
+  {
+    href: "/admin/laporan",
+    label: "Laporan Pendapatan",
+    title: "Laporan Pendapatan",
+    icon: ChartColumnIncreasing,
   },
 ];
 
@@ -55,6 +87,7 @@ export default function AdminLayout({
   const [proofs, setProofs] = useState(0);
   const [open, setOpen] = useState(false);
   const allowed = isStaff;
+  const ownerOnly = OWNER_NAV.some((n) => path.startsWith(n.href));
 
   useEffect(() => {
     if (loading) return;
@@ -65,15 +98,14 @@ export default function AdminLayout({
   useEffect(() => {
     if (!isStaff) return;
     adminService
-      .payments({ status: "menunggu", limit: 1 })
-      .then((r) => setProofs(r.meta.total))
+      .summary()
+      .then((s) => setProofs(s.proofs_to_review))
       .catch(() => {});
   }, [isStaff, path]);
 
   if (loading || !allowed) return <BrandLoader fullscreen />;
 
-  const nav = NAV;
-  const current = nav.find((n) => path.startsWith(n.href));
+  const current = [...NAV, ...OWNER_NAV].find((n) => (n.href === "/admin" ? path === "/admin" : path.startsWith(n.href)));
   const title = path.startsWith("/admin/produk/")
     ? "Form Tambah / Ubah Produk"
     : path.startsWith("/admin/pesanan/")
@@ -145,6 +177,14 @@ export default function AdminLayout({
         </Link>
         <nav aria-label="Menu admin" className="mt-5 flex flex-col gap-1">
           {NAV.map(item)}
+          {isAdmin && (
+            <>
+              <p className="px-1 pt-3 text-xs font-semibold text-faint sm:max-lg:hidden">
+                Khusus Owner
+              </p>
+              {OWNER_NAV.map(item)}
+            </>
+          )}
           <button
             onClick={() => logout()}
             title="Keluar"
@@ -183,7 +223,15 @@ export default function AdminLayout({
             </span>
           </div>
         </header>
-        <main className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10">{children}</main>
+        <main className="px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+          {ownerOnly && !isAdmin ? (
+            <p role="alert" className="rounded-xl bg-white p-8 text-center font-semibold text-danger">
+              Anda tidak memiliki akses ke halaman ini.
+            </p>
+          ) : (
+            children
+          )}
+        </main>
       </div>
     </div>
   );

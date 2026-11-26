@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import BannerStrip from "@/components/banner/BannerStrip";
 import ProductCard from "@/components/product/ProductCard";
 import { useCategories } from "@/hooks/useCategories";
 import { productService } from "@/services";
@@ -11,21 +12,32 @@ import type { ApiProduct } from "@/types/api";
 export default function Home() {
   const cats = useCategories();
   const [items, setItems] = useState<ApiProduct[]>([]);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    productService.list({ sort: "newest", limit: 6 }).then((r) => setItems(r.data)).catch(() => {});
+    productService
+      .list({ sort: "newest", limit: 6 })
+      .then((r) => setItems(r.data))
+      .catch(() => setFailed(true));
   }, []);
 
   return (
     <div className="space-y-6 lg:space-y-10">
-      <div className="flex min-h-88.5 flex-col items-start justify-end gap-4 rounded-2xl bg-ink p-8 text-white sm:min-h-72.5 lg:p-12">
-        <Image src="/Logo.png" alt="" width={60} height={60} className="size-14" />
-        <h1 className="max-w-xl text-3xl font-extrabold lg:text-5xl">Streetwear lokal, siap dipakai.</h1>
-        <p className="font-bold text-lime">cz we are not really strangers</p>
-        <Link href="/katalog" className="rounded-full bg-lime px-6 py-3 text-sm font-bold text-ink">
-          Lihat katalog
-        </Link>
-      </div>
+      {/* Banner hero diatur Admin pada L-26; tanpa banner aktif tampil hero bawaan. */}
+      <BannerStrip
+        placement="hero"
+        className="h-88.5 sm:h-72.5"
+        fallback={
+          <div className="flex min-h-88.5 flex-col items-start justify-end gap-4 rounded-2xl bg-ink p-8 text-white sm:min-h-72.5 lg:p-12">
+            <Image src="/Logo.png" alt="" width={60} height={60} className="size-14" />
+            <h1 className="max-w-xl text-3xl font-extrabold lg:text-5xl">Streetwear lokal, siap dipakai.</h1>
+            <p className="font-bold text-lime">cz we are not really strangers</p>
+            <Link href="/katalog" className="rounded-full bg-lime px-6 py-3 text-sm font-bold text-ink">
+              Lihat katalog
+            </Link>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-8">
         {cats.map((c) => (
@@ -47,6 +59,11 @@ export default function Home() {
             Lihat semua
           </Link>
         </div>
+        {failed && (
+          <p role="alert" className="rounded-xl bg-white p-6 text-center font-semibold text-danger">
+            Data produk gagal dimuat. Muat ulang halaman.
+          </p>
+        )}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
           {items.map((p, i) => (
             // tablet/handphone 6 produk, desktop 4 (sesuai desain)
@@ -56,6 +73,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <BannerStrip placement="main" className="aspect-5/4 sm:aspect-[10/3]" />
     </div>
   );
 }

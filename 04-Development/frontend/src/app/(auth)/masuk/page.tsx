@@ -8,6 +8,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import AuthShell from "@/components/auth/AuthShell";
 import Field from "@/components/auth/Field";
 import { ApiError } from "@/lib/api";
+import { isSafeLink } from "@/lib/safeLink";
 
 export default function MasukPage() {
   const { login } = useAuth();
@@ -27,7 +28,7 @@ export default function MasukPage() {
       router.replace(
         u.role !== "customer"
           ? "/admin"
-          : next?.startsWith("/") && !next.startsWith("//")
+          : next?.startsWith("/") && isSafeLink(next)
             ? next
             : "/",
       );

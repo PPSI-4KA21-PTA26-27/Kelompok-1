@@ -3,7 +3,6 @@ import React from "react";
 import { Toaster } from "react-hot-toast";
 import { ReduxProvider } from "@/redux/provider";
 import { AuthProvider } from "@/app/context/AuthContext";
-import { CartModalProvider } from "@/app/context/CartSidebarModalContext";
 import CartSync from "@/app/CartSync";
 import ServerGate from "@/components/layout/ServerGate";
 
@@ -12,7 +11,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <ReduxProvider>
       <ServerGate>
       <AuthProvider>
-        <CartModalProvider>
           <CartSync />
           {children}
           <Toaster
@@ -30,7 +28,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               error: { iconTheme: { primary: "#ff6b5e", secondary: "#141413" } },
             }}
           />
-        </CartModalProvider>
       </AuthProvider>
     </ServerGate>
     </ReduxProvider>

@@ -37,6 +37,10 @@ func TestValidateCreate(t *testing.T) {
 		{"status salah", func(r *createRequest) { r.Status = "x" }, "status"},
 		{"category bukan uuid", func(r *createRequest) { r.CategoryID = strp("1") }, "category_id"},
 		{"preorder tanpa estimasi", func(r *createRequest) { r.AvailabilityType = AvailabilityPreorder }, "po_estimate_days"},
+		{"preorder estimasi 0 hari", func(r *createRequest) {
+			zero := 0
+			r.AvailabilityType, r.PoEstimateDays = AvailabilityPreorder, &zero
+		}, "po_estimate_days"},
 		{"preorder dengan estimasi", func(r *createRequest) {
 			r.AvailabilityType = AvailabilityPreorder
 			r.PoEstimateDays = intp(7)

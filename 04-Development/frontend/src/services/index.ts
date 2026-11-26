@@ -16,6 +16,11 @@ import type {
   ApiUser,
   ApiVariant,
   AuthResult,
+  ApiAnalytics,
+  ApiBanner,
+  ApiSummary,
+  BannerInput,
+  BannerPlacement,
 } from "@/types/api";
 
 export type ProductQuery = {
@@ -124,7 +129,22 @@ export type ProductInput = {
 
 export type VariantInput = { sku: string; size: string; color: string | null; stock: number };
 
+export const bannerService = {
+  /** Banner yang sedang tayang untuk satu penempatan. */
+  live: (placement: BannerPlacement) => api.get<ApiBanner[]>("/banners", { placement }, { auth: false }),
+};
+
 export const adminService = {
+  /** Ringkasan dashboard L-18 (staff dan owner). */
+  summary: () => api.get<ApiSummary>("/admin/summary"),
+  /** Laporan pendapatan UC-19 (owner): satu bulan (YYYY-MM) untuk L-29. */
+  analyticsMonth: (month: string) => api.get<ApiAnalytics>("/admin/analytics", { month }),
+
+  banners: () => api.get<ApiBanner[]>("/banners", { include_inactive: true }),
+  createBanner: (input: BannerInput) => api.post<ApiBanner>("/banners", input),
+  updateBanner: (id: string, input: Partial<BannerInput>) => api.patch<ApiBanner>("/banners/" + id, input),
+  deleteBanner: (id: string) => api.del("/banners/" + id),
+
   orders: (query?: { page?: number; limit?: number; order_status?: string; q?: string }) =>
     api.list<ApiOrderListItem>("/admin/orders", query),
   updateOrderStatus: (

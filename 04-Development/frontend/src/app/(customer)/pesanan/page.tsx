@@ -62,15 +62,18 @@ export default function PesananPage() {
               </div>
               <div className="mt-4 text-right">
                 <p className="text-muted">Total</p>
-                <p className="font-bold">{formatRupiah(o.total_amount)}</p>
+                <p className="font-bold">{formatRupiah(o.payment_amount ?? o.total_amount)}</p>
               </div>
               <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
                 {o.order_status === "pending_payment" && !o.has_proof && <Countdown due={o.payment_due_at} className="mr-auto" />}
-                {o.order_status === "pending_payment" && (
-                  <Link href={`/pembayaran/${o.id}`} className="rounded-lg bg-lime px-3 py-2 text-xs font-bold">
-                    Bayar sekarang
-                  </Link>
-                )}
+                {o.order_status === "pending_payment" &&
+                  (o.has_proof && o.payment_status === "menunggu" ? (
+                    <span className="mr-auto text-xs font-bold text-warn">Bukti terkirim · menunggu verifikasi</span>
+                  ) : (
+                    <Link href={`/pembayaran/${o.id}`} className="rounded-lg bg-lime px-3 py-2 text-xs font-bold">
+                      {o.payment_status === "ditolak" ? "Unggah ulang bukti" : "Bayar sekarang"}
+                    </Link>
+                  ))}
                 <Link href={`/pesanan/${o.id}`} className={btn}>
                   Lihat detail
                 </Link>

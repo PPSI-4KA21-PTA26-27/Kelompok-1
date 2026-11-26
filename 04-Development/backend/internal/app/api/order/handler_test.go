@@ -141,6 +141,7 @@ func TestWriteError(t *testing.T) {
 		{ErrCartItemNotFound, http.StatusUnprocessableEntity, "cart_item_ids"},
 		{ErrProductUnavailable, http.StatusConflict, "conflict"},
 		{ErrTrackingRequired, http.StatusUnprocessableEntity, "tracking_number"},
+		{ErrShippingOnHold, http.StatusConflict, "conflict"},
 		{ErrInvalidTransition, http.StatusConflict, "conflict"},
 		{ErrNotCustomer, http.StatusForbidden, "forbidden"},
 		{ErrProofUnderReview, http.StatusConflict, "conflict"},
@@ -154,6 +155,20 @@ func TestWriteError(t *testing.T) {
 		}
 		if rec.Code != tc.want || !strings.Contains(rec.Body.String(), tc.code) {
 			t.Errorf("writeError(%v) = %d %s, want %d %q", tc.err, rec.Code, rec.Body.String(), tc.want, tc.code)
+		}
+	}
+}
+
+// Parameter days/month divalidasi sebelum service dipanggil; nilai valid
+// butuh database sehingga hanya nilai salah yang diuji di sini. Hak akses
+// (owner saja) diuji di router (paket api).
+func TestAdminAnalyticsInvalidParams(t *testing.T) {
+	for _, q := range []string{"days=1", "days=14", "days=365", "days=abc", "days=-7", "days=7.0",
+		"month=2026-13", "month=2026-1", "month=abc", "month=2999-01"} {
+		rec := httptest.NewRecorder()
+		NewHandler(nil).AdminAnalytics(rec, httptest.NewRequest(http.MethodGet, "/admin/analytics?"+q, nil))
+		if rec.Code != http.StatusBadRequest {
+			t.Errorf("%s: status = %d, want 400", q, rec.Code)
 		}
 	}
 }

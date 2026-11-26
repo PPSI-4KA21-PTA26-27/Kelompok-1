@@ -143,7 +143,7 @@ export default function AdminPesananPage() {
                     {o.recipient_name}
                   </td>
                   <td data-l="Total" className="px-4 py-3">
-                    {formatRupiah(o.total_amount)}
+                    {formatRupiah(o.payment_amount ?? o.total_amount)}
                   </td>
                   <td data-l="Pembayaran" className="px-4 py-3">
                     <Badge tone={pay.tone} className="px-2 py-0.5 text-[10px]">

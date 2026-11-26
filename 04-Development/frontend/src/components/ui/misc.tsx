@@ -1,10 +1,9 @@
 "use client";
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, Check, ChevronLeft, ChevronRight, Copy, PackageOpen, RotateCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/cn";
-import { formatRupiah } from "@/lib/format";
 
 export type Tone = "neutral" | "dark" | "lime" | "success" | "warn" | "danger" | "info";
 
@@ -82,29 +81,6 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
         </button>
       )}
     </div>
-  );
-}
-
-/** Harga Rupiah (tabular) dengan harga coret bila ada diskon. */
-export function Price({
-  price,
-  discountPercent = 0,
-  size = "md",
-  className,
-}: {
-  price: number | string;
-  discountPercent?: number;
-  size?: "sm" | "md" | "lg";
-  className?: string;
-}) {
-  const base = Number(price) || 0;
-  const final = Math.round(base * (1 - (discountPercent || 0) / 100));
-  const text = { sm: "text-[15px]", md: "text-lg", lg: "text-2xl md:text-3xl" }[size];
-  return (
-    <span className={cn("inline-flex flex-wrap items-baseline gap-x-2", className)}>
-      <span className={cn("font-display font-bold tabular tracking-tight", text)}>{formatRupiah(final)}</span>
-      {discountPercent > 0 && <span className="text-[13px] text-muted line-through tabular">{formatRupiah(base)}</span>}
-    </span>
   );
 }
 
@@ -195,78 +171,6 @@ export function Pagination({
   );
 }
 
-/** Tab berbentuk segmen pill. */
-export function Segmented<V extends string>({
-  value,
-  onChange,
-  options,
-  className,
-}: {
-  value: V;
-  onChange: (v: V) => void;
-  options: { value: V; label: string; count?: number }[];
-  className?: string;
-}) {
-  return (
-    <div role="tablist" className={cn("no-scrollbar flex gap-1.5 overflow-x-auto", className)}>
-      {options.map((o) => (
-        <button
-          key={o.value}
-          type="button"
-          role="tab"
-          aria-selected={o.value === value}
-          onClick={() => onChange(o.value)}
-          className={cn(
-            "inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-4 text-[13px] font-semibold transition-colors",
-            o.value === value ? "border-ink bg-ink text-lime" : "border-line bg-stone text-ink-3 hover:border-line-strong"
-          )}
-        >
-          {o.label}
-          {o.count !== undefined && (
-            <span className={cn("rounded-full px-1.5 text-[11px] tabular", o.value === value ? "bg-lime text-ink" : "bg-white text-muted")}>
-              {o.count}
-            </span>
-          )}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-// Jam bersama (detik-an) untuk useCountdown; null di server supaya hydration cocok.
-const clockSubs = new Set<() => void>();
-let clockNow: number | null = null;
-let clockTimer: ReturnType<typeof setInterval> | null = null;
-function subscribeClock(cb: () => void) {
-  clockSubs.add(cb);
-  clockTimer ??= setInterval(() => {
-    clockNow = Date.now();
-    clockSubs.forEach((f) => f());
-  }, 1000);
-  return () => {
-    clockSubs.delete(cb);
-    if (!clockSubs.size && clockTimer) {
-      clearInterval(clockTimer);
-      clockTimer = null;
-      clockNow = null;
-    }
-  };
-}
-const readClock = () => (clockNow ??= Date.now());
-
-/** Hitung mundur ke batas waktu (mis. batas bayar). */
-export function useCountdown(target?: string | null) {
-  const now = useSyncExternalStore<number | null>(subscribeClock, readClock, () => null);
-  if (!target || now === null) return null;
-  const ms = new Date(target).getTime() - now;
-  if (Number.isNaN(ms)) return null;
-  const s = Math.max(0, Math.floor(ms / 1000));
-  return {
-    expired: ms <= 0,
-    text: [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map((n) => String(n).padStart(2, "0")).join(":"),
-  };
-}
-
 /** Breadcrumb: konteks navigasi saja; identitas halaman (nomor pesanan, nama produk) cukup di h1. */
 export function Breadcrumb({ items }: { items: { href?: string; label: string }[] }) {
   return (
@@ -284,28 +188,5 @@ export function Breadcrumb({ items }: { items: { href?: string; label: string }[
         ))}
       </ol>
     </nav>
-  );
-}
-
-/** Judul seksi editorial: label caps + judul display. */
-export function SectionHeading({
-  eyebrow,
-  title,
-  action,
-  className,
-}: {
-  eyebrow?: string;
-  title: string;
-  action?: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cn("mb-5 flex items-end justify-between gap-4", className)}>
-      <div className="min-w-0">
-        {eyebrow && <p className="caps mb-1 text-muted">{eyebrow}</p>}
-        <h2 className="font-display text-[26px] font-extrabold uppercase leading-[1.05] tracking-tight md:text-[34px]">{title}</h2>
-      </div>
-      {action && <div className="shrink-0 whitespace-nowrap">{action}</div>}
-    </div>
   );
 }

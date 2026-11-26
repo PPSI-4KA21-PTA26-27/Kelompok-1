@@ -15,7 +15,8 @@ import type { ApiOrderDetail, OrderStatus } from "@/types/api";
 
 const COVERAGE = [
   { v: "covered", label: "Terjangkau" },
-  { v: "not_covered", label: "Tidak terjangkau", hint: "Pengiriman ditunda, tentukan tindak lanjut" },
+  { v: "not_covered", label: "Tidak terjangkau", hint: "Pengiriman ditunda, tentukan tindak lanjut." },
+  { v: "needs_check", label: "Perlu pemeriksaan lebih lanjut", hint: "Pengiriman ditahan sampai jangkauan dipastikan." },
 ];
 
 export default function AdminPesananDetail() {
@@ -204,6 +205,12 @@ export default function AdminPesananDetail() {
                 <dt className="text-muted">Ongkos kirim</dt>
                 <dd>{formatRupiah(o.shipping_cost)}</dd>
               </div>
+              {pay && (
+                <div className="flex justify-between">
+                  <dt className="text-muted">Kode unik</dt>
+                  <dd>{formatRupiah(pay.unique_code)}</dd>
+                </div>
+              )}
               <div className="flex justify-between">
                 <dt className="text-muted">Total</dt>
                 <dd className="font-bold">{formatRupiah(pay?.amount ?? o.total_amount)}</dd>

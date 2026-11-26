@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Check, MapPin, Truck } from "lucide-react";
 import { CUST_STATUS } from "@/components/order/status";
 import { Breadcrumb, CopyButton, Skeleton } from "@/components/ui/misc";
+import { errorMessage } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import { formatDate, formatRupiah, joinAddress } from "@/lib/format";
 import { cdn } from "@/lib/img";
@@ -23,6 +25,7 @@ export default function PesananDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [o, setO] = useState<ApiOrderDetail | null>(null);
   const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     orderService.get(id).then(setO).catch((x) => setErr(x instanceof Error ? x.message : "Gagal memuat pesanan"));
@@ -42,12 +45,27 @@ export default function PesananDetailPage() {
   const at = { paid: ["completed", "shipped", "processing", "paid"], ship: ["completed", "shipped"] };
   const idx = ({ pending_payment: 0, paid: 1, processing: 1, shipped: 2, completed: 3, cancelled: 0 } as const)[o.order_status];
   const steps = [
-    { t: "Belum dibayar", d: formatDate(o.created_at) },
+    { t: "Belum dibayar", d: o.order_status === "pending_payment" && o.payment?.has_proof && o.payment.status === "menunggu" ? "Bukti terkirim · menunggu verifikasi admin" : formatDate(o.created_at) },
     { t: "Perlu dikirim", d: at.paid.includes(o.order_status) && o.payment?.paid_at ? `Pembayaran valid · ${formatDate(o.payment.paid_at)}` : "Menunggu pembayaran valid" },
     { t: "Dikirim", d: at.ship.includes(o.order_status) && o.shipment ? formatDate(o.shipment.updated_at) : "Belum dikirim" },
     { t: "Selesai", d: o.order_status === "completed" ? formatDate(o.updated_at) : "Menunggu pesanan diterima" },
   ];
   const pay = o.payment ? PAY[o.payment.status as keyof typeof PAY] : null;
+
+  // SDD L-16: Batalkan hanya saat Belum dibayar (stok kembali); Diterima hanya saat Dikirim.
+  const act = async (kind: "cancel" | "complete") => {
+    if (kind === "cancel" && !confirm("Batalkan pesanan ini? Stok akan dikembalikan.")) return;
+    setBusy(true);
+    try {
+      await (kind === "cancel" ? orderService.cancel(o.id) : orderService.complete(o.id));
+      setO(await orderService.get(o.id));
+      toast.success(kind === "cancel" ? "Pesanan dibatalkan." : "Pesanan ditandai selesai.");
+    } catch (x) {
+      toast.error(errorMessage(x));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div>
@@ -130,9 +148,10 @@ export default function PesananDetailPage() {
             <dl className="mt-5 space-y-3 text-muted">
               <div className="flex justify-between"><dt>Subtotal</dt><dd>{formatRupiah(o.subtotal)}</dd></div>
               <div className="flex justify-between"><dt>Ongkos kirim</dt><dd>{formatRupiah(o.shipping_cost)}</dd></div>
+              {o.payment && <div className="flex justify-between"><dt>Kode unik</dt><dd>{formatRupiah(o.payment.unique_code)}</dd></div>}
             </dl>
             <div className="mt-3 flex justify-between border-t border-line pt-3 text-lg font-bold">
-              <span>Total</span><span>{formatRupiah(o.total_amount)}</span>
+              <span>Total</span><span>{formatRupiah(o.payment?.amount ?? o.total_amount)}</span>
             </div>
             {pay && (
               <div className="mt-4 flex items-center justify-between text-muted">
@@ -140,11 +159,16 @@ export default function PesananDetailPage() {
                 <span className={cn("rounded-full px-3 py-1 text-sm font-bold", pay[1])}>{pay[0]}</span>
               </div>
             )}
-            {o.order_status === "pending_payment" && (
-              <Link href={`/pembayaran/${o.id}`} className="mt-4 grid h-12 place-items-center rounded-lg bg-lime text-sm font-bold">
-                Bayar sekarang
-              </Link>
-            )}
+            {o.order_status === "pending_payment" &&
+              (o.payment?.has_proof && o.payment.status === "menunggu" ? (
+                <p role="status" className="mt-4 rounded-lg bg-warn-soft p-3 text-xs text-warn">
+                  <b>Bukti pembayaran sudah terkirim.</b> Admin sedang memeriksa; status berubah menjadi Perlu dikirim setelah valid.
+                </p>
+              ) : (
+                <Link href={`/pembayaran/${o.id}`} className="mt-4 grid h-12 place-items-center rounded-lg bg-lime text-sm font-bold">
+                  {o.payment?.status === "ditolak" ? "Unggah ulang bukti" : "Bayar sekarang"}
+                </Link>
+              ))}
           </section>
           <section className={card}>
             <h2 className="text-xl font-semibold">Alamat pengiriman</h2>
@@ -157,6 +181,24 @@ export default function PesananDetailPage() {
               </div>
             </div>
           </section>
+          {o.order_status === "pending_payment" && (
+            <button
+              disabled={busy}
+              onClick={() => act("cancel")}
+              className="w-full rounded-full border border-danger bg-white px-6 py-3 font-bold text-danger disabled:opacity-50"
+            >
+              Batalkan Pesanan
+            </button>
+          )}
+          {o.order_status === "shipped" && (
+            <button
+              disabled={busy}
+              onClick={() => act("complete")}
+              className="w-full rounded-full bg-lime px-6 py-3 font-bold text-ink disabled:opacity-50"
+            >
+              Pesanan Diterima
+            </button>
+          )}
         </div>
       </div>
     </div>

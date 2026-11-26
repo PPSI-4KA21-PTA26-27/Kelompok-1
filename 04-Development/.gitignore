@@ -43,3 +43,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Aset asli klien (QRIS toko, foto produk, banner) tidak dipublikasikan di repo publik;
+# minta ke tim lalu taruh di frontend/public/ sebelum menjalankan aplikasi.
+/frontend/public/qris.jpg
+/frontend/public/products/
+/frontend/public/banners/

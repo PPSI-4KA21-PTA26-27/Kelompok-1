@@ -47,9 +47,12 @@ func (s *Service) GetDetail(ctx context.Context, id string, admin bool) (Detail,
 	return Detail{Response: p.Response(), Variants: variants, Images: images}, nil
 }
 
-// Create membuat produk baru. Produk pre-order wajib punya PoEstimateDays.
+// validEstimate: produk pre-order wajib punya estimasi lebih dari 0 hari (L-22, UC-13).
+func validEstimate(days *int) bool { return days != nil && *days > 0 }
+
+// Create membuat produk baru. Produk pre-order wajib punya PoEstimateDays > 0.
 func (s *Service) Create(ctx context.Context, p Product) (Product, error) {
-	if p.AvailabilityType == AvailabilityPreorder && p.PoEstimateDays == nil {
+	if p.AvailabilityType == AvailabilityPreorder && !validEstimate(p.PoEstimateDays) {
 		return Product{}, ErrPreorderEstimate
 	}
 	if p.AvailabilityType != AvailabilityPreorder {
@@ -71,7 +74,7 @@ func (s *Service) Update(ctx context.Context, id string, ch Changes) (Product, e
 	if ch.PoEstimateDays != nil {
 		estimate = ch.PoEstimateDays
 	}
-	if availability == AvailabilityPreorder && estimate == nil {
+	if availability == AvailabilityPreorder && !validEstimate(estimate) {
 		return Product{}, ErrPreorderEstimate
 	}
 	if availability != AvailabilityPreorder {
