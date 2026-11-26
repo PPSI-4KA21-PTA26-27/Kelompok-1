@@ -13,6 +13,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"hii-stranger1/backend/internal/app/api/auth"
+	"hii-stranger1/backend/internal/app/api/banner"
 	"hii-stranger1/backend/internal/app/api/cart"
 	"hii-stranger1/backend/internal/app/api/category"
 	"hii-stranger1/backend/internal/app/api/ongkir"
@@ -62,6 +63,7 @@ func New(cfg config.Config, db *pgxpool.Pool, rdb *redis.Client) *Server {
 	orderSvc := order.NewService(order.NewRepository(db), ongkirSvc, paymentRepo, shipmentRepo, mail)
 	h := handlers{
 		auth:     auth.NewHandler(auth.NewService(userRepo, tokens, mail)),
+		banner:   banner.NewHandler(banner.NewService(banner.NewRepository(db))),
 		user:     user.NewHandler(user.NewService(userRepo)),
 		category: category.NewHandler(category.NewService(categoryRepo)),
 		product:  product.NewHandler(product.NewService(productRepo)),

@@ -69,8 +69,9 @@ func (h *Handler) Upsert(w http.ResponseWriter, r *http.Request) {
 	var c validator.Collector
 	c.Check(s.TrackingNumber == nil || validator.RuneLenBetween(*s.TrackingNumber, 1, 100),
 		"tracking_number", "tracking_number maksimal 100 karakter.")
-	c.Check(s.CoverageStatus == CoverageCovered || s.CoverageStatus == CoverageNotCovered,
-		"coverage_status", "coverage_status harus covered atau not_covered.")
+	c.Check(s.CoverageStatus == CoverageCovered || s.CoverageStatus == CoverageNotCovered ||
+		s.CoverageStatus == CoverageNeedsCheck,
+		"coverage_status", "coverage_status harus covered, not_covered, atau needs_check.")
 	c.Check(validShipping(s.ShippingStatus), "shipping_status",
 		"shipping_status harus pending, shipped, delivered, atau returned.")
 	c.Check(s.ShippingStatus != ShippingShipped || (s.TrackingNumber != nil && *s.TrackingNumber != ""),

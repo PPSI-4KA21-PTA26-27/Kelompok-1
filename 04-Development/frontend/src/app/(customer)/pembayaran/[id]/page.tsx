@@ -6,12 +6,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CircleAlert, X } from "lucide-react";
 import Steps from "@/components/checkout/Steps";
 import Countdown from "@/components/order/Countdown";
+import { useCartActions } from "@/hooks/useCartActions";
 import { formatDate, formatRupiah } from "@/lib/format";
 import { orderService, paymentService } from "@/services";
 import type { ApiOrderDetail, ApiPayment } from "@/types/api";
 
-// shortcut: gambar QRIS statis dari env, pindah ke site_settings saat Sprint 3 (D-17).
-const QRIS_IMAGE_URL = process.env.NEXT_PUBLIC_QRIS_IMAGE_URL ?? "";
 const card = "rounded-3xl border border-line bg-white p-7";
 const HOW = [
   "Buka aplikasi pembayaran yang mendukung QRIS.",
@@ -29,6 +28,11 @@ export default function PembayaranPage() {
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const pick = useRef<HTMLInputElement>(null);
+  const { refresh } = useCartActions();
+  // checkout menghapus item keranjang di server; badge navbar disegarkan di sini (di checkout akan memicu redirect ke /keranjang)
+  useEffect(() => {
+    refresh().catch(() => {});
+  }, [refresh]);
   const preview = useMemo(() => (file ? URL.createObjectURL(file) : ""), [file]);
   useEffect(() => () => URL.revokeObjectURL(preview), [preview]);
 
@@ -44,7 +48,11 @@ export default function PembayaranPage() {
 
   const choose = (f?: File) => {
     if (!f) return;
-    if (!/^image\/(jpeg|png)$/.test(f.type)) return setErr("Format harus JPG atau PNG");
+    // file baru yang ditolak mengosongkan pilihan lama
+    const reject = (m: string) => (setFile(null), setErr(m));
+    if (!/^image\/(jpeg|png)$/.test(f.type)) return reject("Format harus JPG atau PNG");
+    // batas backend maxProofBytes = 2 MB
+    if (f.size > 2 * 1024 * 1024) return reject("Ukuran gambar maksimal 2 MB");
     setErr("");
     setFile(f);
   };
@@ -62,6 +70,7 @@ export default function PembayaranPage() {
   }
 
   const amount = pay ? formatRupiah(pay.amount) : "";
+  const sent = !!pay?.has_proof && pay.status === "menunggu";
 
   return (
     <div>
@@ -78,14 +87,12 @@ export default function PembayaranPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Kode QRIS Hii Stranger</h2>
               <span className="rounded-full bg-warn-soft px-2.5 py-1 text-xs font-bold text-warn">
-                {pay?.has_proof ? "Menunggu verifikasi" : "Belum dibayar"}
+                {pay?.status === "ditolak" ? "Bukti ditolak" : pay?.has_proof ? "Menunggu verifikasi" : "Belum dibayar"}
               </span>
             </div>
             <div className="mt-6 rounded-2xl border-2 border-ink px-3 py-6 text-center lg:px-6 lg:py-10">
-              {QRIS_IMAGE_URL && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={QRIS_IMAGE_URL} alt="Kode QRIS" className="mx-auto size-40 sm:size-50 lg:size-55 object-contain" />
-              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/qris.jpg" alt="QRIS Hii Stranger" className="mx-auto h-auto w-full max-w-65 rounded-lg object-contain" />
               <p className="mt-8 text-muted">Pindai dengan aplikasi pembayaran yang mendukung QRIS</p>
               <p className="mt-8 text-muted">Nominal yang harus dibayar</p>
               <p className="mt-2 text-3xl font-extrabold lg:text-4xl">
@@ -119,8 +126,24 @@ export default function PembayaranPage() {
         </div>
 
         <div className="space-y-7">
+          {order && order.order_status !== "pending_payment" ? (
+            <section className={card}>
+              <h2 className="text-xl font-semibold">Unggah Bukti Pembayaran</h2>
+              <p className="mt-3 text-sm text-muted">Pesanan ini sudah tidak menunggu pembayaran.</p>
+            </section>
+          ) : (
           <section className={card}>
             <h2 className="text-xl font-semibold">Unggah Bukti Pembayaran</h2>
+            {sent && (
+              <p role="status" className="mt-3 rounded-lg bg-lime/30 p-3 text-sm">
+                <b>Bukti sudah terkirim</b> dan menunggu verifikasi admin. Unggah lagi hanya jika berkas tadi salah.
+              </p>
+            )}
+            {pay?.status === "ditolak" && (
+              <p role="alert" className="mt-3 rounded-lg bg-danger-soft p-3 text-sm text-danger">
+                Bukti sebelumnya ditolak. Unggah bukti pembayaran yang benar.
+              </p>
+            )}
             <button
               type="button"
               onClick={() => pick.current?.click()}
@@ -131,14 +154,14 @@ export default function PembayaranPage() {
               <span>
                 <b className="text-ink">Pilih berkas</b> atau tarik ke sini
                 <br />
-                Format JPG atau PNG
+                Format JPG atau PNG, maks 2 MB
               </span>
             </button>
             <input ref={pick} type="file" accept="image/jpeg,image/png" hidden onChange={(e) => choose(e.target.files?.[0])} />
             {file && (
               <div className="mt-4 flex items-center gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={encodeURI(preview)} alt="" className="size-12.5 rounded-lg bg-[#d9d9d9] object-cover" />
+                <img src={preview} alt="" className="size-12.5 rounded-lg bg-[#d9d9d9] object-cover" />
                 <span className="flex-1 truncate text-xs font-semibold">{file.name}</span>
                 <button aria-label="Hapus berkas" onClick={() => setFile(null)}>
                   <X className="size-4" />
@@ -147,9 +170,10 @@ export default function PembayaranPage() {
             )}
             {err && pay && <p role="alert" className="mt-3 text-xs text-danger">{err}</p>}
             <button onClick={send} disabled={!file || busy} className="mt-4 h-12 w-full rounded-xl bg-lime text-sm font-bold disabled:opacity-50">
-              {busy ? "Mengirim..." : "Kirim Bukti Pembayaran"}
+              {busy ? "Mengirim..." : sent ? "Ganti Bukti Pembayaran" : "Kirim Bukti Pembayaran"}
             </button>
           </section>
+          )}
 
           <section className={card}>
             <p className="flex gap-2 rounded-lg border border-warn bg-warn-soft p-3 text-xs text-warn">
@@ -158,8 +182,8 @@ export default function PembayaranPage() {
                 <b>Pembayaran belum dianggap berhasil.</b> Admin akan memeriksa bukti Anda. Status akan berubah ketika telah diverifikasi.
               </span>
             </p>
-            <Link href="/pesanan" className="mt-4 block rounded-lg border border-ink py-2 text-center text-xs font-bold">
-              Lihat Pesanan Saya
+            <Link href={`/pesanan/${id}`} className="mt-4 block rounded-lg border border-ink py-2 text-center text-xs font-bold">
+              Lihat Status Pesanan
             </Link>
           </section>
         </div>

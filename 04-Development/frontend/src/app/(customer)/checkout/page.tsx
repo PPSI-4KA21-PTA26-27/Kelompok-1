@@ -105,6 +105,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     let off = false;
+    setQuote(null);
     const q = sub && ids.length ? regionService.shippingCost(sub, ids) : null;
     if (q) q.then((r) => !off && setQuote(r)).catch(() => !off && setQuote(null));
     return () => {

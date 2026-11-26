@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { tokenStore } from "@/lib/api";
+import { ApiError, tokenStore } from "@/lib/api";
 import { authService } from "@/services";
 import type { ApiUser } from "@/types/api";
 
@@ -26,8 +26,9 @@ async function fetchMe(): Promise<ApiUser | null> {
   if (!tokenStore.get()) return null;
   try {
     return await authService.me();
-  } catch {
-    tokenStore.clear();
+  } catch (e) {
+    // jaringan putus / 5xx bukan alasan me-logout user
+    if (e instanceof ApiError && e.status === 401) tokenStore.clear();
     return null;
   }
 }

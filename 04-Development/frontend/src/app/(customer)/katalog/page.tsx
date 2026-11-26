@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Search } from "lucide-react";
+import BannerStrip from "@/components/banner/BannerStrip";
 import ProductCard from "@/components/product/ProductCard";
 import { Breadcrumb } from "@/components/ui/misc";
 import { useCategories } from "@/hooks/useCategories";
@@ -21,6 +22,8 @@ function Katalog() {
   const page = Math.max(1, Number(sp.get("page")) || 1);
   const [items, setItems] = useState<ApiProduct[]>([]);
   const [meta, setMeta] = useState<ApiMeta>({ page: 1, limit: LIMIT, total: 0 });
+  // null = memuat, "ok" = berhasil, "error" = gagal (TC-02)
+  const [state, setState] = useState<"ok" | "error" | null>(null);
 
   useEffect(() => {
     productService
@@ -28,8 +31,12 @@ function Katalog() {
       .then((r) => {
         setItems(r.data);
         setMeta(r.meta);
+        setState("ok");
       })
-      .catch(() => setItems([]));
+      .catch(() => {
+        setItems([]);
+        setState("error");
+      });
   }, [q, category, page]);
 
   const go = (next: Record<string, string>) => {
@@ -69,6 +76,8 @@ function Katalog() {
         />
       </form>
 
+      <BannerStrip placement="catalog" className="mt-6 aspect-2/1 sm:aspect-[6.7/1]" />
+
       <div className="mt-6 flex flex-wrap gap-2 sm:gap-4">
         <button className={chip(!category)} onClick={() => go({ category: "", page: "" })}>
           Semua <span className="ml-1 text-muted">{total}</span>
@@ -80,6 +89,16 @@ function Katalog() {
         ))}
       </div>
 
+      {state === "error" && (
+        <p role="alert" className="mt-6 rounded-xl bg-white p-6 text-center font-semibold text-danger">
+          Data produk gagal dimuat. Muat ulang halaman.
+        </p>
+      )}
+      {state === "ok" && items.length === 0 && (
+        <p role="status" className="mt-6 rounded-xl bg-white p-6 text-center font-semibold text-muted">
+          {q ? "Produk tidak ditemukan." : "Belum ada produk aktif pada kategori ini."}
+        </p>
+      )}
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-5.5">
         {items.map((p) => (
           <ProductCard key={p.id} p={p} category={cats.find((c) => c.id === p.category_id)?.name} />

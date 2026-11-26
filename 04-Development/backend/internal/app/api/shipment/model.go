@@ -20,6 +20,8 @@ var (
 const (
 	CoverageCovered    = "covered"
 	CoverageNotCovered = "not_covered"
+	// CoverageNeedsCheck: alamat perlu pemeriksaan lebih lanjut (L-24, UC-15).
+	CoverageNeedsCheck = "needs_check"
 )
 
 // Status perjalanan paket.

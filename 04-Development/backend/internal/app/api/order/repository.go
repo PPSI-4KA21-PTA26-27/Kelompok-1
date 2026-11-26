@@ -240,10 +240,10 @@ func lockCartLines(ctx context.Context, tx pgx.Tx, userID string, ids []string) 
 
 const listSelect = `SELECT %s,
 	       (SELECT COALESCE(SUM(oi.quantity), 0) FROM order_items oi WHERE oi.order_id = o.id),
-	       pay.status, COALESCE(pay.has_proof, false), u.email
+	       pay.status, pay.amount::text, COALESCE(pay.has_proof, false), u.email
 	  FROM orders o
 	  JOIN users u ON u.id = o.user_id
-	  LEFT JOIN LATERAL (SELECT p.status, p.proof_url IS NOT NULL AS has_proof
+	  LEFT JOIN LATERAL (SELECT p.status, p.amount, p.proof_url IS NOT NULL AS has_proof
 	                       FROM payments p WHERE p.order_id = o.id
 	                      ORDER BY p.created_at, p.id LIMIT 1) pay ON true`
 
@@ -295,7 +295,7 @@ func (r *Repository) List(ctx context.Context, f Filter, limit, offset int) ([]L
 func collectListItems(rows pgx.Rows) ([]ListItem, error) {
 	out, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (ListItem, error) {
 		var it ListItem
-		dst := append(orderDest(&it.Order), &it.ItemCount, &it.PaymentStatus, &it.HasProof, &it.CustomerEmail)
+		dst := append(orderDest(&it.Order), &it.ItemCount, &it.PaymentStatus, &it.PaymentAmount, &it.HasProof, &it.CustomerEmail)
 		err := row.Scan(dst...)
 		return it, err
 	})
@@ -532,4 +532,79 @@ func wrap(op string, err error) error {
 		return errDuplicateNumber
 	}
 	return fmt.Errorf("order: %s: %w", op, err)
+}
+
+// Summary menghitung ringkasan operasional untuk dashboard admin.
+func (r *Repository) Summary(ctx context.Context) (Summary, error) {
+	s := Summary{StatusCounts: map[string]int{}}
+	b := &pgx.Batch{}
+	b.Queue(`SELECT order_status, COUNT(*) FROM orders GROUP BY order_status`)
+	b.Queue(`SELECT COUNT(*) FROM payments p JOIN orders o ON o.id = p.order_id
+	          WHERE p.status = 'menunggu' AND p.proof_url IS NOT NULL AND o.order_status = 'pending_payment'`)
+	b.Queue(`SELECT COUNT(*) FROM orders WHERE created_at >= date_trunc('day', now())`)
+	b.Queue(`SELECT COALESCE(SUM(total_amount), 0)::text, COUNT(*) FROM orders
+	          WHERE order_status IN ('paid', 'processing', 'shipped', 'completed')
+	            AND created_at >= date_trunc('month', now())`)
+	b.Queue(`SELECT COUNT(*) FROM product_variants v JOIN products p ON p.id = v.product_id
+	          WHERE p.status = 'active' AND v.stock = 0`)
+	b.Queue(`SELECT p.id, p.name, v.id, v.sku, v.size, v.color, v.stock
+	           FROM product_variants v JOIN products p ON p.id = v.product_id
+	          WHERE p.status = 'active' AND v.stock <= $1
+	          ORDER BY v.stock, p.name, v.size LIMIT 12`, lowStockThreshold)
+	b.Queue(fmt.Sprintf(listSelect, orderColumns) + " ORDER BY o.created_at DESC, o.id LIMIT 6")
+	br := r.db.SendBatch(ctx, b)
+	defer func() { _ = br.Close() }()
+
+	rows, err := br.Query()
+	if err != nil {
+		return Summary{}, wrap("summary status", err)
+	}
+	for rows.Next() {
+		var st string
+		var n int
+		if err := rows.Scan(&st, &n); err != nil {
+			rows.Close()
+			return Summary{}, wrap("summary status scan", err)
+		}
+		s.StatusCounts[st] = n
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return Summary{}, wrap("summary status rows", err)
+	}
+	if err := br.QueryRow().Scan(&s.ProofsToReview); err != nil {
+		return Summary{}, wrap("summary proofs", err)
+	}
+	if err := br.QueryRow().Scan(&s.OrdersToday); err != nil {
+		return Summary{}, wrap("summary today", err)
+	}
+	if err := br.QueryRow().Scan(&s.RevenueMonth, &s.PaidOrdersMonth); err != nil {
+		return Summary{}, wrap("summary revenue", err)
+	}
+	if err := br.QueryRow().Scan(&s.OutOfStock); err != nil {
+		return Summary{}, wrap("summary out of stock", err)
+	}
+	lowRows, err := br.Query()
+	if err != nil {
+		return Summary{}, wrap("summary low stock", err)
+	}
+	s.LowStock, err = pgx.CollectRows(lowRows, func(row pgx.CollectableRow) (LowStock, error) {
+		var l LowStock
+		err := row.Scan(&l.ProductID, &l.ProductName, &l.VariantID, &l.SKU, &l.Size, &l.Color, &l.Stock)
+		return l, err
+	})
+	if err != nil {
+		return Summary{}, wrap("summary low stock scan", err)
+	}
+	if s.LowStock == nil {
+		s.LowStock = []LowStock{}
+	}
+	recent, err := br.Query()
+	if err != nil {
+		return Summary{}, wrap("summary recent", err)
+	}
+	if s.Recent, err = collectListItems(recent); err != nil {
+		return Summary{}, err
+	}
+	return s, nil
 }

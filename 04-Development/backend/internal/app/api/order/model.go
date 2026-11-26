@@ -24,6 +24,9 @@ var (
 	ErrCartChanged = errors.New("order: cart changed during checkout")
 	// ErrTrackingRequired: status shipped wajib disertai no. resi.
 	ErrTrackingRequired = errors.New("order: tracking number required")
+	// ErrShippingOnHold: alamat ditandai tidak terjangkau atau perlu
+	// pemeriksaan sehingga pesanan belum boleh dikirim (UC-15).
+	ErrShippingOnHold = errors.New("order: shipping on hold, destination not covered")
 	// ErrInvalidTransition: perubahan status tidak diizinkan.
 	ErrInvalidTransition = errors.New("order: invalid status transition")
 	// ErrNotCustomer: hanya akun pelanggan yang boleh memesan.
@@ -92,6 +95,7 @@ type ListItem struct {
 	Order
 	ItemCount     int     `json:"item_count"`
 	PaymentStatus *string `json:"payment_status"`
+	PaymentAmount *string `json:"payment_amount"` // total + kode unik; nil bila belum ada tagihan
 	HasProof      bool    `json:"has_proof"`
 	CustomerEmail string  `json:"customer_email"`
 }
@@ -185,4 +189,16 @@ type LowStock struct {
 	Size        string  `json:"size"`
 	Color       *string `json:"color"`
 	Stock       int     `json:"stock"`
+}
+
+// Summary adalah ringkasan operasional untuk dashboard admin.
+type Summary struct {
+	StatusCounts    map[string]int `json:"status_counts"`
+	ProofsToReview  int            `json:"proofs_to_review"`
+	OrdersToday     int            `json:"orders_today"`
+	RevenueMonth    string         `json:"revenue_month"`
+	PaidOrdersMonth int            `json:"paid_orders_month"`
+	OutOfStock      int            `json:"out_of_stock"`
+	LowStock        []LowStock     `json:"low_stock"`
+	Recent          []ListItem     `json:"recent"`
 }

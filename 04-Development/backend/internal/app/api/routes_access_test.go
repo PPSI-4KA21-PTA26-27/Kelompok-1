@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"hii-stranger1/backend/internal/app/api/auth"
+	"hii-stranger1/backend/internal/app/api/banner"
 	"hii-stranger1/backend/internal/app/api/cart"
 	"hii-stranger1/backend/internal/app/api/order"
 	"hii-stranger1/backend/internal/app/api/payment"
@@ -28,6 +29,7 @@ func testRouter(t *testing.T) (http.Handler, func(role string) string) {
 	tokens := token.NewManager("0123456789abcdef0123456789abcdef", "test-issuer", time.Minute)
 	h := handlers{
 		auth:     auth.NewHandler(nil),
+		banner:   banner.NewHandler(nil),
 		cart:     cart.NewHandler(nil),
 		order:    order.NewHandler(nil),
 		payment:  payment.NewHandler(nil),
@@ -84,6 +86,24 @@ func TestRouteRoleAccess(t *testing.T) {
 		{http.MethodPut, "/api/v1/orders/" + someUUID + "/shipment", "{}", "customer", http.StatusForbidden},
 		{http.MethodPut, "/api/v1/orders/" + someUUID + "/shipment", "{}", "staff", http.StatusUnprocessableEntity},
 		{http.MethodPut, "/api/v1/orders/" + someUUID + "/shipment", "{}", "owner", http.StatusUnprocessableEntity},
+
+		// Banner (UC-18): tulis hanya staff/owner; gambar wajib saat membuat.
+		{http.MethodPost, "/api/v1/banners", "{}", "", http.StatusUnauthorized},
+		{http.MethodPost, "/api/v1/banners", "{}", "customer", http.StatusForbidden},
+		{http.MethodPost, "/api/v1/banners", "{}", "staff", http.StatusUnprocessableEntity},
+		{http.MethodPatch, "/api/v1/banners/" + someUUID, "{}", "customer", http.StatusForbidden},
+		{http.MethodDelete, "/api/v1/banners/" + someUUID, "", "customer", http.StatusForbidden},
+
+		// Ringkasan dashboard (L-18): staff dan owner.
+		{http.MethodGet, "/api/v1/admin/summary", "", "", http.StatusUnauthorized},
+		{http.MethodGet, "/api/v1/admin/summary", "", "customer", http.StatusForbidden},
+
+		// Laporan pendapatan (UC-19): owner saja; parameter salah ditolak 400.
+		{http.MethodGet, "/api/v1/admin/analytics?days=7", "", "", http.StatusUnauthorized},
+		{http.MethodGet, "/api/v1/admin/analytics?days=7", "", "customer", http.StatusForbidden},
+		{http.MethodGet, "/api/v1/admin/analytics?days=7", "", "staff", http.StatusForbidden},
+		{http.MethodGet, "/api/v1/admin/analytics?days=5", "", "owner", http.StatusBadRequest},
+		{http.MethodGet, "/api/v1/admin/analytics?month=2026-13", "", "owner", http.StatusBadRequest},
 	}
 	for _, tc := range tests {
 		name := tc.method + " " + tc.path + " as " + tc.role

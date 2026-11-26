@@ -111,6 +111,8 @@ export type ApiOrder = {
 export type ApiOrderListItem = ApiOrder & {
   item_count: number;
   payment_status: PaymentStatus | null;
+  /** total + kode unik; null bila tagihan belum dibuat */
+  payment_amount: string | null;
   has_proof: boolean;
   customer_email: string;
 };
@@ -184,3 +186,75 @@ export type ApiShippingQuote = {
   weight_gram: number;
 };
 
+export type BannerPlacement = "hero" | "main" | "catalog";
+
+export type BannerStatus = "live" | "scheduled" | "ended" | "inactive";
+
+export type ApiBanner = {
+  id: string;
+  placement: BannerPlacement;
+  title: string | null;
+  subtitle: string | null;
+  cta_label: string | null;
+  image_url: string;
+  mobile_image_url: string | null;
+  link_url: string | null;
+  sort_order: number;
+  is_active: boolean;
+  starts_at: string | null;
+  ends_at: string | null;
+  created_at: string;
+  status: BannerStatus;
+};
+
+export type BannerInput = {
+  placement: BannerPlacement;
+  title: string | null;
+  subtitle: string | null;
+  cta_label: string | null;
+  image_url: string;
+  mobile_image_url: string | null;
+  link_url: string | null;
+  sort_order: number;
+  is_active: boolean;
+  starts_at: string | null;
+  ends_at: string | null;
+};
+
+export type ApiSummary = {
+  status_counts: Partial<Record<OrderStatus, number>>;
+  proofs_to_review: number;
+  orders_today: number;
+  revenue_month: string;
+  paid_orders_month: number;
+  out_of_stock: number;
+  low_stock: {
+    product_id: string;
+    product_name: string;
+    variant_id: string;
+    sku: string;
+    size: string;
+    color: string | null;
+    stock: number;
+  }[];
+  recent: ApiOrderListItem[];
+};
+
+export type ApiAnalyticsTotals = {
+  revenue: string;
+  paid_orders: number;
+  all_orders: number;
+  cancelled: number;
+  buyers: number;
+  items_sold: number;
+};
+
+export type ApiAnalytics = {
+  days: number;
+  month?: string;
+  current: ApiAnalyticsTotals;
+  previous: ApiAnalyticsTotals;
+  series: { date: string; revenue: string; orders: number }[];
+  top_products: { product_id: string; name: string; quantity: number; revenue: string }[];
+  statuses: Partial<Record<OrderStatus, number>>;
+};

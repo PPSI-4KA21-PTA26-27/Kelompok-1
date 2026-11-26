@@ -22,7 +22,7 @@ const (
 	availMessage    = "availability_type harus ready atau preorder."
 	statusMessage   = "status harus active atau inactive."
 	poMessage       = "po_estimate_days tidak boleh negatif."
-	preorderMessage = "po_estimate_days wajib diisi untuk produk preorder."
+	preorderMessage = "Estimasi pre-order harus lebih dari 0 hari."
 )
 
 // Handler melayani endpoint /products.
@@ -268,7 +268,7 @@ func validateCreate(req createRequest) []response.FieldError {
 	c.Check(validStatus(req.Status), "status", statusMessage)
 	c.Check(req.CategoryID == nil || validator.UUID(*req.CategoryID), "category_id", categoryMessage)
 	c.Check(req.PoEstimateDays == nil || *req.PoEstimateDays >= 0, "po_estimate_days", poMessage)
-	c.Check(req.AvailabilityType != AvailabilityPreorder || req.PoEstimateDays != nil,
+	c.Check(req.AvailabilityType != AvailabilityPreorder || validEstimate(req.PoEstimateDays),
 		"po_estimate_days", preorderMessage)
 	return c.Errors()
 }

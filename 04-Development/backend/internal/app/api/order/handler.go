@@ -248,6 +248,8 @@ func (h *Handler) writeError(w http.ResponseWriter, r *http.Request, op string, 
 		response.Conflict(w, "Stok tidak mencukupi.")
 	case errors.Is(err, ErrTrackingRequired):
 		response.ValidationFailed(w, response.FieldError{Field: "tracking_number", Message: "No. resi wajib diisi."})
+	case errors.Is(err, ErrShippingOnHold):
+		response.Conflict(w, "Pengiriman ditunda: alamat belum dipastikan terjangkau. Ubah cek ketersediaan pengiriman menjadi Terjangkau terlebih dahulu.")
 	case errors.Is(err, ErrInvalidTransition):
 		response.Conflict(w, "Perubahan status order tidak diizinkan.")
 	case errors.Is(err, ErrNotCustomer):
@@ -342,4 +344,15 @@ func isOngkirError(err error) bool {
 	return errors.Is(err, ongkir.ErrDisabled) || errors.Is(err, ongkir.ErrInvalidDestination) ||
 		errors.Is(err, ongkir.ErrNoRoute) ||
 		strings.HasPrefix(err.Error(), "rajaongkir:")
+}
+
+// AdminSummary melayani GET /admin/summary (dashboard L-18, staff dan owner).
+func (h *Handler) AdminSummary(w http.ResponseWriter, r *http.Request) {
+	s, err := h.svc.Summary(r.Context())
+	if err != nil {
+		slog.ErrorContext(r.Context(), "order summary failed", "error", err)
+		response.Internal(w)
+		return
+	}
+	response.JSON(w, http.StatusOK, s)
 }

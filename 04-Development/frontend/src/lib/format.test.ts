@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatRemaining, hasRTRW, paymentLabel, splitRTRW, weeklyRevenue } from "./format";
+import { formatRemaining, hasRTRW, lastMonths, paymentLabel, splitRTRW, weeklyRevenue } from "./format";
 
 describe("paymentLabel", () => {
   it("membedakan belum ada bukti, menunggu, valid, ditolak", () => {
@@ -41,5 +41,28 @@ describe("formatRemaining", () => {
     expect(formatRemaining(125 * 60000)).toBe("2 j 05 mnt");
     expect(formatRemaining(30 * 1000)).toBe("1 mnt");
     expect(formatRemaining(0)).toBe("");
+  });
+});
+
+describe("lastMonths", () => {
+  it("12 bulan terakhir dari bulan berjalan, lintas tahun", () => {
+    const m = lastMonths(new Date("2026-02-15T05:00:00Z"));
+    expect(m).toHaveLength(12);
+    expect(m[0].value).toBe("2026-02");
+    expect(m[1].value).toBe("2026-01");
+    expect(m[2].value).toBe("2025-12");
+    expect(m[11].value).toBe("2025-03");
+  });
+  it("memakai bulan WIB: 30 Nov 18:00 UTC = 1 Des WIB", () => {
+    const m = lastMonths(new Date("2026-11-30T18:00:00Z"));
+    expect(m[0].value).toBe("2026-12");
+    expect(m[0].label).toBe("Desember 2026");
+  });
+});
+
+describe("weeklyRevenue (bulan kalender L-29)", () => {
+  it("31 hari menjadi 4 minggu; hari 29-31 masuk minggu ke-4", () => {
+    const s = Array.from({ length: 31 }, () => ({ revenue: "10" }));
+    expect(weeklyRevenue(s)).toEqual([70, 70, 70, 100]);
   });
 });

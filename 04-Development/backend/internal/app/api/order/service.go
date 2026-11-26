@@ -158,8 +158,17 @@ func (s *Service) UpdateStatus(ctx context.Context, id, status string, ship *Shi
 			return Order{}, ErrTrackingRequired
 		}
 		c.onUpdate = func(ctx context.Context, tx pgx.Tx, o Order) error {
+			// UC-15: alamat yang ditandai tidak terjangkau/perlu pemeriksaan
+			// menahan pengiriman sampai staff menandainya terjangkau.
+			var coverage string
+			err := tx.QueryRow(ctx, `SELECT coverage_status FROM shipments WHERE order_id = $1`, o.ID).Scan(&coverage)
+			if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+				return fmt.Errorf("order: read coverage: %w", err)
+			}
+			if err == nil && coverage != shipment.CoverageCovered {
+				return ErrShippingOnHold
+			}
 			tracking := ship.TrackingNumber
-			var err error
 			sh, _, err = s.shipments.UpsertTx(ctx, tx, shipment.Shipment{
 				OrderID:        o.ID,
 				TrackingNumber: &tracking,
@@ -374,4 +383,9 @@ func newOrderNumber() (string, error) {
 		return "", fmt.Errorf("order: random order number: %w", err)
 	}
 	return "HS" + time.Now().Format("20060102150405") + "-" + strings.ToUpper(hex.EncodeToString(b)), nil
+}
+
+// Summary mengembalikan ringkasan dashboard admin (L-18).
+func (s *Service) Summary(ctx context.Context) (Summary, error) {
+	return s.repo.Summary(ctx)
 }
